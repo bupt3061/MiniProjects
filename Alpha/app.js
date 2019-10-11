@@ -1,30 +1,24 @@
 //app.js
+
+// 外部js
+const upd = require('./js/update.js')
+const stg = 
+upd.updateApp()
+
 App({
   onLaunch: function () {
     // 展示本地存储能力
     var logs = wx.getStorageSync('logs') || []
     logs.unshift(Date.now())
-    wx.setStorageSync('logs', logs)
 
-    // 获取用户信息
-    wx.cloud.init({
-      env: 'test-m3m5d'
-    })
 
-    wx.cloud.callFunction({
-      name: 'getInfo',
-      data: {},
-      success: res => {
-        console.log(res)
-      }
-    })
 
     // 登录
     wx.login({
       success: res => {
         // 发送 res.code 到后台换取 openId, sessionKey, unionId
-        console.log(res)
-        var code = res.code
+        console.log('code:', res.code)
+        const code = res.code
       }
     })
 
@@ -35,7 +29,7 @@ App({
           // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
           wx.getUserInfo({
             success: res => {
-              console.log(res)
+              console.log('2.获取userInfo:', res.userInfo)
 
               // 可以将 res 发送给后台解码出 unionId
               this.globalData.userInfo = res.userInfo
@@ -52,6 +46,8 @@ App({
     })
   },
   globalData: {
+    openid: null,
+    appid: null,
     userInfo: null
   }
 })
