@@ -12,7 +12,7 @@
   border-radius: 50%;
 }
 
-.userinfo-nickname {
+.userinfo-detail {
   color: #aaa;
 }
 

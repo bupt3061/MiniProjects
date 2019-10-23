@@ -13,7 +13,7 @@ const cloud = require('wx-server-sdk')
 cloud.init()
 
 const user = cloud.database({
-  env: "test-m3m5d"
+  env: 'test-m3m5d'
 }).collection('user')
 
 // 云函数入口函数

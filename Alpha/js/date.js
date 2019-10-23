@@ -1,4 +1,10 @@
 function formatTime(date) {
+    /**
+   * 功能：格式化时间并输出
+   * 参数：date(日期)
+   * 返回：格式化时间字符串
+   * 2019/10/23 13：25：55
+   */
   const year = date.getFullYear()
   const month = date.getMonth() + 1
   const day = date.getDate()
