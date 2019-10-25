@@ -10,15 +10,38 @@ const app = getApp()
 
 Page({
   data: {
+    type: 1,
+    registered: true,
     userInfo: null,
     hasUserInfo: false,
     openid: null,
     hasOpenid: false,
     canIUse: wx.canIUse('button.open-type.getUserInfo'),
+    avatarStu: null,
+    avatarTeach: null
   },
-
   onLoad: function() {
     const _this = this
+
+    // 从云端下载默认头像
+    wx.cloud.getTempFileURL({
+      fileList: app.globalData.avatarIDs,
+      success: res => {
+        var avatarStu = res.fileList[0].tempFileURL
+        var avatarTeach = res.fileList[1].tempFileURL
+
+        _this.setData({
+          avatarStu,
+          avatarTeach
+        })
+
+        app.globalData.avatarStu = avatarStu
+        app.globalData.avatarTeach = avatarTeach
+      },
+      fail: err => {
+        console.log(err)
+      }
+    })
 
     // 获取openid
     if (app.globalData.openid) {
@@ -70,6 +93,20 @@ Page({
     }
 
   },
+  switch: function() {
+    var type = this.data.type
+
+    if(type == 1) {
+      this.setData({
+        type: 2
+      })
+    }
+    else {
+      this.setData({
+        type: 1
+      })
+    }
+  },
   getUserInfo: function(e) {
     // 获取userInfo
     console.log('获取userInfo(授权)', e.detail.userInfo)
@@ -87,34 +124,34 @@ Page({
 
     var date = new Date()
 
-    var user = wx.cloud.database({
+    var stu = wx.cloud.database({
       env: 'test-m3m5d'
-    }).collection('user')
+    }).collection('stu')
 
-    try{
-      user.where({
-        _openid: this.openid
-      }).get({
-        success: res => {
-          console.log(res.data)
-        }
-      })
-    }
-    catch(e) {
-      console.log('不存在')
-    }
+    // try{
+    //   user.where({
+    //     _openid: this.openid
+    //   }).get({
+    //     success: res => {
+    //       console.log(res.data)
+    //     }
+    //   })
+    // }
+    // catch(e) {
+    //   console.log('不存在')
+    // }
    
 
-    // var data = {
-    //   openid: this.data.openid,
-    //   gender: this.data.userInfo.gender,
-    //   addr: this.data.userInfo.city + '/' + this.data.userInfo.province + '/' + this.data.userInfo.country,
-    //   regtime: date,
-    //   indentity: 1,
-    //   title: 1,
-    //   contribution: 0.5,
-    // }
+    var data = {
+      openid: this.data.openid,
+      gender: this.data.userInfo.gender,
+      addr: this.data.userInfo.city + '/' + this.data.userInfo.province + '/' + this.data.userInfo.country,
+      regtime: date,
+      indentity: 1,
+      title: 1,
+      contribution: 0.5,
+    }
 
-    // ct.add(user, data)
+    ct.add(stu, data)
   }
 })

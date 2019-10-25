@@ -8,12 +8,14 @@ upd.updateApp()
 
 App({
   onLaunch: function () {
+    const _this =
+
     // 初始化云
     wx.cloud.init({
       env: 'test-m3m5d'
     })
 
-    // 获取本地openid缓存
+    // 获取本地 openid 缓存
     if (stg.getStorage('openid')) {
       console.log('获取openid(缓存):', stg.getStorage('openid'))
       this.globalData.openid = stg.getStorage('openid')
@@ -28,7 +30,7 @@ App({
       }
     })
 
-    // 获得授权后再次登陆获取用户信息
+    // 获取用户信息(授权后)
     wx.getSetting({
       success: res => {
         if (res.authSetting['scope.userInfo']) {
@@ -53,6 +55,9 @@ App({
   },
   globalData: {
     openid: null,
-    userInfo: null
+    userInfo: null,
+    avatarStu: null,
+    avatarTeach: null,
+    avatarIDs: ['cloud://test-m3m5d.7465-test-m3m5d-1300027116/avatar/stu.jpg', 'cloud://test-m3m5d.7465-test-m3m5d-1300027116/avatar/teach.jpg']
   }
 })

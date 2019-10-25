@@ -1,8 +1,27 @@
 /**index.wxss**/
+
+.toteach {
+  display: flex; 
+  flex-direction: row-reverse; 
+  width: 100%;
+}
+
+.tostu {
+  display: flex; 
+  flex-direction: row; 
+  width: 100%;
+}
+
+.link {
+  display: block; 
+  margin: 24rpx
+}
+
 .userinfo {
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin: 48rpx 0rpx;
 }
 
 .userinfo-avatar {
@@ -10,12 +29,9 @@
   height: 128rpx;
   margin: 20rpx;
   border-radius: 50%;
+  border: solid 1px rgb(231, 231, 231)
 }
 
 .userinfo-detail {
   color: #aaa;
-}
-
-.usermotto {
-  margin-top: 200px;
 }

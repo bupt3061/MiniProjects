@@ -1,6 +1,20 @@
 <!--index.wxml-->
 
-<view class="container">
+<block wx:if="{{registered}}">
+  <view class="container" style>
+    <button wx:if="{{!hasUserInfo && canIUse}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo" style="margin: 48rpx 0rpx"> 获取头像昵称 </button>
+    <block wx:else>
+      <view style="width: 80%; height: 200rpx; background-color: red; margin: 24rpx"></view>
+    </block>
+  </view>
+</block>
+
+<block wx:else>
+  <include wx:if="{{type == 1}}" src='../../wxml/stu.wxml' />
+  <include wx:elif="{{type == 2}}" src='../../wxml/teach.wxml' />
+</block>
+
+<!-- <view class="container">
   <button wx:if="{{!hasUserInfo && canIUse}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo"> 获取头像昵称 </button>
   <block wx:else>
     <image bindtap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
@@ -10,4 +24,4 @@
     <text class="userinfo-detail">{{openid}}</text>
     <text class="userinfo-detail">{{appid}}</text>
   </block>
-</view>
+</view> -->
