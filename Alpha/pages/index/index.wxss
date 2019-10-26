@@ -1,37 +1,15 @@
 /**index.wxss**/
 
-.toteach {
-  display: flex; 
-  flex-direction: row-reverse; 
-  width: 100%;
-}
-
-.tostu {
-  display: flex; 
-  flex-direction: row; 
-  width: 100%;
-}
-
-.link {
-  display: block; 
-  margin: 24rpx
-}
-
-.userinfo {
+.card {
+  width: 80%;
+  background-color: white;
+  margin: 40rpx;
+  border-radius: 24rpx;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  margin: 48rpx 0rpx;
-}
-
-.userinfo-avatar {
-  width: 128rpx;
-  height: 128rpx;
-  margin: 20rpx;
-  border-radius: 50%;
-  border: solid 1px rgb(231, 231, 231)
-}
-
-.userinfo-detail {
-  color: #aaa;
+  justify-content: space-between;
+  padding: 56rpx 80rpx;
+  box-sizing: border-box;
 }

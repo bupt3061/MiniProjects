@@ -3,7 +3,7 @@
 @import "/iconfont/iconfont.wxss";
 
 page {
-  background-color: #f2f3f5;
+  background-color: #f3f4f6;
 }
 
 .container {
@@ -13,4 +13,13 @@ page {
   align-items: center;
   justify-content: space-between;
   box-sizing: border-box;
-} 
+}
+
+.primary {
+  color: #14d1b5;
+}
+
+.primary-btn {
+  color: white;
+  background-color:  #14d1b5;
+}

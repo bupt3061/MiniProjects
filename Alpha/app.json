@@ -1,14 +1,47 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/logs/logs"
+    "pages/msg/msg",
+    "pages/mine/mine",
+    "pages/login/login",
+    "pages/loginTeach/loginTeach"
   ],
   "window": {
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#fff",
-    "navigationBarTitleText": "WeChat",
+    "navigationBarTitleText": "作业帮",
     "navigationBarTextStyle": "black"
   },
+  "tabBar": {
+    "borderStyle": "white",
+    "selectedColor": "#14d1b5",
+    "color": "#666666",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "/img/home.png",
+        "selectedIconPath": "/img/selectedHome.png"
+      },
+      {
+        "pagePath": "pages/msg/msg",
+        "text": "消息",
+        "iconPath": "/img/msg.png",
+        "selectedIconPath": "/img/selectedMsg.png"
+      },
+      {
+        "pagePath": "pages/mine/mine",
+        "text": "我的",
+        "iconPath": "/img/mine.png",
+        "selectedIconPath": "/img/selectedMine.png"
+      }
+    ]
+  },
+  "networkTimeout": {
+    "request": 10000,
+    "downloadFile": 10000
+  },
+  "debug": true,
   "sitemapLocation": "sitemap.json",
   "usingComponents": {
     "zan-icon": "/dist/icon/index",

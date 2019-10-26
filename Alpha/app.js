@@ -1,24 +1,39 @@
 //app.js
 
-// 外部js
-const upd = require('./js/update.js')
+// 引入外部js
 const stg = require('./js/storage.js')
-
+const upd = require('./js/update.js')
 upd.updateApp()
 
 App({
   onLaunch: function () {
-    const _this =
+    const _this = this
 
     // 初始化云
     wx.cloud.init({
       env: 'test-m3m5d'
     })
 
-    // 获取本地 openid 缓存
+    // 获取本地缓存
     if (stg.getStorage('openid')) {
+      // 获取openid
       console.log('获取openid(缓存):', stg.getStorage('openid'))
       this.globalData.openid = stg.getStorage('openid')
+    }
+
+    if(stg.getStorage('type')) {
+      // 获取type
+      console.log('获取type(缓存):', stg.getStorage('type'))
+      this.globalData.type = stg.getStorage('type')
+    }
+
+    console.log('获取registered(缓存):', stg.getStorage('registered'))
+    if (!stg.getStorage('registered')) {
+      // 若未注册，则跳转到登陆界面
+      console.log('跳转')
+      wx.redirectTo({
+        url: 'pages/login/login'
+      })
     }
 
     // 登录
@@ -55,9 +70,8 @@ App({
   },
   globalData: {
     openid: null,
+    type: null,
     userInfo: null,
-    avatarStu: null,
-    avatarTeach: null,
     avatarIDs: ['cloud://test-m3m5d.7465-test-m3m5d-1300027116/avatar/stu.jpg', 'cloud://test-m3m5d.7465-test-m3m5d-1300027116/avatar/teach.jpg']
   }
 })

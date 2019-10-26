@@ -1,27 +1,12 @@
 <!--index.wxml-->
 
-<block wx:if="{{registered}}">
-  <view class="container" style>
-    <button wx:if="{{!hasUserInfo && canIUse}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo" style="margin: 48rpx 0rpx"> 获取头像昵称 </button>
-    <block wx:else>
-      <view style="width: 80%; height: 200rpx; background-color: red; margin: 24rpx"></view>
-    </block>
+<view class="container">
+  <view class="card">
+    <text class="zan-font-18 zan-c-gray-darker">交作业<text wx:if="{{taskNum != 0}}"class="zan-font-18 primary">({{taskNum}})</text></text>
+    <zan-icon class="primary" type="pending-orders" style="font-size: 80rpx"></zan-icon>
   </view>
-</block>
-
-<block wx:else>
-  <include wx:if="{{type == 1}}" src='../../wxml/stu.wxml' />
-  <include wx:elif="{{type == 2}}" src='../../wxml/teach.wxml' />
-</block>
-
-<!-- <view class="container">
-  <button wx:if="{{!hasUserInfo && canIUse}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo"> 获取头像昵称 </button>
-  <block wx:else>
-    <image bindtap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
-    <text class="userinfo-detail">{{userInfo.nickName}}</text>
-    <text class="userinfo-detail">{{userInfo.city + '/' + userInfo.province + '/' + userInfo.country}}</text>
-    <text class="userinfo-detail">{{userInfo.gender}}</text>
-    <text class="userinfo-detail">{{openid}}</text>
-    <text class="userinfo-detail">{{appid}}</text>
-  </block>
-</view> -->
+  <view class="card">
+    <text class="zan-font-18 zan-c-gray-darker">互评<text wx:if="{{mutualEvaluateNum != 0}}" class="zan-font-18 primary">({{mutualEvaluateNum}})</text></text>
+    <zan-icon class="primary" type="chat" style="font-size: 80rpx"></zan-icon>
+  </view>
+</view>

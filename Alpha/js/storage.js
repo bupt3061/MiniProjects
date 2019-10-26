@@ -19,6 +19,8 @@ function getStorageInfo() {
   } catch (err) {
     console.log('无法获取缓存信息')
     console.log(err)
+
+    return false
   }
 }
 
@@ -39,24 +41,34 @@ function setStorage(key, value) {
     }
 
     // 存储
-    wx.setStorageSync(key, value)
-    console.log(key, '被成功存储')
+    if(value) {
+      wx.setStorageSync(key, value)
+      console.log(key, '被成功存储')
+    }
+    else {
+      console.log(key, '数据为空')
+    }
   } catch (err) {
     if (!wx.canIUse('setStorage')) {
       console.log('无法使用 wx.setStorage() 函数')
       return
     }
 
-    wx.setStorage({
-      key: key,
-      value: value,
-      success: res => {
-        console.log(key, '被成功存储')
-      },
-      fail: err => {
-        console.log(err)
-      }
-    })
+    if(value) {
+      wx.setStorage({
+        key: key,
+        value: value,
+        success: res => {
+          console.log(key, '被成功存储')
+        },
+        fail: err => {
+          console.log(err)
+        }
+      })
+    }
+    else {
+      console.log(key, '为空')
+    }
   }
 }
 
@@ -76,12 +88,7 @@ function getStorage(key) {
 
     var value = wx.getStorageSync(key)
 
-    if (value) {
-      return value
-    } else {
-      console.log(key, '数据为空')
-      return
-    }
+    return value
   } catch (err) {
     console.log('无法获得', key, '对应的缓存数据')
     console.log(err)
