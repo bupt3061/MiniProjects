@@ -3,6 +3,7 @@
 // 引入外部js
 const stg = require('../../js/storage.js')
 const ct = require('../../js/collection.js')
+const dt = require('../../js/date.js')
 
 // app 实例
 const app = getApp()
@@ -29,15 +30,7 @@ Page({
   /**
    * 页面其他函数
    */
-  toTeach: function() {
-    wx.navigateTo({
-      url: '../loginTeach/loginTeach?type=' + this.data.type,
-      success: res => {
-        console.log(res)
-      }
-    })
-  },
-  getUserInfo: function(e) {
+  confirmStu: function(e) {
     const _this = this
 
     // 显示加载
@@ -54,13 +47,15 @@ Page({
     })
 
     // 缓存数据到本地
-    stg.setStorage('openid', this.data.openid)
     stg.setStorage('type', this.data.type)
     stg.setStorage('registered', true)
+    
+    // 设置全局数据
+    app.globalData.type = this.data.type
 
     // 上传到数据库
-
-    var date = new Date()
+    var date = dt.formatTime(new Date())
+    console.log('date', date)
 
     var stu = wx.cloud.database({
       env: 'test-m3m5d'
@@ -92,7 +87,7 @@ Page({
           })
 
           wx.switchTab({
-            url: "../index/index",
+            url: "../index/index?id=1",
             success: res => {
               console.log('跳转到index')
             },
@@ -111,9 +106,14 @@ Page({
 
     // 跳转到首页
   },
-  confirmStu: function() {
-    stg.setStorage('type', this.data.type)
-    stg.setStorage('registered', true)
+  toTeach: function () {
+
+    wx.navigateTo({
+      url: '../loginTeach/loginTeach?type=' + this.data.type,
+      success: res => {
+        console.log(res)
+      }
+    })
   },
   clickStu: function() {
     this.setData({
@@ -138,7 +138,7 @@ Page({
   onLoad: function(options) {
     const _this = this
 
-    // 从云端下载默认头像
+    // 从云端下载头像
     wx.cloud.getTempFileURL({
       fileList: app.globalData.avatarIDs,
       success: res => {
@@ -172,6 +172,7 @@ Page({
             openid: res.result.OPENID,
             hasOpenid: true
           })
+          stg.setStorage('openid', res.result.OPENID)
         }
       })
     }

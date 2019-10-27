@@ -3,7 +3,14 @@
 // 引入外部js
 const stg = require('./js/storage.js')
 const upd = require('./js/update.js')
+const hs = require('./js/hash.js')
+const dt = require('./js/date.js')
 upd.updateApp()
+
+console.log('hash', hs.hash('设计心理学/2019/10/27 09:11:27'))
+var date1 = new Date('01 07, 1995 03:24:00')
+console.log(dt.formatTime(date1))
+console.log(date1.getTime())
 
 App({
   onLaunch: function () {

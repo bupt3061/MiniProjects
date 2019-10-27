@@ -1,3 +1,5 @@
+// 处理时间类数据
+
 function formatTime(date) {
     /**
    * 功能：格式化时间并输出

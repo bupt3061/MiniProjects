@@ -13,6 +13,8 @@ Page({
     mutualEvaluateNum: 0,
   },
   onLoad: function() {
-
+    this.setData({
+      type: app.globalData.type
+    })
   },
 })
