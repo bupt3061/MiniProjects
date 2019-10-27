@@ -5,10 +5,12 @@ const stg = require('./js/storage.js')
 const upd = require('./js/update.js')
 const hs = require('./js/hash.js')
 const dt = require('./js/date.js')
+
 upd.updateApp()
 
-console.log('hash', hs.hash('设计心理学/2019/10/27 09:11:27'))
-var date1 = new Date('01 07, 1995 03:24:00')
+// console.log('hash', hs.hash('设计心理学/2019/10/27 09:11:27'))
+var date1 = new Date('10 27, 2019 10:42:53')
+console.log(date1)
 console.log(dt.formatTime(date1))
 console.log(date1.getTime())
 
@@ -34,7 +36,6 @@ App({
       this.globalData.type = stg.getStorage('type')
     }
 
-    console.log('获取registered(缓存):', stg.getStorage('registered'))
     if (!stg.getStorage('registered')) {
       // 若未注册，则跳转到登陆界面
       console.log('跳转')

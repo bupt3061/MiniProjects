@@ -55,7 +55,6 @@ Page({
 
     // 上传到数据库
     var date = dt.formatTime(new Date())
-    console.log('date', date)
 
     var stu = wx.cloud.database({
       env: 'test-m3m5d'
@@ -66,14 +65,13 @@ Page({
       gender: this.data.userInfo.gender,
       addr: this.data.userInfo.city + '/' + this.data.userInfo.province + '/' + this.data.userInfo.country,
       regtime: date,
-      type: 1,
       title: 1,
       contribution: 0.5,
     }
 
     try {
       stu.where({
-        _openid: this.data.openid
+        _stuid: this.data.openid
       }).get({
         success: res => {
           if (res.data.length == 0) {
