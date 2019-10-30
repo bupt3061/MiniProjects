@@ -5,6 +5,7 @@ const stg = require('./js/storage.js')
 const upd = require('./js/update.js')
 const hs = require('./js/hash.js')
 const dt = require('./js/date.js')
+const regeneratorRuntime = require('./lib/regenerator-runtime/runtime')
 
 upd.updateApp()
 
@@ -13,6 +14,7 @@ upd.updateApp()
 // console.log(date1)
 // console.log(dt.formatTime(date1))
 // console.log(date1.getTime())
+
 
 App({
   onLaunch: function () {
@@ -23,25 +25,26 @@ App({
       env: 'test-m3m5d'
     })
 
-    // 获取本地缓存
-    if (stg.getStorage('openid')) {
-      // 获取openid
-      console.log('获取openid(缓存):', stg.getStorage('openid'))
-      this.globalData.openid = stg.getStorage('openid')
-    }
-
-    if(stg.getStorage('type')) {
-      // 获取type
-      console.log('获取type(缓存):', stg.getStorage('type'))
-      this.globalData.type = stg.getStorage('type')
-    }
-
+    // 若未注册，则跳转到登陆界面
     if (!stg.getStorage('registered')) {
-      // 若未注册，则跳转到登陆界面
       console.log('跳转')
       wx.redirectTo({
         url: 'pages/login/login'
       })
+    }
+
+    // 获取用户openid
+    var openid = stg.getStorage('openid')
+    if (openid) {
+      console.log('获取openid(缓存):', openid)
+      this.globalData.openid = openid
+    }
+
+    // 获取用户类型
+    var type = stg.getStorage('type')
+    if (type) {
+      console.log('获取type(缓存):', type)
+      this.globalData.type = type
     }
 
     // 登录
@@ -75,11 +78,14 @@ App({
         }
       }
     })
+
   },
   globalData: {
     openid: null,
     type: null,
     userInfo: null,
-    avatarIDs: ['cloud://test-m3m5d.7465-test-m3m5d-1300027116/avatar/stu.jpg', 'cloud://test-m3m5d.7465-test-m3m5d-1300027116/avatar/teach.jpg']
+    avatarIDs: ['cloud://test-m3m5d.7465-test-m3m5d-1300027116/avatar/stu.jpg', 'cloud://test-m3m5d.7465-test-m3m5d-1300027116/avatar/teach.jpg'],
+    courses: [],
+    tasks: []
   }
 })

@@ -49,16 +49,14 @@ Page({
     // 缓存数据到本地
     stg.setStorage('type', this.data.type)
     stg.setStorage('registered', true)
-    
+
     // 设置全局数据
     app.globalData.type = this.data.type
 
     // 上传到数据库
     var date = dt.formatTime(new Date())
 
-    var stu = wx.cloud.database({
-      env: 'test-m3m5d'
-    }).collection('stu')
+    var stu = db.collection('stu')
 
     var data = {
       openid: this.data.openid,
@@ -102,9 +100,8 @@ Page({
       console.log(err)
     }
 
-    // 跳转到首页
   },
-  toTeach: function () {
+  toTeach: function() {
 
     wx.navigateTo({
       url: '../loginTeach/loginTeach?type=' + this.data.type,
@@ -129,7 +126,10 @@ Page({
     })
     console.log(this.data.type)
   },
+  async init() {
 
+  },
+  
   /**
    * 生命周期函数--监听页面加载
    */
