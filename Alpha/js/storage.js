@@ -88,6 +88,10 @@ function getStorage(key) {
 
     var value = wx.getStorageSync(key)
 
+    if(!value) {
+      return false
+    }
+
     return value
   } catch (err) {
     console.log('无法获得', key, '对应的缓存数据')

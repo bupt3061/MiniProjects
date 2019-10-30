@@ -9,10 +9,10 @@ const dt = require('./js/date.js')
 upd.updateApp()
 
 // console.log('hash', hs.hash('设计心理学/2019/10/27 09:11:27'))
-var date1 = new Date('10 27, 2019 10:42:53')
-console.log(date1)
-console.log(dt.formatTime(date1))
-console.log(date1.getTime())
+// var date1 = new Date('10 27, 2019 10:42:53')  
+// console.log(date1)
+// console.log(dt.formatTime(date1))
+// console.log(date1.getTime())
 
 App({
   onLaunch: function () {
