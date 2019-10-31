@@ -14,13 +14,15 @@ function getStorageInfo() {
   // 获取缓存信息
   try {
     const res = wx.getStorageInfoSync()
+
+    if(res == []) {
+      return false
+    }
     
     return res.keys
   } catch (err) {
     console.log('无法获取缓存信息')
     console.log(err)
-
-    return false
   }
 }
 

@@ -5,7 +5,6 @@ const stg = require('./js/storage.js')
 const upd = require('./js/update.js')
 const hs = require('./js/hash.js')
 const dt = require('./js/date.js')
-const regeneratorRuntime = require('./lib/regenerator-runtime/runtime')
 
 upd.updateApp()
 
@@ -17,6 +16,113 @@ upd.updateApp()
 
 
 App({
+  async init() {
+    // 初始化
+    let openid = await this.getOpenid()
+    let item = await this.getUserItem(openid)
+    this.login()
+    if(await this.getSetting()) {
+      let userInfo = await this.getUserInfo()
+      console.log('qwaipwp:', userInfo)
+    }
+  },
+  getOpenid: function () {
+    return new Promise((resolve, reject) => {
+      // 获取openid
+      wx.cloud.callFunction({
+        name: 'getInfo',
+        data: {},
+        success: res => {
+          console.log('openid:', res.result.OPENID)
+          resolve(res.result.OPENID)
+        },
+        fail: err => {
+          console.log(err)
+          reject(err)
+        }
+      })
+    })
+  },
+  getUserItem: function (openid) {
+    // 从数据库中获取该用户记录
+    return new Promise((resolve, reject) => {
+      const db = wx.cloud.database({
+        env: 'test-m3m5d'
+      })
+
+      db.collection('user').where({
+        _openid: openid
+      })
+        .get()
+        .then(res => {
+          console.log(res.data)
+          resolve(res.data)
+        })
+        .catch(err => {
+          console.log(err)
+          reject(err)
+        })
+    })
+  },
+  login: function () {
+    // 登陆以获取用户基本信息
+    return new Promise((resolve, reject) => {
+      wx.login({
+        success: res => {
+          // 发送 res.code 到后台换取 openId, sessionKey, unionId
+          console.log('code:', res.code)
+          resolve(res.code)
+        },
+        fail: err => {
+          console.log(err)
+          reject(err)
+        }
+      })
+    })
+  },
+  getSetting: function (resolve, reject) {
+    return new Promise((resolve, reject) => {
+      wx.getSetting({
+        success: res => {
+          if (res.authSetting['scope.userInfo']) {
+            // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
+            resolve(res.authSetting['scope.userInfo'])
+          }
+        },
+        fail: err => {
+          console.log(err)
+          reject(err)
+        }
+      })
+    })
+  },
+  getUserInfo: function () {
+    // 获取用户基本信息
+    return new Promise((resolve, reject) => {
+      wx.getUserInfo({
+        success: res => {
+          console.log('userInfo:', res.userInfo)
+          resolve(res.userInfo)
+          // 可以将 res 发送给后台解码出 unionId
+          this.globalData.userInfo = res.userInfo
+
+          // 由于 getUserInfo 是网络请求，可能会在 Page.onLoad 之后才返回
+          // 所以此处加入 callback 以防止这种情况
+          if (this.userInfoReadyCallback) {
+            this.userInfoReadyCallback(res)
+          }
+        },
+        fail: err => {
+          console.log(err)
+          reject(err)
+        }
+      })
+    })
+  },
+  toLogin: function () {
+    // 判断该用户是否登陆过，若无则跳转到login界面
+
+  },
   onLaunch: function () {
     const _this = this
 
@@ -24,6 +130,8 @@ App({
     wx.cloud.init({
       env: 'test-m3m5d'
     })
+
+    this.init()
 
     // 若未注册，则跳转到登陆界面
     if (!stg.getStorage('registered')) {
@@ -53,6 +161,9 @@ App({
         // 发送 res.code 到后台换取 openId, sessionKey, unionId
         const code = res.code
         console.log('code:', res.code)
+      },
+      fail: err => {
+        console.log(err)
       }
     })
 
