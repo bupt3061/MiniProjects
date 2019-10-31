@@ -18,15 +18,22 @@ upd.updateApp()
 App({
   async init() {
     // 初始化
-    let openid = await this.getOpenid()
-    let item = await this.getUserItem(openid)
+
+    let openid = await this.getOpenid() // 获取openid
+    let item = await this.getUserItem(openid) // 从数据库获取用户信息
     this.login()
-    if(await this.getSetting()) {
-      let userInfo = await this.getUserInfo()
-      console.log('qwaipwp:', userInfo)
+    if (await this.getSetting()) {
+      let res = await this.getUserInfo()
+      var userInfo = res
     }
+    var tasks = []
+    for(var i = 0; i < item.courses.length; i++) {
+      let res = await this.getTasks(item.courses[i])
+      tasks = tasks.concat(res)
+    }
+    console.log('tasks:', tasks)
   },
-  getOpenid: function () {
+  getOpenid: function() {
     return new Promise((resolve, reject) => {
       // 获取openid
       wx.cloud.callFunction({
@@ -43,20 +50,18 @@ App({
       })
     })
   },
-  getUserItem: function (openid) {
+  getUserItem: function(openid) {
     // 从数据库中获取该用户记录
     return new Promise((resolve, reject) => {
-      const db = wx.cloud.database({
-        env: 'test-m3m5d'
-      })
+      const db = wx.cloud.database()
 
       db.collection('user').where({
-        _openid: openid
-      })
+          _openid: openid
+        })
         .get()
         .then(res => {
-          console.log(res.data)
-          resolve(res.data)
+          console.log('item:', res.data[0])
+          resolve(res.data[0])
         })
         .catch(err => {
           console.log(err)
@@ -64,7 +69,7 @@ App({
         })
     })
   },
-  login: function () {
+  login: function() {
     // 登陆以获取用户基本信息
     return new Promise((resolve, reject) => {
       wx.login({
@@ -80,12 +85,13 @@ App({
       })
     })
   },
-  getSetting: function (resolve, reject) {
+  getSetting: function(resolve, reject) {
+    // 获取授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
     return new Promise((resolve, reject) => {
       wx.getSetting({
         success: res => {
           if (res.authSetting['scope.userInfo']) {
-            // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
+            // 已经授权
             resolve(res.authSetting['scope.userInfo'])
           }
         },
@@ -96,7 +102,7 @@ App({
       })
     })
   },
-  getUserInfo: function () {
+  getUserInfo: function() {
     // 获取用户基本信息
     return new Promise((resolve, reject) => {
       wx.getUserInfo({
@@ -119,11 +125,28 @@ App({
       })
     })
   },
-  toLogin: function () {
-    // 判断该用户是否登陆过，若无则跳转到login界面
+  getTasks: function(courseid) {
+    return new Promise((resolve, reject) => {
+      const db = wx.cloud.database()
 
+      db.collection('task').where({
+          _courseid: courseid
+        })
+        .get()
+        .then(res => {
+          resolve(res.data)
+        })
+        .catch(err => {
+          console.log(err)
+          reject(err)
+        })
+    })
   },
-  onLaunch: function () {
+  toLogin: function() {
+    // 判断该用户是否登陆过，若无则跳转到login界面
+    
+  },
+  onLaunch: function() {
     const _this = this
 
     // 初始化云
@@ -144,14 +167,12 @@ App({
     // 获取用户openid
     var openid = stg.getStorage('openid')
     if (openid) {
-      console.log('获取openid(缓存):', openid)
       this.globalData.openid = openid
     }
 
     // 获取用户类型
     var type = stg.getStorage('type')
     if (type) {
-      console.log('获取type(缓存):', type)
       this.globalData.type = type
     }
 
@@ -160,7 +181,6 @@ App({
       success: res => {
         // 发送 res.code 到后台换取 openId, sessionKey, unionId
         const code = res.code
-        console.log('code:', res.code)
       },
       fail: err => {
         console.log(err)
@@ -174,7 +194,6 @@ App({
           // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
           wx.getUserInfo({
             success: res => {
-              console.log('获取userInfo(已授权):', res.userInfo)
 
               // 可以将 res 发送给后台解码出 unionId
               this.globalData.userInfo = res.userInfo
