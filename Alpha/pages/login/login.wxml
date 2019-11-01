@@ -16,6 +16,5 @@
       <text>我是老师</text>
     </view>
   </block>
-  <button wx:if="{{type == 1}}" loading="{{loading}}" open-type="getUserInfo" class="primary-btn" style="width: 80%; margin-top: 96rpx;" bindgetuserinfo="confirmStu">确认</button>
-  <button wx:elif="{{type == 2}}" class="primary-btn" style="width: 80%; margin-top: 96rpx;" bindtap="toTeach">下一步</button>
+  <button loading="{{loading}}" open-type="getUserInfo" class="primary-bg" style="width: 80%; margin-top: 96rpx;" bindgetuserinfo="toNext">下一步</button>
 </view>

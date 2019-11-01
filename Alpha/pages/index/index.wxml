@@ -1,5 +1,6 @@
 <!--index.wxml-->
 <block wx:if="{{type == 1}}">
+  <zan-toptips wx:if="{{courses == []}}" backgroundColor=" #14d1b5" content="{{ content }}" is-show="{{ $zanui.toptips.show }}" bindtap="toMyCourse" />
   <view class="container" style="padding-top: 160rpx">
     <view class="card">
       <text class="zan-font-18 zan-c-gray-darker">作业<text wx:if="{{uploadNum != 0}}"class="zan-font-18 primary"> ({{uploadNum}}) </text></text>

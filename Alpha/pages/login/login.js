@@ -1,10 +1,5 @@
 // pages/login/login.js
 
-// 引入外部js
-const stg = require('../../js/storage.js')
-const ct = require('../../js/collection.js')
-const dt = require('../../js/date.js')
-
 // app 实例
 const app = getApp()
 
@@ -14,7 +9,9 @@ Page({
    * 页面的初始数据
    */
   data: {
+    openid: null,
     type: 1,
+    basicInfo: null,
     stuStyle: "primary",
     teachStyle: "zan-c-gray-dark",
     avatarStu: null,
@@ -26,45 +23,86 @@ Page({
   /**
    * 页面其他函数
    */
-  confirmStu: function(e) {
+  toNext: function(e) {
     const _this = this
-
-    // 显示加载
-    this.setData({
-      loading: true
-    })
 
     // 获取userInfo
     console.log('获取basicInfo(授权)', e.detail.userInfo)
+    this.setData({
+      basicInfo: e.detail.userInfo
+    })
     app.globalData.basicInfo = e.detail.userInfo
+    app.globalData.type = this.data.type
 
-  },
-  toTeach: function() {
+    // 上传数据
+    // var date = new Date()
+    // var data = {
+    //   gender: this.data.basicInfo.gender,
+    //   addr: this.data.basicInfo.city + '/' + this.data.basicInfo.province + '/' + this.data.basicInfo.country,
+    //   regtime: date,
+    //   title: 1,
+    //   contribution: 0.5,
+    //   type: this.data.type,
+    //   courses: []
+    // }
 
+    // const user = wx.cloud.database().collection('user')
+    // user.where({
+    //     _openid: this.data.openid
+    //   })
+    //   .get()
+    //   .then(res => {
+    //     if (res.data.length == 0) {
+    //       console.log('上传该用户记录')
+    //       user.add({
+    //           data: data
+    //         })
+    //         .then(res => {
+    //           console.log('上传成功:', res)
+    //           _this.setData({
+    //             loading: false
+    //           })
+    //         })
+    //         .catch(err => {
+    //           console.log(err)
+    //         })
+    //     }
+    //   })
+    //   .catch(err => {
+    //     console.log(err)
+    //   })
+
+    // 跳转
     wx.navigateTo({
-      url: '../loginTeach/loginTeach?type=' + this.data.type,
+      url: '../loginNext/loginNext',
       success: res => {
-        console.log(res)
+        console.log('跳转到loginNext')
+        console.log(this.data)
+      },
+      fial: err => {
+        console.log(err)
       }
     })
+
   },
   clickStu: function() {
+    // 选择学生身份
     this.setData({
       type: 1,
       stuStyle: "primary",
       teachStyle: "zan-c-gray-dark"
     })
     console.log(this.data.type)
+
   },
   clickTeach: function() {
+    // 选择教师身份
     this.setData({
       type: 2,
       stuStyle: "zan-c-gray-dark",
       teachStyle: "primary"
     })
     console.log(this.data.type)
-  },
-  async init() {
 
   },
 
@@ -72,7 +110,12 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function(options) {
-    const _this = this
+
+    if (app.globalData.openid) {
+      this.setData({
+        openid: app.globalData.openid
+      })
+    }
 
     // 从云端下载头像
     wx.cloud.getTempFileURL({
@@ -81,7 +124,7 @@ Page({
         var avatarStu = res.fileList[0].tempFileURL
         var avatarTeach = res.fileList[1].tempFileURL
 
-        _this.setData({
+        this.setData({
           avatarStu,
           avatarTeach
         })
@@ -90,56 +133,6 @@ Page({
         console.log(err)
       }
     })
-
-    // // 获取openid
-    // if (app.globalData.openid) {
-    //   this.setData({
-    //     openid: app.globalData.openid,
-    //     hasOpenid: true
-    //   })
-    // } else {
-    //   wx.cloud.callFunction({
-    //     name: 'getInfo',
-    //     data: {},
-    //     success: res => {
-    //       console.log('获取openid(云函数):', res.result.OPENID)
-    //       app.globalData.openid = res.result.OPENID
-    //       _this.setData({
-    //         openid: res.result.OPENID,
-    //         hasOpenid: true
-    //       })
-    //       stg.setStorage('openid', res.result.OPENID)
-    //     }
-    //   })
-    // }
-
-    // // 获取userInfo
-    // if (app.globalData.userInfo) {
-    //   this.setData({
-    //     basicInfo: app.globalData.userInfo,
-    //     hasBasicInfo: true
-    //   })
-    // } else if (this.data.canIUse) {
-    //   // 由于 getUserInfo 是网络请求，可能会在 Page.onLoad 之后才返回
-    //   // 所以此处加入 callback 以防止这种情况
-    //   app.userInfoReadyCallback = res => {
-    //     this.setData({
-    //       basicInfo: res.userInfo,
-    //       hasBasicInfo: true
-    //     })
-    //   }
-    // } else {
-    //   // 在没有 open-type=getUserInfo 版本的兼容处理
-    //   wx.getUserInfo({
-    //     success: res => {
-    //       app.globalData.userInfo = res.userInfo
-    //       this.setData({
-    //         userInfo: res.userInfo,
-    //         hasUserInfo: true
-    //       })
-    //     }
-    //   })
-    // }
 
   },
 
@@ -161,53 +154,7 @@ Page({
    * 生命周期函数--监听页面隐藏
    */
   onHide: function() {
-    // 上传到数据库
-    const db = wx.cloud.database()
-    var date = dt.formatTime(new Date())
 
-    var stu = db.collection('stu')
-
-    var data = {
-      openid: this.data.openid,
-      gender: this.data.userInfo.gender,
-      addr: this.data.userInfo.city + '/' + this.data.userInfo.province + '/' + this.data.userInfo.country,
-      regtime: date,
-      title: 1,
-      contribution: 0.5,
-    }
-
-    try {
-      stu.where({
-        _stuid: this.data.openid
-      }).get({
-        success: res => {
-          if (res.data.length == 0) {
-            ct.add(stu, data)
-          } else {
-            console.log('记录已存在')
-          }
-
-          _this.setData({
-            loading: false
-          })
-
-          wx.switchTab({
-            url: "../index/index?id=1",
-            success: res => {
-              console.log('跳转到index')
-            },
-            fial: err => {
-              console.log(err)
-            }
-          })
-        },
-        fail: err => {
-          console.log(err)
-        }
-      })
-    } catch (err) {
-      console.log(err)
-    }
   },
 
   /**

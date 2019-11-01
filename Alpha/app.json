@@ -4,7 +4,7 @@
     "pages/msg/msg",
     "pages/mine/mine",
     "pages/login/login",
-    "pages/loginTeach/loginTeach"
+    "pages/loginNext/loginNext"
   ],
   "window": {
     "backgroundTextStyle": "light",
@@ -71,6 +71,7 @@
     "zan-popup": "/dist/popup/index",
     "zan-tab": "/dist/tab/index",
     "zan-toptips": "/dist/toptips/index",
-    "zan-loadmore": "/dist/loadmore/index"
+    "zan-loadmore": "/dist/loadmore/index",
+    "zan-toptips": "/dist/toptips/index"
   }
 }

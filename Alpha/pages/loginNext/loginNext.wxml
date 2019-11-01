@@ -1,0 +1,4 @@
+<!--pages/loginNext/loginNext.wxml-->
+<view class="container" style="padding-top: 64rpx">
+  <button class="primary-bg" style="width: 80%; margin-top: 96rpx;" bindgetuserinfo="toNext">确定</button>
+</view>

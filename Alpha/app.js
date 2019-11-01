@@ -21,16 +21,6 @@ App({
   async init() {
     // 初始化
 
-    // 判断是否注册
-    // if(!stg.getStorage('registered')) {
-    //   let openid = await this.getOpenid() // 获取openid
-    //   let userInfo = await this.getUserInfo(openid) // 从数据库获取该用户信息
-
-    //   if (!userInfo) {
-    //     this.toLogin()
-    //     return
-    //   }
-    // }
     let openid = await this.getOpenid()
     this.globalData.openid = openid
 
@@ -59,24 +49,6 @@ App({
       })
     })
   },
-  // getUserInfo: function(openid) {
-  //   // 从数据库中获取该用户记录
-  //   return new Promise((resolve, reject) => {
-  //     const db = wx.cloud.database()
-
-  //     db.collection('user').where({
-  //         _openid: openid
-  //       })
-  //       .get()
-  //       .then(res => {
-  //         resolve(res.data[0])
-  //       })
-  //       .catch(err => {
-  //         console.log(err)
-  //         reject(err)
-  //       })
-  //   })
-  // },
   login: function() {
     // 登陆以获取用户基本信息
     return new Promise((resolve, reject) => {
@@ -131,14 +103,6 @@ App({
       })
     })
   },
-  // toLogin: function() {
-  //   // 判断该用户是否登陆过，若无则跳转到login界面
-  //   return new Promise((resolve, reject) => {
-  //     wx.redirectTo({
-  //       url: '../login/login'
-  //     })
-  //   })
-  // },
 
   onLaunch: function() {
 
@@ -155,6 +119,8 @@ App({
     userInfo: null,
     basicInfo: null,
     avatarIDs: ['cloud://test-m3m5d.7465-test-m3m5d-1300027116/avatar/stu.jpg', 'cloud://test-m3m5d.7465-test-m3m5d-1300027116/avatar/teach.jpg'],
-    tasks: null
+    tasks: null,
+    courses: null,
+    type: null
   }
 })

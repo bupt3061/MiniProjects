@@ -13,7 +13,13 @@ Page({
     courses: null,
     tasks: null,
     uploadNum: 0,
-    evaluateNum: 0
+    evaluateNum: 0,
+    content: '添加课程 >>',
+    $zanui: {
+      toptips: {
+        show: true
+      }
+    }
   },
   async init() {
     // 获取用户基本信息
@@ -151,7 +157,11 @@ Page({
       resolve([tasks,  uploadNum, evaluateNum])
     })
   },
-
+  toMyCourse: function() {
+    wx.switchTab({
+      url: '../mine/mine',
+    })
+  },
   /**
    * 生命周期函数--监听页面加载
    */

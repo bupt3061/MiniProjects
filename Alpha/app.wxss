@@ -19,7 +19,7 @@ page {
   color: #14d1b5;
 }
 
-.primary-btn {
+.primary-bg {
   color: white;
   background-color:  #14d1b5;
 }
