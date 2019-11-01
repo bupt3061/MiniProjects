@@ -2,11 +2,11 @@
 <block wx:if="{{type == 1}}">
   <view class="container" style="padding-top: 160rpx">
     <view class="card">
-      <text class="zan-font-18 zan-c-gray-darker">交作业<text wx:if="{{taskNum != 0}}"class="zan-font-18 primary">({{taskNum}})</text></text>
+      <text class="zan-font-18 zan-c-gray-darker">作业<text wx:if="{{uploadNum != 0}}"class="zan-font-18 primary"> ({{uploadNum}}) </text></text>
       <zan-icon class="primary" type="pending-orders" style="font-size: 80rpx"></zan-icon>
     </view>
     <view class="card">
-      <text class="zan-font-18 zan-c-gray-darker">互评<text wx:if="{{mutualEvaluateNum != 0}}" class="zan-font-18 primary">({{mutualEvaluateNum}})</text></text>
+      <text class="zan-font-18 zan-c-gray-darker">互评<text wx:if="{{evaluateNum != 0}}" class="zan-font-18 primary"> ({{evaluateNum}}) </text></text>
       <zan-icon class="primary" type="chat" style="font-size: 80rpx"></zan-icon>
     </view>
   </view>
