@@ -1,18 +1,34 @@
 // pages/mine/mine.js
+
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
-
+    QRCode: null
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-
+    wx.cloud.callFunction({
+      name: 'createQRCode',
+      data: {
+        path: 'www.baidu.com'
+      }
+    })
+    .then(res => {
+      console.log(res.result.buffer)
+      var QRCode = "data:image/png;base64," + wx.arrayBufferToBase64(res.result.buffer)
+      this.setData({
+        QRCode: QRCode
+      })
+    })
+    .catch(err => {
+      console.log(err)
+    })
   },
 
   /**

@@ -78,6 +78,7 @@ Page({
       success: res => {
         console.log('跳转到loginNext')
         console.log(this.data)
+        console.log(app.globalData)
       },
       fial: err => {
         console.log(err)

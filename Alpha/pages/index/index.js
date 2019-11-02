@@ -1,9 +1,6 @@
 //index.js
 
-// 引入外部js
-const stg = require('../../js/storage.js')
-
-//获取应用实例
+// 获取用户基本信息
 const app = getApp()
 
 Page({
@@ -22,10 +19,11 @@ Page({
     }
   },
   async init() {
-    // 获取用户基本信息
-    let openid = await this.getOpenid() // 获取openid
-    console.log('openid:', openid)
-    let userInfo = await this.getUserInfo(openid) // 从数据库获取该用户信息
+    const app = getApp()
+
+    // 从数据库获取该用户信息
+    let openid = await this.getOpenid()
+    let userInfo = await this.getUserInfo(openid)
     console.log('userInfo:', userInfo)
 
     if(!userInfo) {
@@ -47,20 +45,29 @@ Page({
     console.log('uploadNum', uploadNum)
     console.log('evaluateNum', evaluateNum)
 
+    // 获取用户所有课程
+    var courses = []
+    for (var i = 0; i < userInfo.courses.length; i++) {
+      let res = await this.getCourse(userInfo.courses[i])
+      courses = courses.concat(res)
+    }
+    console.log('courses:', courses)
+
     // 设置数据
     this.setData({
       openid: openid,
       type: userInfo.type,
-      courses: userInfo.courses,
+      courses: courses,
       tasks: tasks,
       uploadNum: uploadNum,
       evaluateNum: evaluateNum
     })
 
-    const app = getApp()
     app.globalData.openid = openid
     app.globalData.userInfo = userInfo
     app.globalData.tasks = tasks
+    app.globalData.courses = courses
+    app.globalData.type = userInfo.type
 
   },
   getOpenid: function () {
@@ -155,6 +162,23 @@ Page({
 
       // resolve({ 'tasks': tasks, 'uploadNum': uploadNum, 'evaluateNum': evaluateNum})
       resolve([tasks,  uploadNum, evaluateNum])
+    })
+  },
+  getCourse: function(courseid) {
+    return new Promise((resolve, reject) => {
+      const db = wx.cloud.database()
+
+      db.collection('course').where({
+        _courseid: courseid
+      })
+      .get()
+      .then(res => {
+        resolve(res.data)
+      })
+      .catch(err => {
+        console.log(err)
+        reject(err)
+      })
     })
   },
   toMyCourse: function() {

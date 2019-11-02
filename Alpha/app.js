@@ -1,10 +1,10 @@
 //app.js
 
 // 引入外部js
-const stg = require('./js/storage.js')
-const upd = require('./js/update.js')
-const hs = require('./js/hash.js')
-const dt = require('./js/date.js')
+const stg = require('./utils/storage.js')
+const upd = require('./utils/update.js')
+const hs = require('./utils/hash.js')
+const dt = require('./utils/date.js')
 
 upd.updateApp()
 
@@ -21,9 +21,6 @@ App({
   async init() {
     // 初始化
 
-    let openid = await this.getOpenid()
-    this.globalData.openid = openid
-
     this.login() // 登陆
     if (await this.getSetting()) { // 获取头像、昵称等基本信息
       let res = await this.getBasicInfo()
@@ -32,22 +29,6 @@ App({
       console.log('basicInfo:', basicInfo)
     }
 
-  },
-  getOpenid: function() {
-    return new Promise((resolve, reject) => {
-      // 获取openid
-      wx.cloud.callFunction({
-        name: 'getInfo',
-        data: {},
-        success: res => {
-          resolve(res.result.OPENID)
-        },
-        fail: err => {
-          console.log(err)
-          reject(err)
-        }
-      })
-    })
   },
   login: function() {
     // 登陆以获取用户基本信息
