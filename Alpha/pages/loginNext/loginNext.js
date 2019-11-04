@@ -1,13 +1,61 @@
 // pages/loginNext/loginNext.js
+
+const app = getApp()
+
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
-
+    openid: null,
+    type: null,
+    basicInfo: null,
+    name: null,
+    phone: null,
+    courses: null
   },
-  toIndex: function() {
+  async init() {
+    // 初始化
+
+    let openid = await this.getOpenid()
+    let type = await this.getType()
+
+    app.globalData.openid = openid
+    this.setData({
+      openid: openid,
+      type: type
+    })
+  },
+  getOpenid: function () {
+    return new Promise((resolve, reject) => {
+      // 获取openid
+      wx.cloud.callFunction({
+        name: 'getInfo',
+        data: {},
+        success: res => {
+          resolve(res.result.OPENID)
+        },
+        fail: err => {
+          console.log(err)
+          reject(err)
+        }
+      })
+    })
+  },
+  getType: function() {
+    return new Promise((resolve, reject) => {
+      const app = getApp()
+      var type = app.globalData.type
+      if(type) {
+        resolve(type)
+      }
+    })
+  },
+  confirm: function() {
+    // 
+
+    // 跳转到首页
     wx.switchTab({
       url: '../index/index',
     })
@@ -17,7 +65,9 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
+    this.init()
 
+    
   },
 
   /**

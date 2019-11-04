@@ -72,6 +72,7 @@
     "zan-tab": "/dist/tab/index",
     "zan-toptips": "/dist/toptips/index",
     "zan-loadmore": "/dist/loadmore/index",
-    "zan-toptips": "/dist/toptips/index"
+    "zan-toptips": "/dist/toptips/index",
+    "zan-field": "/dist/field/index"
   }
 }

@@ -1,4 +1,9 @@
 <!--pages/loginNext/loginNext.wxml-->
-<view class="container" style="padding-top: 64rpx">
-  <button class="primary-bg" style="width: 80%; margin-top: 96rpx;" bindtap="toIndex">确定</button>
+<view class="container" style="padding-top: 64rpx; border-radius: 40rpx">
+  <zan-cell-group style="width: 92%">
+    <zan-field title="姓名" mode="wrapped"></zan-field>
+    <zan-field title="电话" mode="wrapped"></zan-field>
+    <zan-field title="机构" mode="wrapped"></zan-field>
+  </zan-cell-group>
+  <button class="primary-bg" style="width: 92%; margin-top: 96rpx;" bindtap="confirm">确定</button>
 </view>

@@ -9,9 +9,7 @@ Page({
    * 页面的初始数据
    */
   data: {
-    openid: null,
     type: 1,
-    basicInfo: null,
     stuStyle: "primary",
     teachStyle: "zan-c-gray-dark",
     avatarStu: null,
@@ -24,15 +22,26 @@ Page({
    * 页面其他函数
    */
   toNext: function(e) {
-    const _this = this
 
     // 获取userInfo
-    console.log('获取basicInfo(授权)', e.detail.userInfo)
-    this.setData({
-      basicInfo: e.detail.userInfo
+    // console.log('获取basicInfo(授权)', e.detail.userInfo)
+    // this.setData({
+    //   basicInfo: e.detail.userInfo
+    // })
+    // app.globalData.basicInfo = e.detail.userInfo
+
+    app.globalData.type = this.data.type // 设置type
+
+    // 跳转到loginNext
+    wx.navigateTo({
+      url: '../loginNext/loginNext',
+      success: res => {
+        console.log('跳转到loginNext')
+      },
+      fial: err => {
+        console.log(err)
+      }
     })
-    app.globalData.basicInfo = e.detail.userInfo
-    app.globalData.type = this.data.type
 
     // 上传数据
     // var date = new Date()
@@ -72,19 +81,6 @@ Page({
     //     console.log(err)
     //   })
 
-    // 跳转
-    wx.navigateTo({
-      url: '../loginNext/loginNext',
-      success: res => {
-        console.log('跳转到loginNext')
-        console.log(this.data)
-        console.log(app.globalData)
-      },
-      fial: err => {
-        console.log(err)
-      }
-    })
-
   },
   clickStu: function() {
     // 选择学生身份
@@ -94,7 +90,6 @@ Page({
       teachStyle: "zan-c-gray-dark"
     })
     console.log(this.data.type)
-
   },
   clickTeach: function() {
     // 选择教师身份
@@ -112,11 +107,11 @@ Page({
    */
   onLoad: function(options) {
 
-    if (app.globalData.openid) {
-      this.setData({
-        openid: app.globalData.openid
-      })
-    }
+    // if (app.globalData.openid) {
+    //   this.setData({
+    //     openid: app.globalData.openid
+    //   })
+    // }
 
     // 从云端下载头像
     wx.cloud.getTempFileURL({
