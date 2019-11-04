@@ -60,6 +60,9 @@ Page({
       url: '../index/index',
     })
   },
+  getId: function(e) {
+    console.log(e.currentTarget)
+  },
 
   /**
    * 生命周期函数--监听页面加载
@@ -67,7 +70,7 @@ Page({
   onLoad: function (options) {
     this.init()
 
-    
+
   },
 
   /**

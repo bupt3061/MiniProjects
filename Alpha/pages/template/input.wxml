@@ -1,0 +1,4 @@
+<view class="input zan-font-14">
+  <text class="title">姓名</text>
+  <input class="field"/>
+</view>

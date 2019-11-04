@@ -39,7 +39,7 @@
 .zan-field--wrapped::after {
   left: 0;
   border-width: 1px;
-  border-radius: 16px;
+  border-radius: 4px;
 }
 
 .zan-field--wrapped::after {
