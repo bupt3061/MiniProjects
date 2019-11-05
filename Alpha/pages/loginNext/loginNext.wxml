@@ -2,15 +2,16 @@
 <view class="container" style="padding-top: 64rpx;">
   <view class="input zan-font-14">
     <text class="title">姓名</text>
-    <input class="field" maxlength="{{20}}" />
+    <input id="name" class="field" maxlength="{{20}}" value="{{name}}" auto-focus="{{true}}" bindblur="handleName" />
   </view>
   <view class="input zan-font-14">
     <text class="title">电话</text>
-    <input class="field" maxlength="{{20}}" />
+    <input id="phone" class="field" maxlength="{{20}}" value="{{phone}}" bindblur="handlePhone" />
   </view>
   <view class="input zan-font-14">
     <text class="title">机构</text>
-    <input class="field" maxlength="{{20}}" />
+    <input id="organization" class="field" maxlength="{{20}}" value="{{organization}}" bindblur="handleOrganization" />
   </view>
-  <button class="primary-bg" style="width: 92%; margin-top: 96rpx;" bindtap="confirm">确定</button>
 </view>
+  <button loading="{{loading}}" open-type="getUserInfo" class="primary-bg" style="width: 92%; margin-top: 64rpx;" bindgetuserinfo="confirm">确定</button>
+  <button style="width: 92%; margin-top: 32rpx; border: 1px solid rgb(20, 209, 181); color: #14d1b5;" bindtap="goBack">上一步</button>

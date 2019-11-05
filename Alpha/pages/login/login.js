@@ -15,7 +15,6 @@ Page({
     avatarStu: null,
     avatarTeach: null,
     canIUse: wx.canIUse('button.open-type.getUserInfo'),
-    loading: false
   },
 
   /**

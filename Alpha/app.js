@@ -19,9 +19,9 @@ upd.updateApp()
 
 App({
   async init() {
-    // 初始化
 
     this.login() // 登陆
+
     if (await this.getSetting()) { // 获取头像、昵称等基本信息
       let res = await this.getBasicInfo()
       var basicInfo = res

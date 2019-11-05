@@ -8,7 +8,7 @@
       <text>我是学生</text>
     </view>
   </block>
-  <zan-loadmore type="text" text="或者" class="zan-c-gray" style="width: 92%"></zan-loadmore>
+  <zan-loadmore type="text" text="或者" class="zan-c-gray" style="width: 92%;"></zan-loadmore>
   <block>
     <image class='avatar' src="{{avatarTeach}}" mode="cover" bindtap="clickTeach"></image>
     <view class="zan-font-18 {{teachStyle}} type" bindtap="clickTeach">
