@@ -1,17 +1,27 @@
 <!--pages/loginNext/loginNext.wxml-->
-<view class="container" style="padding-top: 64rpx;">
-  <view class="input zan-font-14">
-    <text class="title">姓名</text>
-    <input id="name" class="field" maxlength="{{20}}" value="{{name}}" auto-focus="{{true}}" bindblur="handleName" />
-  </view>
-  <view class="input zan-font-14">
-    <text class="title">电话</text>
-    <input id="phone" class="field" maxlength="{{20}}" value="{{phone}}" bindblur="handlePhone" />
-  </view>
-  <view class="input zan-font-14">
-    <text class="title">机构</text>
-    <input id="organization" class="field" maxlength="{{20}}" value="{{organization}}" bindblur="handleOrganization" />
-  </view>
-</view>
+<zan-toptips class="err-bg" content="{{content}}" duration="{{ duration }}" is-show="{{ $zanui.toptips.show }}" />
+<view class="container" style="padding-top: 96rpx;">
+  <block wx:if="{{type == 1}}">
+    <view class="input zan-font-14" style="border-bottom: none; border-radius: 10rpx;">
+      <!-- <zan-icon class="title primary zan-font-22" type="add2"></zan-icon> -->
+      <text class="primary title" style="font-size: 40px; line-height: 38rpx;">+</text>
+      <input id="name" class="field" placeholder="添加课程" placeholder-class="zan-c-gray" maxlength="{{20}}" auto-focus="{{true}}" />
+    </view>
+  </block>
+  <block wx:else="{{type == 2}}">
+    <view class="input zan-font-14" style="border-bottom: none; border-radius: 10rpx 10rpx 0 0;">
+      <text class="title">姓名</text>
+      <input id="name" class="field" maxlength="{{20}}" value="{{name}}" auto-focus="{{true}}" bindblur="handleName" />
+    </view>
+    <view class="input zan-font-14" style="border-bottom: none">
+      <text class="title">电话</text>
+      <input id="phone" class="field {{err}}" maxlength="{{20}}" value="{{phone}}" bindblur="handlePhone" auto-focus="{{focus}}" />
+    </view>
+    <view class="input zan-font-14" style="border-radius: 0 0 10rpx 10rpx;">
+      <text class="title">机构</text>
+      <input id="organization" class="field" maxlength="{{20}}" value="{{organization}}" bindblur="handleOrganization" />
+    </view>
+  </block>
   <button loading="{{loading}}" open-type="getUserInfo" class="primary-bg" style="width: 92%; margin-top: 64rpx;" bindgetuserinfo="confirm">确定</button>
   <button style="width: 92%; margin-top: 32rpx; border: 1px solid rgb(20, 209, 181); color: #14d1b5;" bindtap="goBack">上一步</button>
+</view>

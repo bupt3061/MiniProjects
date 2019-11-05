@@ -12,25 +12,32 @@ Page({
    */
   data: {
     openid: null,
-    type: null,
+    type: 1,
     name: null,
     phone: null,
     organization: null,
     courses: [],
-    loading: false
+    loading: false,
+    duration: 1000,
+    content: null,
+    $zanui: {
+      toptips: {
+        show: false
+      }
+    }
   },
   async init() {
 
     let openid = await this.getOpenid()
     let type = await this.getType()
-    var name = stg.getStorage('name')
-    var phone = stg.getStorage('phone')
-    var organization = stg.getStorage('organization')
-
-    if(!name && !phone && !organization) {
-      name = null
-      phone = null
-      organization = null
+    if (stg.getStorage('name')) {
+      var name = stg.getStorage('name')
+    }
+    if (stg.getStorage('phone')) {
+      var phone = stg.getStorage('phone')
+    }
+    if (stg.getStorage('organization')) {
+      var organization = stg.getStorage('organization')
     }
 
     app.globalData.openid = openid
@@ -42,6 +49,10 @@ Page({
       organization: organization
     })
 
+  },
+  getCourses: function() {
+    // 获取所有课程信息
+    
   },
   getOpenid: function() {
     return new Promise((resolve, reject) => {
@@ -139,12 +150,59 @@ Page({
   },
   handleName: function(e) {
     console.log(e.detail.value)
+    this.setData({
+      name: e.detail.value
+    })
   },
-  handlePhone: function (e) {
+  handlePhone: function(e) {
     console.log(e.detail.value)
+    if (e.detail.value == '') {
+      this.customCallback('电话号码为空')
+    } else {
+      if (!this.checkPhone(e.detail.value)) {
+        this.customCallback('电话号码输入错误')
+      } else {
+        this.setData({
+          phone: e.detail.value,
+        })
+      }
+    }
   },
-  handleOrganization: function (e) {
+  handleOrganization: function(e) {
     console.log(e.detail.value)
+    this.setData({
+      organization: e.detail.value
+    })
+  },
+  checkPhone: function(phone) {
+    var myreg = /^[1][3,4,5,7,8][0-9]{9}$/;
+    if (!myreg.test(phone)) {
+      return false
+    } else {
+      return true
+    }
+  },
+  customCallback: function(content) {
+    // 显示顶部提示
+    this.setData({
+      $zanui: {
+        toptips: {
+          show: true
+        }
+      },
+      content: content
+    });
+
+    // 1秒钟后隐藏
+    setTimeout(() => {
+      this.setData({
+        $zanui: {
+          toptips: {
+            show: false
+          }
+        }
+      })
+    }, this.data.duration);
   },
 
   /**
@@ -152,8 +210,6 @@ Page({
    */
   onLoad: function(options) {
     this.init()
-
-
   },
 
   /**
