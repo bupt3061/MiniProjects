@@ -204,6 +204,16 @@ Page({
       })
     }, this.data.duration);
   },
+  addCourse: function (e) {
+    const _this = this
+    wx.scanCode({
+      success(res) {
+        console.log(res.result)
+        _this.data.courses.push(res.result)
+        console.log(_this.data.courses)
+      }
+    })
+  },
 
   /**
    * 生命周期函数--监听页面加载

@@ -2,9 +2,9 @@
   "pages": [
     "pages/index/index",
     "pages/msg/msg",
-    "pages/mine/mine",
     "pages/login/login",
-    "pages/loginNext/loginNext"
+    "pages/loginNext/loginNext",
+    "pages/mine/mine"
   ],
   "window": {
     "backgroundTextStyle": "light",

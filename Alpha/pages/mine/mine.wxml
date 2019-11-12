@@ -1,4 +1,6 @@
 <!--pages/mine/mine.wxml-->
-<text>pages/mine/mine.wxml</text>
 
-<image src='{{QRCode}}'></image>
+<canvas hidden="{{canvasHidden}}" style="position: absolute; left: -300px; top: -200px; width: 60px; height: 60px; background-color:#ddd" canvas-id="qrCanvas"></canvas>
+
+<canvas style="width: 100%; height: {{windowHeight}}px; background-color:#ddd" canvas-id="myCanvas">
+</canvas>

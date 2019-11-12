@@ -1,11 +1,11 @@
 <!--pages/loginNext/loginNext.wxml-->
 <zan-toptips class="err-bg" content="{{content}}" duration="{{ duration }}" is-show="{{ $zanui.toptips.show }}" />
+
 <view class="container" style="padding-top: 96rpx;">
   <block wx:if="{{type == 1}}">
     <view class="input zan-font-14" style="border-bottom: none; border-radius: 10rpx;">
-      <!-- <zan-icon class="title primary zan-font-22" type="add2"></zan-icon> -->
-      <text class="primary title" style="font-size: 40px; line-height: 38rpx;">+</text>
-      <input id="name" class="field" placeholder="添加课程" placeholder-class="zan-c-gray" maxlength="{{20}}" auto-focus="{{true}}" />
+      <zan-icon type="photograph" class="primary title" style="font-size: 24px; line-height: 38rpx;" bindtap="addCourse"></zan-icon>
+      <input id="name" class="field" placeholder="搜索课程" placeholder-class="zan-c-gray" maxlength="{{20}}" />
     </view>
   </block>
   <block wx:else="{{type == 2}}">
