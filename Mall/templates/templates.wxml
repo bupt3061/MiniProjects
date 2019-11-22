@@ -1,0 +1,10 @@
+<!--pages/templates/templates.wxml-->
+<template name="search">
+  <view class="search-container zan-font-14 zan-c-gray-darker" bindtap="clickSearch">
+    <view class="search">
+      <zan-icon type="search" style="margin-right: 4px"></zan-icon>
+      <text>搜索商品和店铺</text>
+    </view>
+  </view>
+</template>
+

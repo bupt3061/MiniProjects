@@ -1,0 +1,17 @@
+/* pages/templates/templates.wxss */
+.search-container {
+  width: 100%;
+  background-color: white;
+  border-bottom: 1px solid #fafafa;
+}
+
+.search {
+  background-color: #ededed;
+  height: 28px;
+  border: 1px solid #fafafa;
+  border-radius: 14px;
+  margin: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

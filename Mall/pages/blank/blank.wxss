@@ -1,0 +1,5 @@
+/* pages/blank/blank.wxss */
+
+page {
+  background-color: white;
+}

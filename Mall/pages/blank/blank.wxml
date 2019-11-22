@@ -1,0 +1,4 @@
+<!--pages/blank/blank.wxml-->
+<view class="container" style="padding-top: 35%">
+  <image src="../../img/blank.png" />
+</view>

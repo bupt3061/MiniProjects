@@ -1,0 +1,71 @@
+<!--index.wxml-->
+<!-- 引用模板 -->
+<import src="../../templates/templates.wxml" />
+
+<view class="container zan-font-14 zan-c-black">
+  <template is="search" />
+  <swiper autoplay="{{autoplay}}" indicator-dots="{{indicatorDots}}" indicator-color="{{indicatorColor}}" indicator-active-color="{{indicatorActiveColor}}" circular="{{circular}}" style="width: 100%; height: {{swiperHeight}}px; margin-bottom: 8px; ">
+    <swiper-item wx:for="{{swiperItems}}" data-index="{{index}}" wx:key="{{index}}" bindtap="clickSwiperItem">
+      <image src="{{item.path}}" style="width: 100%; height: 100%"></image>
+    </swiper-item>
+  </swiper>
+  <view class="item-container">
+    <view class="title">
+      <view style="display: flex; align-items: baseline; ">
+        <text class="zan-font-16" style="margin-right: 8px; ">秒杀</text>
+        <text class="zan-c-gray zan-font-12">秒杀更实惠</text>
+      </view>
+      <view>
+        <text class="more">更多</text>
+      </view>
+    </view>
+    <view class="items">
+      <view class="item" wx:for="{{miaoshaItems}}" wx:key="{{index}}" data-id="{{item._id}}" bindtap="clickMiaoshaItem">
+        <view class="item-tag zan-font-12">秒杀</view>
+        <image src="{{item.thumb}}" style="width: 100%; border: 1px solid #fafafa;" mode="widthFix"></image>
+        <text style="padding: 8px 0; margin-top: -4px; display: block; ">￥{{item.currentPrice}}</text>
+      </view>
+    </view>
+  </view>
+  <view class="item-container">
+    <view class="title">
+      <view style="display: flex; align-items: baseline; ">
+        <text class="zan-font-16" style="margin-right: 8px; ">惠拼团</text>
+        <text class="zan-c-gray zan-font-12">好物更要拼</text>
+      </view>
+      <view>
+        <text class="more">更多</text>
+      </view>
+    </view>
+    <view class="items">
+      <view class="item" wx:for="{{pintuanItems}}" wx:key="{{index}}" data-id="{{item._id}}" bindtap="clickPintuanItem">
+        <view class="item-tag zan-font-12">团购</view>
+        <image src="{{item.thumb}}" style="width: 100%; border: 1px solid #fafafa;" mode="widthFix"></image>
+        <text style="padding: 8px 0; margin-top: -4px; display: block; ">￥{{item.currentPrice}}</text>
+      </view>
+    </view>
+  </view>
+  <view class="item-container">
+    <view class="title">
+      <view style="display: flex; align-items: baseline; ">
+        <text class="zan-font-16" style="margin-right: 8px; ">优选服务</text>
+      </view>
+      <view>
+        <text class="more">更多</text>
+      </view>
+    </view>
+    <view class="services" style="display: flex; justify-content: space-between; padding: 0px 8px 8px 8px; box-sizing: border-box; width: 100%;">
+      <view style="background-color: gray; width: {{sItemWidth}}px; height: 200px;">
+        <image src="../../img/buycar.png" style="width: 100%; height: 100%; border: 1px solid #fafafa;" />
+      </view>
+      <view style="width: {{sItemWidth}}px; height: 200px; display: flex; flex-direction: column; justify-content: space-between;">
+        <view style="background-color: gray; width: 100%; height: 96px">
+          <image src="../../img/sangao.jpg" style="width: 100%; height: 100%; border: 1px solid #fafafa;" />
+        </view>
+        <view style="background-color: gray; width: 100%; height: 96px">
+          <image src="../../img/sangao.jpg" style="width: 100%; height: 100%; border: 1px solid #fafafa;" />
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
