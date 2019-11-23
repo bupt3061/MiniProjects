@@ -1,13 +1,40 @@
 <!--pages/mine/mine.wxml-->
-<view class="container">
+<import src="../../templates/templates.wxml" />
+
+<view class="container zan-font-14 zan-c-black">
   <view class="userinfo">
-    <button wx:if="{{!hasUserInfo && canIUse}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo"> 获取头像昵称 </button>
-    <block wx:else>
-      <image bindtap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
-      <text class="userinfo-nickname">{{userInfo.nickName}}</text>
-    </block>
+    <view>
+      <image class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="scaleToFill"></image>
+    </view>
+    <view>
+      <button wx:if="{{!hasUserInfo && canIUse}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo"> 登录 </button>
+      <block wx:else>
+        <text class="userinfo-nickname zan-font-18 zan-c-black">{{userInfo.nickName}}</text>
+      </block>
+    </view>
   </view>
-  <view class="usermotto">
-    <text class="user-motto">{{motto}}</text>
+  <view class="content">
+    <view class="title">
+      <view class="zan-font-16">我的订单</view>
+      <view style="display: flex; align-items: center; " bindtap="toDingdan">
+        <text style="margin-right: 4px;">全部订单</text>
+        <zan-icon class="zan-font-12" type="arrow"></zan-icon>
+      </view>
+    </view>
+    <view class="main">
+      <template is="fuwu-item" wx:for="{{dingdanItems}}" wx:key="{{index}}" data="{{...item}}" />
+    </view>
+  </view>
+  <view class="content">
+    <view class="title">
+      <view class="zan-font-16">我的服务</view>
+      <view style="display: flex; align-items: center; " bindtap="toFuwu">
+        <text style="margin-right: 4px;">服务记录</text>
+        <zan-icon class="zan-font-12" type="arrow"></zan-icon>
+      </view>
+    </view>
+    <view class="main">
+      <template is="fuwu-item" wx:for="{{fuwuItems}}" wx:key="{{index}}" data="{{...item}}" />
+    </view>
   </view>
 </view>

@@ -20,3 +20,12 @@
     <view class="zan-font-14 name">{{name}}</view>
   </view>
 </template>
+
+<template name="fuwu-item">
+  <view style="width: 25%; float: left; margin-bottom: 24px;" data-url="{{url}}" bindtap="clickFuwu">
+    <view style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: column; align-items: center;">
+      <image src="{{icon}}" style="width: 36%;" mode="widthFix" />
+      <view class="zan-font-12" style="width: 100%; text-align: center; margin-top: 8px;">{{name}}</view>
+    </view>
+  </view>
+</template>

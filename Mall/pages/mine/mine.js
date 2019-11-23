@@ -9,22 +9,103 @@ Page({
    */
   data: {
     motto: 'Hello World',
-    userInfo: {},
+    userInfo: {
+      avatarUrl: "../../img/zhanwei.png"
+    },
     hasUserInfo: false,
-    canIUse: wx.canIUse('button.open-type.getUserInfo')
+    canIUse: wx.canIUse('button.open-type.getUserInfo'),
+    fuwuItems: [{
+        icon: "../../img/kefu.png",
+        name: "客服",
+        url: null
+      },
+      {
+        icon: "../../img/jiankang.png",
+        name: "家庭健康",
+        url: null,
+      },
+      {
+        icon: "../../img/weixiu.png",
+        name: "家电维修",
+        url: null
+      },
+      {
+        icon: "../../img/yuezican.png",
+        name: "营养餐",
+        url: null
+      },
+      {
+        icon: "../../img/qiche.png",
+        name: "汽车服务",
+        url: null
+      },
+      {
+        icon: "../../img/youhui.png",
+        name: "优惠",
+        url: null
+      },
+      {
+        icon: "../../img/quanqiu.png",
+        name: "全球采购",
+        url: null
+      },
+      {
+        icon: "../../img/tongcheng.png",
+        name: "同城服务",
+        url: null
+      },
+      {
+        icon: "../../img/yundong.png",
+        name: "运动健身",
+        url: null
+      },
+    ],
+    dingdanItems: [{
+        icon: "../../img/daifukuan.png",
+        name: "待付款",
+        url: null
+      },
+      {
+        icon: "../../img/daishouhuo.png",
+        name: "待收货",
+        url: null,
+      },
+      {
+        icon: "../../img/yiwancheng.png",
+        name: "已完成",
+        url: null
+      },
+      {
+        icon: "../../img/tuihuanhuo.png",
+        name: "退换货",
+        url: null
+      },
+    ]
   },
   //事件处理函数
-  bindViewTap: function() {
-    wx.navigateTo({
-      url: '../logs/logs'
-    })
-  },
-  getUserInfo: function (e) {
+  getUserInfo: function(e) {
     console.log(e)
     app.globalData.userInfo = e.detail.userInfo
     this.setData({
       userInfo: e.detail.userInfo,
       hasUserInfo: true
+    })
+  },
+  clickFuwu: function(e) {
+    console.log(e.currentTarget.dataset.url)
+
+    wx.navigateTo({
+      url: '../blank/blank',
+    })
+  },
+  toDingdan: function() {
+    wx.navigateTo({
+      url: '../blank/blank',
+    })
+  },
+  toFuwu: function() {
+    wx.navigateTo({
+      url: '../blank/blank',
     })
   },
   /**
