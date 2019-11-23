@@ -1,2 +1,28 @@
 <!--pages/store/store.wxml-->
-<text>pages/store/store.wxml</text>
+<import src="../../templates/templates.wxml" />
+
+<view class="container zan-font-14 zan-c-black" style="position: relative;">
+  <view class="search-container zan-font-14 zan-c-gray-darker" bindtap="clickSearch">
+    <view class="search">
+      <zan-icon type="search" style="margin-right: 4px"></zan-icon>
+      <text>搜索商品和店铺</text>
+    </view>
+  </view>
+  <view class="store-container">
+    <view class="side-nav" style="height: {{windowHeight - 45}}px;">
+      <template wx:for="{{navList}}" wx:key="{{index}}" is="{{item.active?'nav-item-active' : 'nav-item'}}" data="{{...item}}" />
+    </view>
+    <view class="content" >
+      <image src="../../img/banner.jpg" style="width: 100%; height: 120px; border-radius: 4px" />
+      <view style="width: 40%; padding: 16px 0;">
+        <zan-loadmore type="text" text="精品好店"></zan-loadmore>
+      </view>
+      <view style="width: 100%; ">
+        <view wx:for="{{showItems}}" wx:key="{{index}}" style="margin-right: 4px; display: inline-block" data-home="{{item.home}}" bindtap="clickStore">
+          <image src="{{item.thumb}}" style="width: {{(windowWidth -120) / 3 - 4}}px; height: {{(windowWidth -120) / 3 - 4}}px; border: 1px solid #fafafa;" />
+          <view class="zan-font-12" style="width: width: {{(windowWidth -120) / 3 - 4}}px; padding: 4px 0px 8px 0px; margin-top: -4px; text-align: center; ">{{item.name}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

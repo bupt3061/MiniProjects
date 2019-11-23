@@ -1,6 +1,7 @@
 //index.js
 //获取应用实例
 const app = getApp()
+const templatesJS = require("../../templates/templates.js")
 
 Page({
   data: {
@@ -32,10 +33,26 @@ Page({
     {
       thumb: "../../img/zhanwei.png"
     },
+    ],
+    fuwuItems: [{
+      cover: "../../img/zhanwei.png"
+    },
+    {
+      cover: "../../img/zhanwei.png"
+    },
+    {
+      cover: "../../img/zhanwei.png"
+    },
     ]
   },
   //事件处理函数
   async init() {
+    wx.showLoading({
+      title: '加载中',
+      icon: 'loading',
+      duration: 10000
+    })
+
     // 获取尺寸
     this.getSysInfo()
 
@@ -57,13 +74,20 @@ Page({
       pintuanItems[i].thumb = await this.getTempFileURL(pintuanItems[i].thumb)
     }
 
-    console.log(pintuanItems)
+    // 获取fuwuItems
+    var fuwuItems = await this.getFuwuItems()
+    for (var i = 0; i < fuwuItems.length; i++) {
+      fuwuItems[i].cover = await this.getTempFileURL(fuwuItems[i].cover)
+    }
 
     this.setData({
       swiperItems: swiperItems,
       miaoshaItems: miaoshaItems,
-      pintuanItems: pintuanItems
+      pintuanItems: pintuanItems,
+      fuwuItems: fuwuItems
     })
+
+    wx.hideLoading()
   },
   getMiaoshaItems: function () {
     // 获取swiperItems
@@ -89,6 +113,22 @@ Page({
         env: "test-m3m5d"
       })
       db.collection('mpintuan').limit(3)
+        .get()
+        .then(res => {
+          resolve(res.data)
+        })
+        .catch(err => {
+          console.log(err)
+          reject(err)
+        })
+    })
+  },
+  getFuwuItems: function () {
+    return new Promise((resolve, reject) => {
+      const db = wx.cloud.database({
+        env: "test-m3m5d"
+      })
+      db.collection('mfuwu').limit(3)
         .get()
         .then(res => {
           resolve(res.data)
@@ -137,6 +177,11 @@ Page({
     var res = wx.getSystemInfoSync()
     var screenHeight = res.screenHeight
     var screenWidth = res.screenWidth
+    var windowHeight = res.windowHeight
+
+    app.globalData.screenHeight = screenHeight
+    app.globalData.screenWidth = screenWidth
+    app.globalData.windowHeight = windowHeight
 
     this.setData({
       swiperHeight: screenHeight * 0.2,
@@ -145,15 +190,7 @@ Page({
     })
   },
   clickSearch: function () {
-    wx.navigateTo({
-      url: "../blank/blank",
-      success: res => {
-        console.log(res)
-      },
-      fail: err => {
-        console.log(err)
-      }
-    })
+    templatesJS.clickSearch()
   },
   clickSwiperItem: function (e) {
     var index = e.currentTarget.dataset.index

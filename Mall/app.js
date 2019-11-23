@@ -1,4 +1,5 @@
 //app.js
+
 App({
   onLaunch: function () {
     // 初始化云
@@ -39,6 +40,9 @@ App({
     })
   },
   globalData: {
-    userInfo: null
+    userInfo: null,
+    screenHeight: null,
+    screenWidth: null,
+    windowHeight: null,
   }
 })

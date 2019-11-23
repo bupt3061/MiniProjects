@@ -25,7 +25,7 @@
     "zan-col": "./dist/col/index"
   },
   "tabBar": {
-    "backgroundColor": "white",
+    "backgroundColor": "#fafafa",
     "borderStyle": "white",
     "selectedColor": "#b72c31",
     "color": "#666666",

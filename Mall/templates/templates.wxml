@@ -8,3 +8,15 @@
   </view>
 </template>
 
+<template name="nav-item-active">
+  <view class="nav-item" data-cat="{{cat}}" bindtap="clickNav">
+    <view class="active-mark"></view>
+    <view class="zan-font-18 name active">{{name}}</view>
+  </view>
+</template>
+
+<template name="nav-item">
+  <view class="nav-item" data-cat="{{cat}}" bindtap="clickNav">
+    <view class="zan-font-14 name">{{name}}</view>
+  </view>
+</template>
