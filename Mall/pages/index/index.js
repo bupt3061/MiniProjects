@@ -15,34 +15,34 @@ Page({
     itemWidth: null,
     sItemWidth: null,
     miaoshaItems: [{
-      thumb: "../../img/zhanwei.png"
-    },
-    {
-      thumb: "../../img/zhanwei.png"
-    },
-    {
-      thumb: "../../img/zhanwei.png"
-    },
+        thumb: "../../img/zhanwei.png"
+      },
+      {
+        thumb: "../../img/zhanwei.png"
+      },
+      {
+        thumb: "../../img/zhanwei.png"
+      },
     ],
     pintuanItems: [{
-      thumb: "../../img/zhanwei.png"
-    },
-    {
-      thumb: "../../img/zhanwei.png"
-    },
-    {
-      thumb: "../../img/zhanwei.png"
-    },
+        thumb: "../../img/zhanwei.png"
+      },
+      {
+        thumb: "../../img/zhanwei.png"
+      },
+      {
+        thumb: "../../img/zhanwei.png"
+      },
     ],
     fuwuItems: [{
-      cover: "../../img/zhanwei.png"
-    },
-    {
-      cover: "../../img/zhanwei.png"
-    },
-    {
-      cover: "../../img/zhanwei.png"
-    },
+        cover: "../../img/zhanwei.png"
+      },
+      {
+        cover: "../../img/zhanwei.png"
+      },
+      {
+        cover: "../../img/zhanwei.png"
+      },
     ]
   },
   //事件处理函数
@@ -67,35 +67,38 @@ Page({
     for (var i = 0; i < miaoshaItems.length; i++) {
       miaoshaItems[i].thumb = await this.getTempFileURL(miaoshaItems[i].thumb)
     }
+    app.globalData.miaoshaItems = miaoshaItems
 
     // 获取pintuanItems
     var pintuanItems = await this.getPintuanItems()
     for (var i = 0; i < pintuanItems.length; i++) {
       pintuanItems[i].thumb = await this.getTempFileURL(pintuanItems[i].thumb)
     }
+    app.globalData.pintuanItems = pintuanItems 
 
     // 获取fuwuItems
     var fuwuItems = await this.getFuwuItems()
     for (var i = 0; i < fuwuItems.length; i++) {
       fuwuItems[i].cover = await this.getTempFileURL(fuwuItems[i].cover)
     }
+    app.globalData.fuwuItems = fuwuItems
 
     this.setData({
       swiperItems: swiperItems,
-      miaoshaItems: miaoshaItems,
-      pintuanItems: pintuanItems,
-      fuwuItems: fuwuItems
+      miaoshaItems: miaoshaItems.slice(0, 3),
+      pintuanItems: pintuanItems.slice(0, 3),
+      fuwuItems: fuwuItems.slice(0, 3)
     })
 
     wx.hideLoading()
   },
-  getMiaoshaItems: function () {
+  getMiaoshaItems: function() {
     // 获取swiperItems
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database({
         env: "test-m3m5d"
       })
-      db.collection('mmiaosha').limit(3)
+      db.collection('mmiaosha')
         .get()
         .then(res => {
           resolve(res.data)
@@ -106,13 +109,13 @@ Page({
         })
     })
   },
-  getPintuanItems: function () {
+  getPintuanItems: function() {
     // 获取swiperItems
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database({
         env: "test-m3m5d"
       })
-      db.collection('mpintuan').limit(3)
+      db.collection('mpintuan')
         .get()
         .then(res => {
           resolve(res.data)
@@ -123,12 +126,12 @@ Page({
         })
     })
   },
-  getFuwuItems: function () {
+  getFuwuItems: function() {
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database({
         env: "test-m3m5d"
       })
-      db.collection('mfuwu').limit(3)
+      db.collection('mfuwu')
         .get()
         .then(res => {
           resolve(res.data)
@@ -139,7 +142,7 @@ Page({
         })
     })
   },
-  getSwiperItems: function () {
+  getSwiperItems: function() {
     // 获取swiperItems
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database({
@@ -156,7 +159,7 @@ Page({
         })
     })
   },
-  getTempFileURL: function (value) {
+  getTempFileURL: function(value) {
     // 用fileID换取临时文件地址
     return new Promise((resolve, reject) => {
       wx.cloud.getTempFileURL({
@@ -173,7 +176,7 @@ Page({
       })
     })
   },
-  getSysInfo: function () {
+  getSysInfo: function() {
     var res = wx.getSystemInfoSync()
     var screenHeight = res.screenHeight
     var screenWidth = res.screenWidth
@@ -189,10 +192,10 @@ Page({
       sItemWidth: (screenWidth - 24) / 2
     })
   },
-  clickSearch: function () {
+  clickSearch: function() {
     templatesJS.clickSearch()
   },
-  clickSwiperItem: function (e) {
+  clickSwiperItem: function(e) {
     var index = e.currentTarget.dataset.index
     wx.navigateTo({
       url: this.data.swiperItems[index].url,
@@ -204,13 +207,31 @@ Page({
       }
     })
   },
-  clickMiaoshaItem: function (e) {
-    console.log(e.currentTarget.dataset.id)
+  clickMiaoshaItem: function(e) {
+    console.log(e.currentTarget.dataset.detail)
   },
-  clickPintuanItem: function (e) {
-    console.log(e.currentTarget.dataset.id)
+  clickPintuanItem: function(e) {
+    console.log(e.currentTarget.dataset.detail)
   },
-  onLoad: function () {
+  clickFuwu: function(e) {
+    console.log(e.currentTarget.dataset.detail)
+  },
+  toMiaosha: function() {
+    wx.navigateTo({
+      url: '../miaosha/miaosha',
+    })
+  },
+  toFuwu: function() {
+    wx.switchTab({
+      url: '../service/service',
+    })
+  },
+  toPintuan: function() {
+    wx.navigateTo({
+      url: '../pintuan/pintuan',
+    })
+  },
+  onLoad: function() {
     this.init()
   }
 })

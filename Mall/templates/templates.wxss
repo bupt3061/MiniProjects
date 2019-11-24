@@ -39,3 +39,29 @@
 .active {
   color: #b4272d;
 }
+
+.ms-container {
+  width: 100%;
+  margin-top: 8px;
+  padding: 8px;
+  background-color: white;
+  box-sizing: border-box;
+  display: flex;
+}
+
+.ms-main {
+  width: 70%;
+  height: inherit;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-left: 8px;
+}
+
+.store {
+  display: inline-block;
+  padding: 2px 4px;
+  background-color: #edd8ad;
+  color: #4f2902;
+  border-radius: 2px;
+}

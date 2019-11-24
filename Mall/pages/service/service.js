@@ -1,18 +1,27 @@
 // pages/service/service.js
+// 获取全局变量
+const app = getApp()
+
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
-
+    fuwuItems: null
   },
+  init: function() {
+    const fuwuItems = app.globalData.fuwuItems
 
+    this.setData({
+      fuwuItems: fuwuItems
+    })
+  },
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-
+    this.init()
   },
 
   /**

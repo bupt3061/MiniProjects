@@ -14,7 +14,20 @@ page {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding: 0px;
+  padding: 0 0 32px 0;
   margin: 0px;
   box-sizing: border-box;
 } 
+
+.primary-c {
+  color: #FE5858;
+}
+
+.primary-c-dark {
+  color: #b4272d
+}
+
+.primary-bg {
+  background-color: #FE5858;
+  color: white;
+}

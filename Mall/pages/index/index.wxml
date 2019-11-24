@@ -16,11 +16,11 @@
         <text class="zan-c-gray zan-font-12">秒杀更实惠</text>
       </view>
       <view>
-        <text class="more">更多</text>
+        <text class="more" bindtap="toMiaosha">更多</text>
       </view>
     </view>
     <view class="items">
-      <view class="item" wx:for="{{miaoshaItems}}" wx:key="{{index}}" data-id="{{item._id}}" bindtap="clickMiaoshaItem">
+      <view class="item" wx:for="{{miaoshaItems}}" wx:key="{{item._id}}" data-detail="{{item.detail}}" bindtap="clickMiaoshaItem">
         <view class="item-tag zan-font-12">秒杀</view>
         <image src="{{item.thumb}}" style="width: 100%; border: 1px solid #fafafa;" mode="widthFix"></image>
         <text style="padding: 8px 0; margin-top: -4px; display: block; ">￥{{item.currentPrice}}</text>
@@ -34,11 +34,11 @@
         <text class="zan-c-gray zan-font-12">好物更要拼</text>
       </view>
       <view>
-        <text class="more">更多</text>
+        <text class="more" bindtap="toPintuan">更多</text>
       </view>
     </view>
     <view class="items">
-      <view class="item" wx:for="{{pintuanItems}}" wx:key="{{index}}" data-id="{{item._id}}" bindtap="clickPintuanItem">
+      <view class="item" wx:for="{{pintuanItems}}" wx:key="{{item._id}}" data-detail="{{item.detail}}" bindtap="clickPintuanItem">
         <view class="item-tag zan-font-12">团购</view>
         <image src="{{item.thumb}}" style="width: 100%; border: 1px solid #fafafa;" mode="widthFix"></image>
         <text style="padding: 8px 0; margin-top: -4px; display: block; ">￥{{item.currentPrice}}</text>
@@ -51,19 +51,19 @@
         <text class="zan-font-16" style="margin-right: 8px; ">优选服务</text>
       </view>
       <view>
-        <text class="more">更多</text>
+        <text class="more" bindtap="toFuwu">更多</text>
       </view>
     </view>
     <view class="services" style="display: flex; justify-content: space-between; padding: 0px 8px 8px 8px; box-sizing: border-box; width: 100%;">
-      <view style="width: {{sItemWidth}}px; height: 200px;">
-        <image src="{{fuwuItems[0].cover}}" style="width: 100%; height: 100%; border: 1px solid #fafafa;" />
+      <view style="width: {{sItemWidth}}px; height: 200px;" data-detail="{{fuwuItems[0].detail}}" bindtap="clickFuwu">
+        <image src="{{fuwuItems[0].cover}}" style="width: 100%; height: 100%; border: 1px solid #fafafa;" mode="aspectFill" />
       </view>
       <view style="width: {{sItemWidth}}px; height: 200px; display: flex; flex-direction: column; justify-content: space-between;">
-        <view style="width: 100%; height: 96px">
-          <image src="{{fuwuItems[1].cover}}" style="width: 100%; height: 100%; border: 1px solid #fafafa;" />
+        <view style="width: 100%; height: 96px" data-detail="{{fuwuItems[1].detail}}" bindtap="clickFuwu">
+          <image src="{{fuwuItems[1].cover}}" style="width: 100%; height: 100%; border: 1px solid #fafafa;" mode="scaleToFill" />
         </view>
-        <view style="width: 100%; height: 96px">
-          <image src="{{fuwuItems[2].cover}}" style="width: 100%; height: 100%; border: 1px solid #fafafa;" />
+        <view style="width: 100%; height: 96px" data-detail="{{fuwuItems[2].detail}}" bindtap="clickFuwu">
+          <image src="{{fuwuItems[2].cover}}" style="width: 100%; height: 100%; border: 1px solid #fafafa;" mode="scaleToFill" />
         </view>
       </view>
     </view>

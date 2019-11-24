@@ -1,2 +1,6 @@
 <!--pages/service/service.wxml-->
-<text>pages/service/service.wxml</text>
+<import src="../../templates/templates.wxml" />
+
+<view class="container zan-font-14 zan-c-black">
+  <template is="fuwuItem" wx:for="{{fuwuItems}}" wx:key="{{item._id}}" data="{{...item}}"></template>
+</view>

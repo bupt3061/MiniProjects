@@ -6,6 +6,8 @@
     "pages/cart/cart",
     "pages/mine/mine",
     "pages/blank/blank",
+    "pages/miaosha/miaosha",
+    "pages/pintuan/pintuan",
     "pages/logs/logs"
   ],
   "window": {

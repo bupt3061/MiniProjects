@@ -44,5 +44,8 @@ App({
     screenHeight: null,
     screenWidth: null,
     windowHeight: null,
+    miaoshaItems: null,
+    fuwuItems: null,
+    pintuanItems: null
   }
 })

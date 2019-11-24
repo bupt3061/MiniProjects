@@ -1,0 +1,7 @@
+<!--pages/pintuan/pintuan.wxml-->
+<!-- 引用模板 -->
+<import src="../../templates/templates.wxml" />
+
+<view class="container zan-font-14 zan-c-black">
+  <template is="pintuanItem" wx:for="{{pintuanItems}}" wx:key="{{item._id}}" data="{{...item}}"></template>
+</view>
