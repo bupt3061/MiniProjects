@@ -1,5 +1,37 @@
-<!--pages/xiangqing-pt/xiangqing-pt.wxml-->
-<text>pages/xiangqing-pt/xiangqing-pt.wxml</text>
-
+<!--pages/xiangqing-ms/xiangqing-ms.wxml-->
 <!-- 引用模板 -->
 <import src="../../templates/templates.wxml" />
+
+<view class="container zan-font-14 zan-c-black;" style="position: relative; padding-bottom: 64px;">
+  <swiper class="swiper" autoplay="{{autoplay}}" indicator-dots="{{indicatorDots}}" indicator-color="{{indicatorColor}}" indicator-active-color="{{indicatorActiveColor}}" circular="{{circular}}">
+    <swiper-item wx:for="{{swiperItems}}" wx:key="{{index}}" style="width: inherit; height: inherit; overflow: visible;">
+      <image src="{{item.img}}" style="width: inherit; " mode="widthFix" />
+    </swiper-item>
+  </swiper>
+  <view class="price">
+    <view class="primary-c-dark zan-font-18" style="margin-right: 8px; font-weight: bold;">￥{{currentPrice}}</view>
+    <view style="text-decoration: line-through">￥{{originalPrice}}</view>
+  </view>
+  <view class="info">
+    <view class="zan-font-16" style="font-weight: bold;">{{title}}</view>
+    <view class="zan-font-12 store" bindtap="toStore">
+      {{store}}
+      <zan-icon class="zan-font-10" type="arrow"></zan-icon>
+    </view>
+  </view>
+  <view class="pintuan">
+    <view style="padding: 16px;">
+      {{total}}人参团
+    </view>
+    <scroll-view style="width: 100%; height: 200px; overflow: hidden; " scroll-y="true" scroll-into-view="_{{id}}">
+      <view class="user" wx:for="{{userItems}}" wx:key="{{index}}" id="_{{index}}" bindtap="click">
+        <view style="display: flex; align-items: center;">
+          <image class="avatar" src="{{item.avatarUrl}}" mode="widthFix" />
+          <view>{{item.nickname}}</view>
+        </view>
+        <view class="zan-font-20 primary-c-dark" style="font-weight: bold; margin-right: 64px;">-{{item.price}}元</view>
+      </view>
+    </scroll-view>
+  </view>
+  <view class="primary-bg zan-font-20" style="width: 100%; padding: 8px 16px; text-align: center; position: fixed; bottom: 0; font-weight: bold;" >参团</view>
+</view>

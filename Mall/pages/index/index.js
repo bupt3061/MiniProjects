@@ -58,6 +58,12 @@ Page({
 
     // 获取并处理swiperItems
     var swiperItems = await this.getSwiperItems()
+    // var swiperItemsPromises = swiperItems.map(item => this.getTempFileURL(item.path))
+    // Promise.all(swiperItemsPromises).then(results => {
+    //   for (let i = 0; i < result.length; i++) {
+    //     swiperItems[i].path = result[i]
+    //   }
+    // })
     for (var i = 0; i < swiperItems.length; i++) {
       swiperItems[i].path = await this.getTempFileURL(swiperItems[i].path)
     }

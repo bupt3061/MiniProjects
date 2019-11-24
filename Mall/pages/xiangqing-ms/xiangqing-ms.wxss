@@ -45,3 +45,25 @@
   color: #e48c25;
   background-color: white;
 }
+
+.user {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  box-sizing: border-box;
+}
+
+.avatar {
+  width: 56px;
+  height: 56px;
+  border: 1px solid #fafafa;
+  border-radius: 28px;
+  margin-right: 8px;
+}
+
+.pintuan {
+  width: 100%;
+  box-sizing: border-box;
+  background-color: white;
+}

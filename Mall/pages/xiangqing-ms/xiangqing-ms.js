@@ -31,11 +31,14 @@ Page({
     min: 59,
     sec: 49,
     interval: null,
+    interval1: null,
     currentPrice: null,
     originalPrice: null,
     title: null,
     store: null,
-    total: null
+    total: null,
+    userItems: null,
+    id: 4
   },
   setTime: function() {
     const _this = this
@@ -61,7 +64,7 @@ Page({
       interval: interval
     })
   },
-  init: function(id) {
+  setInfo: function(id) {
     var data = null
     const miaoshaItems = app.globalData.miaoshaItems
 
@@ -79,6 +82,68 @@ Page({
       total: data.total
     })
   },
+  async init() {
+    const _this = this
+
+    var userItems = await this.getUserItems()
+    for (var i = 0; i < userItems.length; i++) {
+      userItems[i].avatarUrl = await this.getTempFileURL(userItems[i].avatarUrl)
+    }
+
+    var length = userItems.length
+    var id = this.data.id
+
+    var interval1 = setInterval(function() {
+      if(id == length-1) {
+        id = 0
+      }
+      else {
+        id++
+      }
+      _this.setData({
+        id: id
+      })
+    }, 1000)
+
+    this.setData({
+      userItems: userItems,
+      interval1: interval1
+    })
+  },
+  getUserItems: function () {
+    // 获取swiperItems
+    return new Promise((resolve, reject) => {
+      const db = wx.cloud.database({
+        env: "test-m3m5d"
+      })
+      db.collection('mmsuser')
+        .get()
+        .then(res => {
+          resolve(res.data)
+        })
+        .catch(err => {
+          console.log(err)
+          reject(err)
+        })
+    })
+  },
+  getTempFileURL: function (value) {
+    // 用fileID换取临时文件地址
+    return new Promise((resolve, reject) => {
+      wx.cloud.getTempFileURL({
+        fileList: [{
+          fileID: value,
+          maxAge: 60 * 60, // one hour
+        }]
+      }).then(res => {
+        // get temp file URL
+        resolve(res.fileList[0].tempFileURL)
+      }).catch(err => {
+        console.log(err)
+        reject(err)
+      })
+    })
+  },
   toStore: function() {
     wx.navigateTo({
       url: '../blank/blank',
@@ -91,7 +156,8 @@ Page({
     const id = options.id
 
     this.setTime()
-    this.init(id)
+    this.setInfo(id)
+    this.init()
   },
   /**
    * 生命周期函数--监听页面初次渲染完成
@@ -112,6 +178,7 @@ Page({
    */
   onHide: function() {
     clearInterval(this.data.interval)
+    clearInterval(this.data.interval1)
   },
 
   /**
@@ -119,6 +186,7 @@ Page({
    */
   onUnload: function() {
     clearInterval(this.data.interval)
+    clearInterval(this.data.interval1)
   },
 
   /**
