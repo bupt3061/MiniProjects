@@ -208,13 +208,28 @@ Page({
     })
   },
   clickMiaoshaItem: function(e) {
-    console.log(e.currentTarget.dataset.detail)
+    const id = e.currentTarget.dataset.id
+    console.log(id)
+
+    wx.navigateTo({
+      url: '../xiangqing-ms/xiangqing-ms?id=' + id,
+    })
   },
   clickPintuanItem: function(e) {
-    console.log(e.currentTarget.dataset.detail)
+    const id = e.currentTarget.dataset.id
+    console.log(id)
+
+    wx.navigateTo({
+      url: '../xiangqing-pt/xiangqing-pt?id=' + id,
+    })
   },
   clickFuwu: function(e) {
-    console.log(e.currentTarget.dataset.detail)
+    const id = e.currentTarget.dataset.id
+    console.log(id)
+
+    wx.navigateTo({
+      url: '../blank/blank?id=' + id,
+    })
   },
   toMiaosha: function() {
     wx.navigateTo({

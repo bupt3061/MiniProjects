@@ -1,0 +1,5 @@
+<!--pages/xiangqing-pt/xiangqing-pt.wxml-->
+<text>pages/xiangqing-pt/xiangqing-pt.wxml</text>
+
+<!-- 引用模板 -->
+<import src="../../templates/templates.wxml" />

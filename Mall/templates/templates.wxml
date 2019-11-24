@@ -31,7 +31,7 @@
 </template>
 
 <template name="miaoshaItem">
-  <view class="ms-container" data-detail="{{detail}}" bindtap="clickItem">
+  <view class="ms-container" data-id="{{_id}}" bindtap="clickItem">
     <image src="{{thumb}}" style="width: 30%; " mode="widthFix" />
     <view class="ms-main">
       <view>
@@ -55,7 +55,7 @@
 </template>
 
 <template name="pintuanItem">
-  <view class="ms-container" data-detail="{{detail}}" bindtap="clickItem">
+  <view class="ms-container" data-id="{{_id}}" bindtap="clickItem">
     <image src="{{thumb}}" style="width: 30%; " mode="widthFix" />
     <view class="ms-main">
       <view>
@@ -79,7 +79,7 @@
 </template>
 
 <template name="fuwuItem">
-  <view style="background-color: white; margin-top: 8px; width: 100%;" data-detail="{{detail}}">
+  <view style="background-color: white; margin-top: 8px; width: 100%;" data-id="{{_id}}">
     <image src="{{cover}}" style="width: 100%; border-bottom: 1px solid #fafafa; " mode="widthFix" />
     <view style="text-align: center; width: 100%; padding: 16px 24px 24px 24px;  box-sizing: border-box;">
       <view class="zan-font-18">{{title}}</view>

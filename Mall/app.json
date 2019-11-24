@@ -8,6 +8,8 @@
     "pages/blank/blank",
     "pages/miaosha/miaosha",
     "pages/pintuan/pintuan",
+    "pages/xiangqing-ms/xiangqing-ms",
+    "pages/xiangqing-pt/xiangqing-pt",
     "pages/logs/logs"
   ],
   "window": {

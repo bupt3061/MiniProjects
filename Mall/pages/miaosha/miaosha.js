@@ -49,7 +49,12 @@ Page({
     })
   },
   clickItem: function(e) {
-    console.log(e.currentTarget.dataset.detail)
+    const id = e.currentTarget.dataset.id
+    console.log(id)
+
+    wx.navigateTo({
+      url: '../xiangqing-ms/xiangqing-ms?id=' + id,
+    })
   }, 
   /**
    * 生命周期函数--监听页面加载
