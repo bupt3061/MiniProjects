@@ -53,7 +53,7 @@ Page({
     console.log(id)
 
     wx.navigateTo({
-      url: '../xiangqing-ms/xiangqing-ms?id=' + id,
+      url: '../xiangqing-pt/xiangqing-pt?id=' + id,
     })
   },
   /**

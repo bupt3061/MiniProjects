@@ -13,20 +13,20 @@ Page({
     indicatorColor: "rgba(255, 255, 255, .3)",
     indicatorActiveColor: "#ffffff",
     swiperItems: [{
-      img: "../../img/sp1.jpg"
-    },
-    {
-      img: "../../img/sp2.jpg"
-    },
-    {
-      img: "../../img/sp3.jpg"
-    },
-    {
-      img: "../../img/sp4.jpg"
-    },
-    {
-      img: "../../img/sp5.jpg"
-    }
+        img: "../../img/sp1.jpg"
+      },
+      {
+        img: "../../img/sp2.jpg"
+      },
+      {
+        img: "../../img/sp3.jpg"
+      },
+      {
+        img: "../../img/sp4.jpg"
+      },
+      {
+        img: "../../img/sp5.jpg"
+      }
     ],
     min: 59,
     sec: 49,
@@ -40,7 +40,7 @@ Page({
     userItems: null,
     id: 4
   },
-  setInfo: function (id) {
+  setInfo: function(id) {
     var data = null
     const pintuanItems = app.globalData.pintuanItems
 
@@ -71,11 +71,10 @@ Page({
     var length = userItems.length
     var id = this.data.id
 
-    var interval1 = setInterval(function () {
+    var interval1 = setInterval(function() {
       if (id == length - 1) {
         id = 0
-      }
-      else {
+      } else {
         id++
       }
       _this.setData({
@@ -88,7 +87,7 @@ Page({
       interval1: interval1
     })
   },
-  getUserItems: function () {
+  getUserItems: function() {
     // 获取swiperItems
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database({
@@ -105,7 +104,7 @@ Page({
         })
     })
   },
-  getTempFileURL: function (value) {
+  getTempFileURL: function(value) {
     // 用fileID换取临时文件地址
     return new Promise((resolve, reject) => {
       wx.cloud.getTempFileURL({
@@ -122,7 +121,7 @@ Page({
       })
     })
   },
-  toStore: function () {
+  toStore: function() {
     wx.navigateTo({
       url: '../blank/blank',
     })
@@ -130,7 +129,7 @@ Page({
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad: function (options) {
+  onLoad: function(options) {
     const id = options.id
 
     this.setInfo(id)
@@ -139,21 +138,21 @@ Page({
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
-  onReady: function () {
+  onReady: function() {
 
   },
 
   /**
    * 生命周期函数--监听页面显示
    */
-  onShow: function () {
+  onShow: function() {
 
   },
 
   /**
    * 生命周期函数--监听页面隐藏
    */
-  onHide: function () {
+  onHide: function() {
     clearInterval(this.data.interval)
     clearInterval(this.data.interval1)
   },
@@ -161,7 +160,7 @@ Page({
   /**
    * 生命周期函数--监听页面卸载
    */
-  onUnload: function () {
+  onUnload: function() {
     clearInterval(this.data.interval)
     clearInterval(this.data.interval1)
   },
@@ -169,21 +168,21 @@ Page({
   /**
    * 页面相关事件处理函数--监听用户下拉动作
    */
-  onPullDownRefresh: function () {
+  onPullDownRefresh: function() {
 
   },
 
   /**
    * 页面上拉触底事件的处理函数
    */
-  onReachBottom: function () {
+  onReachBottom: function() {
 
   },
 
   /**
    * 用户点击右上角分享
    */
-  onShareAppMessage: function () {
+  onShareAppMessage: function() {
 
   }
 })
