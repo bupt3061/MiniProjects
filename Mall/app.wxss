@@ -2,6 +2,7 @@
 
 @import "./dist/index.wxss";
 @import "./templates/templates.wxss";
+@import "./iconfont/iconfont.wxss";
 
 page {
   background-color: #f4f4f4;

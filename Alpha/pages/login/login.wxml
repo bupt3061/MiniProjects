@@ -16,5 +16,5 @@
       <text>我是老师</text>
     </view>
   </block>
-  <button loading="{{loading}}" open-type="getUserInfo" class="primary-bg" style="width: 92%; margin-top: 96rpx;" bindgetuserinfo="toNext">下一步</button>
+  <button loading="{{loading}}" class="primary-bg" style="width: 92%; margin-top: 96rpx;" bindtap="toNext">下一步</button>
 </view>

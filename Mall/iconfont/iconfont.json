@@ -1,0 +1,16 @@
+{
+  "id": "1531749",
+  "name": "mall",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "4266160",
+      "name": "分享",
+      "font_class": "fenxiang",
+      "unicode": "e713",
+      "unicode_decimal": 59155
+    }
+  ]
+}

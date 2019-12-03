@@ -10,6 +10,7 @@
     "pages/pintuan/pintuan",
     "pages/xiangqing-ms/xiangqing-ms",
     "pages/xiangqing-pt/xiangqing-pt",
+    "pages/qiche/qiche",
     "pages/logs/logs"
   ],
   "window": {

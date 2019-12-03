@@ -28,8 +28,8 @@ Page({
         img: "../../img/sp5.jpg"
       }
     ],
-    min: 59,
-    sec: 49,
+    min: 0,
+    sec: 10,
     interval: null,
     interval1: null,
     currentPrice: null,
@@ -48,10 +48,25 @@ Page({
     const interval = setInterval(function () {
       sec--
       if (sec == 0) {
-        sec = 59
-        min--
         if (min == 0) {
           clearInterval(_this.data.interval)
+          wx.showModal({
+            title: '秒杀结束',
+            content: '拼团享受团购价',
+            success: res => {
+              console.log('确定')
+              wx.navigateTo({
+                url: '../xiangqing-pt/xiangqing-pt?id=QduV9iEvm0QxknDTbnWasAXA09SGoK6vs0VLH6STKNtiitZ5',
+              })
+            },
+            fail: err => {
+              console.log('取消')
+            }
+          })
+        }
+        else {
+          sec = 59
+          min--
         }
       }
       _this.setData({
@@ -148,6 +163,14 @@ Page({
     wx.navigateTo({
       url: '../blank/blank',
     })
+  },
+  jiajia: function() {
+
+    this.setData({
+      currentPrice: parseFloat(this.data.currentPrice) + 5,
+      total: parseInt(this.data.total) + 1
+    })
+
   },
   /**
    * 生命周期函数--监听页面加载

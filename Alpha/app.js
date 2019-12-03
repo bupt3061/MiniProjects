@@ -23,8 +23,7 @@ App({
     this.login() // 登陆
 
     if (await this.getSetting()) { // 获取头像、昵称等基本信息
-      let res = await this.getBasicInfo()
-      var basicInfo = res
+      let basicInfo = await this.getBasicInfo()
       this.globalData.basicInfo = basicInfo
       console.log('basicInfo:', basicInfo)
     }

@@ -8,9 +8,14 @@
       <image src="{{item.img}}" style="width: inherit; " mode="widthFix" />
     </swiper-item>
   </swiper>
-  <view class="price">
-    <view class="primary-c-dark zan-font-18" style="margin-right: 8px; font-weight: bold;">￥{{currentPrice}}</view>
-    <view style="text-decoration: line-through">￥{{originalPrice}}</view>
+  <view class="item-info">
+    <view class="price">
+      <view class="primary-c-dark zan-font-18" style="margin-right: 8px; font-weight: bold;">￥{{currentPrice}}</view>
+      <view style="text-decoration: line-through">￥{{originalPrice}}</view>
+    </view>
+    <view>
+      <text class="iconfont icon-fenxiang primary-c-dark" style="font-size: 2em;"></text>
+    </view>
   </view>
   <view class="info">
     <view class="zan-font-16" style="font-weight: bold;">{{title}}</view>
@@ -33,5 +38,5 @@
       </view>
     </scroll-view>
   </view>
-  <view class="primary-bg zan-font-20" style="width: 100%; padding: 8px 16px; text-align: center; position: fixed; bottom: 0; font-weight: bold;" >参团</view>
+  <view class="primary-bg zan-font-20" style="width: 100%; padding: 8px 16px; text-align: center; position: fixed; bottom: 0; font-weight: bold;" bindtap="cantuan">参团</view>
 </view>

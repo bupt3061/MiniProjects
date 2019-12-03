@@ -17,6 +17,23 @@ Page({
       fuwuItems: fuwuItems
     })
   },
+  clickFuwu: function (e) {
+    const id = e.currentTarget.dataset.id
+    console.log(id)
+
+    var qiche_id = "bf01ac72-bd35-4208-bf7d-d325c0e90dd5"
+
+    if (id == qiche_id) {
+      wx.navigateTo({
+        url: '../qiche/qiche',
+      })
+    }
+    else {
+      wx.navigateTo({
+        url: '../blank/blank?id=' + id,
+      })
+    }
+  },
   /**
    * 生命周期函数--监听页面加载
    */

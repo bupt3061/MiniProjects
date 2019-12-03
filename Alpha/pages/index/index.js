@@ -1,9 +1,12 @@
 //index.js
 
-// 获取用户基本信息
+// 获取全局变量
 const app = getApp()
 
 Page({
+  /**
+   * 页面的初始数据
+   */
   data: {
     openid: null,
     type: null,
@@ -18,6 +21,9 @@ Page({
       }
     }
   },
+  /**
+   * 初始化函数
+   */
   async init() {
     const app = getApp()
 
@@ -25,13 +31,15 @@ Page({
     let openid = await this.getOpenid()
     let userInfo = await this.getUserInfo(openid)
     console.log('userInfo:', userInfo)
+    app.globalData.openid = openid
 
-    if(!userInfo) {
+    if (!userInfo) {
+      // 数据库中不存在该条记录
       wx.redirectTo({
-        url: '../login/login',
+        url: '../login/login?openid=' + openid,
       })
 
-      return 
+      return
     }
 
     // 获取用户所有任务
@@ -63,14 +71,13 @@ Page({
       evaluateNum: evaluateNum
     })
 
-    app.globalData.openid = openid
     app.globalData.userInfo = userInfo
     app.globalData.tasks = tasks
     app.globalData.courses = courses
     app.globalData.type = userInfo.type
 
   },
-  getOpenid: function () {
+  getOpenid: function() {
     return new Promise((resolve, reject) => {
       // 获取openid
       wx.cloud.callFunction({
@@ -86,14 +93,14 @@ Page({
       })
     })
   },
-  getUserInfo: function (openid) {
+  getUserInfo: function(openid) {
     // 从数据库中获取该用户记录
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database()
 
       db.collection('user').where({
-        _openid: openid
-      })
+          _openid: openid
+        })
         .get()
         .then(res => {
           resolve(res.data[0])
@@ -104,13 +111,13 @@ Page({
         })
     })
   },
-  getTasks: function (courseid) {
+  getTasks: function(courseid) {
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database()
 
       db.collection('task').where({
-        _courseid: courseid
-      })
+          _courseid: courseid
+        })
         .get()
         .then(res => {
           resolve(res.data)
@@ -121,6 +128,26 @@ Page({
         })
     })
   },
+  getCourse: function(courseid) {
+    return new Promise((resolve, reject) => {
+      const db = wx.cloud.database()
+
+      db.collection('course').where({
+          _courseid: courseid
+        })
+        .get()
+        .then(res => {
+          resolve(res.data)
+        })
+        .catch(err => {
+          console.log(err)
+          reject(err)
+        })
+    })
+  },
+  /**
+   * 页面其他函数
+   */
   processTasks: function (openid, tasks) {
     // 处理任务数据
     return new Promise((resolve, reject) => {
@@ -159,29 +186,10 @@ Page({
         tasks[i]['uploadDisplay'] = uploadDisplay
         tasks[i]['evaluateDisplay'] = evaluateDisplay
       }
-
-      // resolve({ 'tasks': tasks, 'uploadNum': uploadNum, 'evaluateNum': evaluateNum})
-      resolve([tasks,  uploadNum, evaluateNum])
+      resolve([tasks, uploadNum, evaluateNum])
     })
   },
-  getCourse: function(courseid) {
-    return new Promise((resolve, reject) => {
-      const db = wx.cloud.database()
-
-      db.collection('course').where({
-        _courseid: courseid
-      })
-      .get()
-      .then(res => {
-        resolve(res.data)
-      })
-      .catch(err => {
-        console.log(err)
-        reject(err)
-      })
-    })
-  },
-  toMyCourse: function() {
+  toMyCourse: function () {
     wx.switchTab({
       url: '../mine/mine',
     })

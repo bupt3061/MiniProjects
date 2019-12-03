@@ -16,24 +16,43 @@ Page({
     avatarTeach: null,
     canIUse: wx.canIUse('button.open-type.getUserInfo'),
   },
+  /**
+   * 初始化函数
+   */
+  async init() {
+    let res = await this.getAvatars()
+    console.log(res)
+  },
+  getAvatars: function() {
+    return new Promise((resolve, reject) => {
+      // 从云端下载头像
+      wx.cloud.getTempFileURL({
+        fileList: app.globalData.avatarIDs,
+        success: res => {
+          var avatarStu = res.fileList[0].tempFileURL
+          var avatarTeach = res.fileList[1].tempFileURL
 
+          this.setData({
+            avatarStu,
+            avatarTeach
+          })
+
+          resolve('success')
+        },
+        fail: err => {
+          console.log(err)
+          reject('faile')
+        }
+      })
+    })
+  },
   /**
    * 页面其他函数
    */
   toNext: function(e) {
-
-    // 获取userInfo
-    // console.log('获取basicInfo(授权)', e.detail.userInfo)
-    // this.setData({
-    //   basicInfo: e.detail.userInfo
-    // })
-    // app.globalData.basicInfo = e.detail.userInfo
-
-    app.globalData.type = this.data.type // 设置type
-
     // 跳转到loginNext
     wx.navigateTo({
-      url: '../loginNext/loginNext',
+      url: '../loginNext/loginNext?type=' + this.data.type,
       success: res => {
         console.log('跳转到loginNext')
       },
@@ -41,45 +60,6 @@ Page({
         console.log(err)
       }
     })
-
-    // 上传数据
-    // var date = new Date()
-    // var data = {
-    //   gender: this.data.basicInfo.gender,
-    //   addr: this.data.basicInfo.city + '/' + this.data.basicInfo.province + '/' + this.data.basicInfo.country,
-    //   regtime: date,
-    //   title: 1,
-    //   contribution: 0.5,
-    //   type: this.data.type,
-    //   courses: []
-    // }
-
-    // const user = wx.cloud.database().collection('user')
-    // user.where({
-    //     _openid: this.data.openid
-    //   })
-    //   .get()
-    //   .then(res => {
-    //     if (res.data.length == 0) {
-    //       console.log('上传该用户记录')
-    //       user.add({
-    //           data: data
-    //         })
-    //         .then(res => {
-    //           console.log('上传成功:', res)
-    //           _this.setData({
-    //             loading: false
-    //           })
-    //         })
-    //         .catch(err => {
-    //           console.log(err)
-    //         })
-    //     }
-    //   })
-    //   .catch(err => {
-    //     console.log(err)
-    //   })
-
   },
   clickStu: function() {
     // 选择学生身份
@@ -98,37 +78,12 @@ Page({
       teachStyle: "primary"
     })
     console.log(this.data.type)
-
   },
-
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function(options) {
-
-    // if (app.globalData.openid) {
-    //   this.setData({
-    //     openid: app.globalData.openid
-    //   })
-    // }
-
-    // 从云端下载头像
-    wx.cloud.getTempFileURL({
-      fileList: app.globalData.avatarIDs,
-      success: res => {
-        var avatarStu = res.fileList[0].tempFileURL
-        var avatarTeach = res.fileList[1].tempFileURL
-
-        this.setData({
-          avatarStu,
-          avatarTeach
-        })
-      },
-      fail: err => {
-        console.log(err)
-      }
-    })
-
+    this.init()
   },
 
   /**

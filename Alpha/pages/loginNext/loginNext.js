@@ -1,21 +1,20 @@
 // pages/loginNext/loginNext.js
-
-// 外部js
-const stg = require('../../utils/storage.js')
-
+// 获取全局变量
 const app = getApp()
 
-Page({
+// 引入外部js
+const stg = require('../../utils/storage.js')
 
+Page({
   /**
    * 页面的初始数据
    */
   data: {
     openid: null,
     type: 1,
-    name: null,
-    phone: null,
-    organization: null,
+    name: '',
+    phone: '',
+    organization: '',
     courses: [],
     loading: false,
     duration: 1000,
@@ -26,10 +25,10 @@ Page({
       }
     }
   },
+  /**
+   * 初始化函数
+   */
   async init() {
-
-    let openid = await this.getOpenid()
-    let type = await this.getType()
     if (stg.getStorage('name')) {
       var name = stg.getStorage('name')
     }
@@ -40,10 +39,7 @@ Page({
       var organization = stg.getStorage('organization')
     }
 
-    app.globalData.openid = openid
     this.setData({
-      openid: openid,
-      type: type,
       name: name,
       phone: phone,
       organization: organization
@@ -52,35 +48,25 @@ Page({
   },
   getCourses: function() {
     // 获取所有课程信息
-    
+
   },
-  getOpenid: function() {
-    return new Promise((resolve, reject) => {
-      // 获取openid
-      wx.cloud.callFunction({
-        name: 'getInfo',
-        data: {},
-        success: res => {
-          resolve(res.result.OPENID)
-        },
-        fail: err => {
-          console.log(err)
-          reject(err)
-        }
-      })
-    })
-  },
-  getType: function() {
-    return new Promise((resolve, reject) => {
-      const app = getApp()
-      var type = app.globalData.type
-      if (type) {
-        resolve(type)
-      }
-    })
-  },
+  /**
+   * 页面其他函数
+   */
   confirm: function(e) {
     const _this = this
+
+    // 验证数据
+    if(this.data.name == '') {
+      return
+    }
+
+    if(this.data.phone == '') {
+      return
+    }
+    else {
+      
+    }
 
     // 显示加载
     this.setData({
@@ -107,35 +93,22 @@ Page({
     }
 
     const user = wx.cloud.database().collection('user')
-    user.where({
-        _openid: this.data.openid
+    user.add({
+        data: data
       })
-      .get()
       .then(res => {
-        if (res.data.length == 0) {
-          console.log('上传该用户记录')
-          user.add({
-              data: data
-            })
-            .then(res => {
-              console.log('上传成功:', res)
-              _this.setData({
-                loading: false
-              })
-              // 跳转到首页
-              wx.switchTab({
-                url: '../index/index',
-              })
-            })
-            .catch(err => {
-              console.log(err)
-            })
-        }
+        console.log('上传成功:', res)
+        _this.setData({
+          loading: false
+        })
+        // 跳转到首页
+        wx.switchTab({
+          url: '../index/index',
+        })
       })
       .catch(err => {
         console.log(err)
       })
-
   },
   goBack: function() {
     // 缓存
@@ -204,7 +177,7 @@ Page({
       })
     }, this.data.duration);
   },
-  addCourse: function (e) {
+  addCourse: function(e) {
     const _this = this
     wx.scanCode({
       success(res) {
@@ -214,11 +187,14 @@ Page({
       }
     })
   },
-
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function(options) {
+    this.setData({
+      type: options.type
+    })
+
     this.init()
   },
 

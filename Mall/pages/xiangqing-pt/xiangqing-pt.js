@@ -126,6 +126,46 @@ Page({
       url: '../blank/blank',
     })
   },
+  cantuan: function() {
+    const _this = this
+    const avartarUrl = app.globalData.userInfo.avartarUrl
+    const nickname = app.globalData.userInfo.nickname
+
+    console.log(avartarUrl)
+    const newItem = {
+      avartarUrl: avartarUrl,
+      nickname: nickname,
+      price: 0.3
+    }
+
+    wx.showModal({
+      title: '拼团成功',
+      content: '分享再享9折',
+      success(res) {
+        if (res.confirm) {
+          console.log('用户点击确定')
+          wx.showShareMenu({
+            withShareTicket: true,
+            success: res => {
+              console.log(res)
+              const currentPrice = _this.data.currentPrice
+              const total = _this.data.total
+          
+              _this.setData({
+                currentPrice: (currentPrice * 0.9).toFixed(2),
+                total: total + 1
+              })
+            },
+            fail: err => {
+              console.log(err)
+            }
+          })
+        } else if (res.cancel) {
+          console.log('用户点击取消')
+        }
+      }
+    })
+  },
   /**
    * 生命周期函数--监听页面加载
    */

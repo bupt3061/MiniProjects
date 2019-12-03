@@ -41,5 +41,5 @@
       </view>
     </scroll-view>
   </view>
-  <view class="primary-bg zan-font-20" style="width: 100%; padding: 8px 16px; text-align: center; position: fixed; bottom: 0; font-weight: bold;" > +5元</view>
+  <view class="primary-bg zan-font-20" style="width: 100%; padding: 8px 16px; text-align: center; position: fixed; bottom: 0; font-weight: bold;" bindtap="jiajia"> +5元</view>
 </view>
