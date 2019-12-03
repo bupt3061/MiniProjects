@@ -22,6 +22,6 @@
       <input id="organization" class="field" maxlength="{{20}}" value="{{organization}}" bindblur="handleOrganization" />
     </view>
   </block>
-  <button loading="{{loading}}" open-type="getUserInfo" class="primary-bg" style="width: 92%; margin-top: 64rpx;" bindgetuserinfo="confirm">确定</button>
-  <button style="width: 92%; margin-top: 32rpx; border: 1px solid rgb(20, 209, 181); color: #14d1b5;" bindtap="goBack">上一步</button>
+  <button disabled="{{disabled}}" open-type="getUserInfo" class="primary-bg" style="width: 91%; margin-top: 64rpx;" bindgetuserinfo="confirm">确定</button>
+  <button style="width: 91%; margin-top: 32rpx; border: 1px solid rgb(20, 209, 181); color: #14d1b5;" bindtap="goBack">上一步</button>
 </view>

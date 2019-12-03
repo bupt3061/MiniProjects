@@ -6,7 +6,8 @@
 	},
 	"setting": {
 		"urlCheck": true,
-		"es6": false,
+		"es6": true,
+		"enhance": true,
 		"postcss": true,
 		"minified": true,
 		"newFeature": true,
@@ -22,7 +23,7 @@
 		}
 	},
 	"compileType": "miniprogram",
-	"libVersion": "2.9.3",
+	"libVersion": "2.9.4",
 	"appid": "wx8bd01aeb60593f14",
 	"projectname": "Alpha",
 	"debugOptions": {

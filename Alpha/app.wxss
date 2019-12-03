@@ -38,7 +38,7 @@ page {
   flex-direction: row;
   justify-content: flex-start;
   background-color: white;
-  width: 92%;
+  width: 91%;
   padding: 32rpx 32rpx;
   border: 1rpx solid #eee;
   box-sizing: border-box;

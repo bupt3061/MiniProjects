@@ -12,18 +12,18 @@ Page({
   data: {
     openid: null,
     type: 1,
-    name: '',
-    phone: '',
-    organization: '',
+    name: null,
+    phone: null,
+    organization: null,
     courses: [],
-    loading: false,
     duration: 1000,
     content: null,
     $zanui: {
       toptips: {
         show: false
       }
-    }
+    },
+    disabled: true
   },
   /**
    * 初始化函数
@@ -31,20 +31,27 @@ Page({
   async init() {
     if (stg.getStorage('name')) {
       var name = stg.getStorage('name')
+      console.log('name', name)
+      this.setData({
+        name: name
+      })
     }
+
     if (stg.getStorage('phone')) {
       var phone = stg.getStorage('phone')
+      console.log('phone', phone)
+      this.setData({
+        phone: phone
+      })
     }
+
     if (stg.getStorage('organization')) {
       var organization = stg.getStorage('organization')
+      console.log('organization', organization)
+      this.setData({
+        organization: organization
+      })
     }
-
-    this.setData({
-      name: name,
-      phone: phone,
-      organization: organization
-    })
-
   },
   getCourses: function() {
     // 获取所有课程信息
@@ -55,23 +62,6 @@ Page({
    */
   confirm: function(e) {
     const _this = this
-
-    // 验证数据
-    if(this.data.name == '') {
-      return
-    }
-
-    if(this.data.phone == '') {
-      return
-    }
-    else {
-      
-    }
-
-    // 显示加载
-    this.setData({
-      loading: true
-    })
 
     // 获取basicInfo
     var basicInfo = e.detail.userInfo
@@ -98,9 +88,6 @@ Page({
       })
       .then(res => {
         console.log('上传成功:', res)
-        _this.setData({
-          loading: false
-        })
         // 跳转到首页
         wx.switchTab({
           url: '../index/index',
@@ -122,30 +109,84 @@ Page({
     })
   },
   handleName: function(e) {
-    console.log(e.detail.value)
+    var name = e.detail.value
+    var phone = this.data.phone
+
+    if (name == '') {
+      name = null
+      this.customCallback('姓名为空')
+    }
+
+    if ((name != null) && (phone != null) && this.checkPhone(phone)) {
+      this.setData({
+        disabled: false
+      })
+    } else {
+      this.setData({
+        disabled: true
+      })
+    }
+
     this.setData({
-      name: e.detail.value
+      name: name
     })
+
+    stg.setStorage('name', name)
   },
   handlePhone: function(e) {
-    console.log(e.detail.value)
-    if (e.detail.value == '') {
+    var phone = e.detail.value
+    var name = this.data.name
+
+    if (phone == '') {
+      phone = null
       this.customCallback('电话号码为空')
-    } else {
-      if (!this.checkPhone(e.detail.value)) {
-        this.customCallback('电话号码输入错误')
-      } else {
-        this.setData({
-          phone: e.detail.value,
-        })
-      }
+    } else if (!this.checkPhone(phone)) {
+      this.customCallback('电话号码输入错误')
     }
+
+    if ((name != null) && (phone != null) && this.checkPhone(phone)) {
+      this.setData({
+        disabled: false
+      })
+    } else {
+      this.setData({
+        disabled: true
+      })
+    }
+
+    this.setData({
+      phone: phone
+    })
+
+    stg.setStorage('phone', phone)
   },
   handleOrganization: function(e) {
-    console.log(e.detail.value)
+    var organization = e.detail.value
+    var phone = this.data.phone
+    var name = this.data.name
+
+    // 其他输入
+    if ((name != null) && (phone != null) && this.checkPhone(phone)) {
+      this.setData({
+        disabled: false
+      })
+    } else {
+      this.setData({
+        disabled: true
+      })
+    }
+
+    // 输入为空
+    if (organization == '') {
+      organization = null
+    }
+
+    // 存储
     this.setData({
-      organization: e.detail.value
+      organization: organization
     })
+
+    stg.setStorage('organization', organization)
   },
   checkPhone: function(phone) {
     var myreg = /^[1][3,4,5,7,8][0-9]{9}$/;
