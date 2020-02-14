@@ -19,6 +19,11 @@ page {
   color: #14d1b5;
 }
 
+.primary-bg {
+  color: white;
+  background-color: #14d1b5;
+}
+
 .err {
   color: #e64240
 }
@@ -26,11 +31,6 @@ page {
 .err-bg {
   color: white;
   background-color: #e64240
-}
-
-.primary-bg {
-  color: white;
-  background-color:  #14d1b5;
 }
 
 .input {

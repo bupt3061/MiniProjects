@@ -1,0 +1,11 @@
+<!--pages/homework/homework.wxml-->
+<import src="../template/template.wxml" />
+
+<view class="container zan-font-14 zan-c-gray-darker" style="padding: 24px 0px;">
+  <block wx:if="{{uploadNum > 0}}">
+    <template is="title" data="{{title: '未提交'}}" />
+  </block>
+  <block>
+    <template is="title" data="{{title: '已提交'}}" />
+  </block>
+</view>

@@ -1,0 +1,6 @@
+<template name="title">
+  <view class="zan-font-18" style="width: 90%; display: flex; flex-direction: row; margin-bottom: 24px;">
+    <view class="primary-bg" style="width: 8px; border-radius: 2px; margin-right: 8px;"></view>
+    <view>{{title}}</view>
+  </view>
+</template>

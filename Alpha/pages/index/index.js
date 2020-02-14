@@ -27,6 +27,11 @@ Page({
   async init() {
     const app = getApp()
 
+    // 加载
+    wx.showLoading({
+      title: '加载中',
+    })
+
     // 从数据库获取该用户信息
     let openid = await this.getOpenid()
     let userInfo = await this.getUserInfo(openid)
@@ -61,6 +66,9 @@ Page({
     }
     console.log('courses:', courses)
 
+    // 结束加载
+    wx.hideLoading()
+
     // 设置数据
     this.setData({
       openid: openid,
@@ -77,6 +85,9 @@ Page({
     app.globalData.type = userInfo.type
 
   },
+  /**
+   * 页面其他函数
+   */
   getOpenid: function() {
     return new Promise((resolve, reject) => {
       // 获取openid
@@ -145,9 +156,6 @@ Page({
         })
     })
   },
-  /**
-   * 页面其他函数
-   */
   processTasks: function (openid, tasks) {
     // 处理任务数据
     return new Promise((resolve, reject) => {
@@ -192,6 +200,11 @@ Page({
   toMyCourse: function () {
     wx.switchTab({
       url: '../mine/mine',
+    })
+  },
+  toHomework: function() {
+    wx.navigateTo({
+      url: '../homework/homework?uploadNum='+this.data.uploadNum,
     })
   },
   /**

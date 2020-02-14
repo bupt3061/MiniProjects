@@ -4,7 +4,8 @@
     "pages/msg/msg",
     "pages/login/login",
     "pages/loginNext/loginNext",
-    "pages/mine/mine"
+    "pages/mine/mine",
+    "pages/homework/homework"
   ],
   "window": {
     "backgroundTextStyle": "light",
