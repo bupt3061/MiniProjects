@@ -26,6 +26,7 @@ Page({
    */
   async init() {
     const app = getApp()
+    const date = new Date()
 
     // 加载
     wx.showLoading({
@@ -53,7 +54,15 @@ Page({
       let res = await this.getTasks(userInfo.courses[i])
       temp = temp.concat(res)
     }
-    let [tasks, uploadNum, evaluateNum] = await this.processTasks(openid, temp)
+
+    var new_temp = []
+    for(var i = 0; i < temp.length; i++) {
+      if(date >= temp[i].uploadstart) {
+        new_temp.push(temp[i])
+      }
+    }
+
+    let [tasks, uploadNum, evaluateNum] = await this.processTasks(openid, new_temp)
     console.log('tasks:', tasks)
     console.log('uploadNum', uploadNum)
     console.log('evaluateNum', evaluateNum)
@@ -64,6 +73,23 @@ Page({
       let res = await this.getCourse(userInfo.courses[i])
       courses = courses.concat(res)
     }
+
+    // 获得课程封面
+    var coverids = []
+    for (var i = 0; i < courses.length; i++) {
+      var temp = {
+        fileID: courses[i].cover,
+        maxAge: 60 * 60, // one hour
+      }
+      coverids.push(temp)
+    }
+
+    let covers = await this.get_covers(coverids)
+
+    for (var i = 0; i < courses.length; i++) {
+      courses[i].tempFileURL = covers[i].tempFileURL
+    }
+
     console.log('courses:', courses)
 
     // 结束加载
@@ -88,6 +114,19 @@ Page({
   /**
    * 页面其他函数
    */
+  get_covers: function(covers) {
+    return new Promise((resolve, reject) => {
+      wx.cloud.getTempFileURL({
+        fileList: covers
+      }).then(res => {
+        // get temp file URL
+        resolve(res.fileList)
+      }).catch(error => {
+        // handle error
+        console.log(error)
+      })
+    })
+  },
   getOpenid: function() {
     return new Promise((resolve, reject) => {
       // 获取openid
@@ -125,6 +164,9 @@ Page({
   getTasks: function(courseid) {
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database()
+      const _ = db.command
+
+      var date = new Date()
 
       db.collection('task').where({
           _courseid: courseid
@@ -156,7 +198,7 @@ Page({
         })
     })
   },
-  processTasks: function (openid, tasks) {
+  processTasks: function(openid, tasks) {
     // 处理任务数据
     return new Promise((resolve, reject) => {
       var date = new Date()
@@ -165,46 +207,52 @@ Page({
 
       for (var i = 0; i < tasks.length; i++) {
         var upload = true // 默认已交作业
-        var uploadDisplay = false // 默认不用显示未交作业
         var evaluate = true // 默认已互评
-        var evaluateDisplay = false // 默认不用显示未互评
 
-        // 判断是否已上传
+        var past_upload = false // 默认提交未过期
+        var past_evaluate = false // 默认互评未过期
+
+        // 判断是否提交
         if (!tasks[i].uploaded.includes(openid)) {
           upload = false
 
-          if (date >= tasks[i].uploadstart && date <= tasks[i].uploadend) {
-            uploadDisplay = true
-            uploadNum = uploadNum + 1
+          if(date >= tasks[i].uploadstart && date <= tasks[i].uploadend) {
+            uploadNum += 1
           }
         }
 
-        // 判断是否完成互评任务
         if (!tasks[i].evaluated.includes(openid)) {
           evaluate = false
 
           if (date >= tasks[i].evaluatestart && date <= tasks[i].evaluateend) {
-            evaluateDisplay = true
-            evaluateNum = evaluateNum + 1
+            evaluateNum += 1
           }
+        }
+        
+        // 判断是否过期
+        if (date > tasks[i].evaluateend) {
+          past_upload = true
+          past_evaluate = true
+        } else if (date > tasks[i].uploadend) {
+          past_upload = true
         }
 
         tasks[i]['upload'] = upload
         tasks[i]['evaluate'] = evaluate
-        tasks[i]['uploadDisplay'] = uploadDisplay
-        tasks[i]['evaluateDisplay'] = evaluateDisplay
+        tasks[i]['past_upload'] = past_upload
+        tasks[i]['past_evaluate'] = past_evaluate
       }
       resolve([tasks, uploadNum, evaluateNum])
     })
   },
-  toMyCourse: function () {
+  toMyCourse: function() {
     wx.switchTab({
       url: '../mine/mine',
     })
   },
   toHomework: function() {
     wx.navigateTo({
-      url: '../homework/homework?uploadNum='+this.data.uploadNum,
+      url: '../homework/homework?uploadNum=' + this.data.uploadNum,
     })
   },
   /**

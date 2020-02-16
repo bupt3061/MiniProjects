@@ -1,6 +1,6 @@
 <template name="title">
-  <view class="zan-font-18" style="width: 90%; display: flex; flex-direction: row; margin-bottom: 24px;">
-    <view class="primary-bg" style="width: 8px; border-radius: 2px; margin-right: 8px;"></view>
+  <view class="zan-font-18 zan-c-gray-darker" style="width: 90%; display: flex; flex-direction: row; margin-bottom: 32rpx;">
+    <view class="primary-bg" style="width: 12rpx; border-radius: 4rpx; margin-right: 12rpx;"></view>
     <view>{{title}}</view>
   </view>
 </template>
