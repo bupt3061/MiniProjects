@@ -56,8 +56,8 @@ Page({
     }
 
     var new_temp = []
-    for(var i = 0; i < temp.length; i++) {
-      if(date >= temp[i].uploadstart) {
+    for (var i = 0; i < temp.length; i++) {
+      if (date >= new Date(temp[i].uploadstart)) {
         new_temp.push(temp[i])
       }
     }
@@ -186,7 +186,7 @@ Page({
       const db = wx.cloud.database()
 
       db.collection('course').where({
-          _courseid: courseid
+          _id: courseid
         })
         .get()
         .then(res => {
@@ -216,7 +216,7 @@ Page({
         if (!tasks[i].uploaded.includes(openid)) {
           upload = false
 
-          if(date >= tasks[i].uploadstart && date <= tasks[i].uploadend) {
+          if (date >= new Date(tasks[i].uploadstart) && date <= new Date(tasks[i].uploadend)) {
             uploadNum += 1
           }
         }
@@ -224,16 +224,16 @@ Page({
         if (!tasks[i].evaluated.includes(openid)) {
           evaluate = false
 
-          if (date >= tasks[i].evaluatestart && date <= tasks[i].evaluateend) {
+          if (date >= new Date(tasks[i].evaluatestart) && date <= new Date(tasks[i].evaluateend)) {
             evaluateNum += 1
           }
         }
-        
+
         // 判断是否过期
-        if (date > tasks[i].evaluateend) {
+        if (date > new Date(tasks[i].evaluateend)) {
           past_upload = true
           past_evaluate = true
-        } else if (date > tasks[i].uploadend) {
+        } else if (date > new Date(tasks[i].uploadend)) {
           past_upload = true
         }
 

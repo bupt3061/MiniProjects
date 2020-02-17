@@ -31,6 +31,17 @@ function formatTime(date) {
   return [year, month, day].map(formatNumber).join('/')
 }
 
+function convertFormatTime(dateString) {
+  if(dateString) {
+    var arr1 = dateString.split(" ");
+    var sdate = arr1[0].split('/');
+    var date = new Date(sdate[0], sdate[1] - 1, sdate[2], );
+    console.log(date)
+
+    return date;
+  }
+}
+
 function formatNumber(n) {
   n = n.toString()
   return n[1] ? n : '0' + n
@@ -38,5 +49,6 @@ function formatNumber(n) {
 
 module.exports = {
   formatTime: formatTime,
-  formatTimeFull: formatTimeFull
+  formatTimeFull: formatTimeFull,
+  convertFormatTime: convertFormatTime
 }
