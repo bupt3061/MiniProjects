@@ -33,6 +33,10 @@ Page({
       title: '加载中',
     })
 
+    // 获取设备信息
+    var info = wx.getSystemInfoSync()
+    var screenWidth = info.screenWidth
+
     // 从数据库获取该用户信息
     let openid = await this.getOpenid()
     let userInfo = await this.getUserInfo(openid)
@@ -109,7 +113,7 @@ Page({
     app.globalData.tasks = tasks
     app.globalData.courses = courses
     app.globalData.type = userInfo.type
-
+    app.globalData.screenWidth = screenWidth
   },
   /**
    * 页面其他函数

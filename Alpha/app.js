@@ -8,15 +8,6 @@ const dt = require('./utils/date.js')
 
 upd.updateApp()
 
-// console.log('hash', hs.hash('设计心理学/2019/10/27 09:11:27'))
-// var date1 = new Date('10 27, 2019 10:42:53')  
-// var date2 = new Date()
-// console.log(date2 >= date1)
-// console.log(date1)
-// console.log(dt.formatTime(date1))
-// console.log(date1.getTime())
-
-
 App({
   async init() {
 
@@ -101,6 +92,7 @@ App({
     avatarIDs: ['cloud://test-m3m5d.7465-test-m3m5d-1300027116/avatar/stu.jpg', 'cloud://test-m3m5d.7465-test-m3m5d-1300027116/avatar/teach.jpg'],
     tasks: null,
     courses: null,
-    type: null
+    type: null,
+    screenWidth: 0
   }
 })

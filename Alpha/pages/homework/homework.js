@@ -157,6 +157,7 @@ Page({
 
     wx.hideLoading()
 
+    // 存储
     this.setData({
       wtj_tasks: wtj_tasks,
       ytj_tasks: ytj_tasks,
@@ -165,6 +166,11 @@ Page({
       ygqNum: ygq_tasks.length,
       courses: courses
     })
+
+    app.globalData.wtj_tasks = wtj_tasks
+    app.globalData.ygq_tasks = ygq_tasks
+    app.globalData.ytj_tasks = ytj_tasks
+    app.globalData.kxg_tasks = kxg_tasks
   },
   /**
    * 页面其他函数
@@ -172,12 +178,16 @@ Page({
   clickwtj: function(e) {
     const taskid = e.currentTarget.dataset.taskid
     console.log(taskid)
+
+    wx.navigateTo({
+      url: '../submit/submit?taskid=' + taskid,
+    })
   },
   clickkxg: function (e) {
     const taskid = e.currentTarget.dataset.taskid
     console.log(taskid)
   },
-  clicytj: function (e) {
+  clickytj: function (e) {
     const taskid = e.currentTarget.dataset.taskid
     console.log(taskid)
   },

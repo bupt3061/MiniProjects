@@ -4,19 +4,19 @@
 <view class="container zan-font-14 zan-c-black" style="padding: 32rpx 0px;">
   <block wx:if="{{uploadNum > 0 || ygqNum > 0}}">
     <template is="title" data="{{title: '未提交'}}" />
-    <block wx:for="{{wtj_tasks}}">
+    <block wx:for="{{wtj_tasks}}" wx:key="{{index}}">
         <template is="wtj-card" data="{{...item}}"></template>
     </block>
-    <block wx:for="{{ygq_tasks}}">
+    <block wx:for="{{ygq_tasks}}" wx:key="{{index}}">
       <template is="ygq-card" data="{{...item}}"></template>
     </block>
   </block>
   <block>
     <template is="title" data="{{title: '已提交'}}" />
-    <block wx:for="{{kxg_tasks}}">
+    <block wx:for="{{kxg_tasks}}" wx:key="{{index}}">
       <template is="kxg-card" data="{{...item}}"></template>
     </block>
-    <block wx:for="{{ytj_tasks}}">
+    <block wx:for="{{ytj_tasks}}" wx:key="{{index}}">
       <template is="ytj-card" data="{{...item}}"></template>
     </block>
   </block>
