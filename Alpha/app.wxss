@@ -24,6 +24,11 @@ page {
   background-color: #14d1b5;
 }
 
+.forbidden-bg {
+  color: #666666;
+  background-color: #e1e1e1;
+}
+
 .err {
   color: #e64240
 }

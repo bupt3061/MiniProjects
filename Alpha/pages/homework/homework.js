@@ -9,8 +9,13 @@ Page({
    * 页面的初始数据
    */
   data: {
-    tasks: [],
-    uploadNum: 0
+    wtj_tasks: [],
+    ytj_tasks: [],
+    ygq_tasks: [],
+    kxg_tasks: [],
+    courses: [],
+    uploadNum: 0,
+    ygqNum: 0
   },
   /**
    * 初始化函数
@@ -19,15 +24,20 @@ Page({
     var tasks = app.globalData.tasks
     var courses = app.globalData.courses
     var openid = app.globalData.openid
-
     const date = new Date()
+
+    wx.showLoading({
+      title: '加载中',
+    })
 
     // 处理tasks
     for (var i = 0; i < tasks.length; i++) {
-      // 获得封面
+      // 获得封面及课程名
+      tasks[i].display = true
       for (var j = 0; j < courses.length; j++) {
         if (courses[j]._id == tasks[i]._courseid) {
           tasks[i].tempFileURL = courses[j].tempFileURL
+          tasks[i].coursename = courses[j].coursename
         }
       }
     }
@@ -38,8 +48,8 @@ Page({
 
     for (var i = 0; i < tasks.length; i++) {
       // 链接作业
-      for(var j =0; j < works.length; j++) {
-        if(tasks[i]._id == works[j]._taskid) {
+      for (var j = 0; j < works.length; j++) {
+        if (tasks[i]._id == works[j]._taskid) {
           tasks[i]._workid = works[j]._id
           tasks[i].uploadtime = works[j].uploadtime
         }
@@ -93,8 +103,6 @@ Page({
       for (var i = 0; i < kxg_tasks.length; i++) {
         // 排序
         for (var j = 0; j < kxg_tasks.length - i - 1; j++) {
-          console.log(new Date(kxg_tasks[j].uploadtime))
-          console.log(new Date(kxg_tasks[j + 1].uploadtime))
           if (new Date(kxg_tasks[j].uploadtime) < new Date(kxg_tasks[j + 1].uploadtime)) {
             var temp = kxg_tasks[j]
             kxg_tasks[j] = kxg_tasks[j + 1]
@@ -104,36 +112,82 @@ Page({
       }
     }
 
-    // // 处理已提交
-    // for(var i = 0; i < ytj_tasks.length; i++) {
-    //   ygq_tasks[i].zhouqi = dt.formatTime(new Date(ygq_tasks[i].uploadstart)) + " - " + dt.formatTime(new Date(ygq_tasks[i].uploadend))
-    // }
+    // 处理已提交
+    if (ytj_tasks.length != 0) {
+      for (var i = 0; i < ytj_tasks.length; i++) {
+        // 获得周期
+        ytj_tasks[i].tijiao = dt.formatTime(new Date(ytj_tasks[i].uploadtime))
+      }
 
-    // // 处理已过期
-    // for (var i = 0; i < ytj_tasks.length; i++) {
-    //   ytj_tasks[i].zhouqi = dt.formatTime(new Date(ytj_tasks[i].uploadstart)) + " - " + dt.formatTime(new Date(ytj_tasks[i].uploadend))
-    // }
+      for (var i = 0; i < ytj_tasks.length; i++) {
+        // 排序
+        for (var j = 0; j < ytj_tasks.length - i - 1; j++) {
+          if (new Date(ytj_tasks[j].uploadtime) < new Date(ytj_tasks[j + 1].uploadtime)) {
+            var temp = ytj_tasks[j]
+            ytj_tasks[j] = ytj_tasks[j + 1]
+            ytj_tasks[j + 1] = temp
+          }
+        }
+      }
+    }
 
-    // console.log(tasks)
+
+    // 处理已过期
+    if (ygq_tasks.length != 0) {
+      for (var i = 0; i < ygq_tasks.length; i++) {
+        ygq_tasks[i].zhouqi = dt.formatTime(new Date(ygq_tasks[i].uploadstart)) + " - " + dt.formatTime(new Date(ygq_tasks[i].uploadend))
+      }
+
+      for (var i = 0; i < ygq_tasks.length; i++) {
+        // 排序
+        for (var j = 0; j < ygq_tasks.length - i - 1; j++) {
+          if (new Date(ygq_tasks[j].uploadstart) > new Date(ygq_tasks[j + 1].uploadstart)) {
+            var temp = ygq_tasks[j]
+            ygq_tasks[j] = ygq_tasks[j + 1]
+            ygq_tasks[j + 1] = temp
+          }
+        }
+      }
+    }
+
     console.log("未提交", wtj_tasks)
     console.log("已提交", ytj_tasks)
     console.log("已过期", ygq_tasks)
     console.log("可修改", kxg_tasks)
 
+    wx.hideLoading()
+
     this.setData({
-      tasks: app.globalData.tasks
+      wtj_tasks: wtj_tasks,
+      ytj_tasks: ytj_tasks,
+      ygq_tasks: ygq_tasks,
+      kxg_tasks: kxg_tasks,
+      ygqNum: ygq_tasks.length,
+      courses: courses
     })
   },
   /**
    * 页面其他函数
    */
+  clickwtj: function(e) {
+    const taskid = e.currentTarget.dataset.taskid
+    console.log(taskid)
+  },
+  clickkxg: function (e) {
+    const taskid = e.currentTarget.dataset.taskid
+    console.log(taskid)
+  },
+  clicytj: function (e) {
+    const taskid = e.currentTarget.dataset.taskid
+    console.log(taskid)
+  },
   getWork: function(openid) {
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database()
 
       db.collection('work').where({
-        _openid: openid
-      })
+          _openid: openid
+        })
         .get()
         .then(res => {
           resolve(res.data)
@@ -150,7 +204,7 @@ Page({
     var days = (endDate - startDate) / (1 * 24 * 60 * 60 * 1000)
     var timeString = null
 
-    if (days < 1) {
+    if (days < 2) {
       var hours = days * 24
       timeString = Math.floor(hours).toString() + "小时"
 
