@@ -15,7 +15,7 @@
   </block>
   <block wx:else>
     <view class="title">
-      <input class="zan-font-18 title-field" placeholder="{{placeholder}}" value="{{title}}" maxlength="50" bindinput="titleinput" />
+      <input class="zan-font-18 title-field" placeholder="{{placeholder}}" value="{{text}}" maxlength="50" bindinput="titleinput" />
       <view class="title-tip">
         <view class="zan-c-gray-dark">{{title_len}}/50</view>
       </view>

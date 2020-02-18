@@ -28,7 +28,6 @@ Page({
   async init(path) {
     let files = await this.getFiles(path)
 
-    console.log(files)
     this.setData({
       files: files
     })
@@ -329,12 +328,10 @@ Page({
         title: title,
         describe: describe,
         desc_len: desc_len,
-        title_len: title_len
+        title_len: title_len,
+        status: false
       })
-
-      console.log('title', this.data.title)
-      console.log('desc', this.data.describe)
-
+      
       this.init(path)
 
     }
