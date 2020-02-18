@@ -127,7 +127,17 @@ Page({
       let res = await await this.getTasks(userInfo.courses[i], now)
       tasks = tasks.concat(res)
     }
-    
+
+    // 添加课程信息
+    for(var i = 0; i < tasks.length; i++) {
+      for(var j = 0; j < courses.length; j++) {
+        if(tasks[i]._courseid == courses[j]._id) {
+          tasks[i].coursename = courses[j].coursename
+          tasks[i].courseCover = courses[j].coverPath
+        }
+      }
+    }
+
     var uploadNum = 0
     var evaluateNum = 0
 
@@ -191,6 +201,8 @@ Page({
       evaluateNum: evaluateNum
     })
 
+    app.globalData.uploadNum = uploadNum
+    app.globalData.evaluateNum = evaluateNum
   },
   /**
    * 页面其他函数
@@ -415,7 +427,10 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function() {
-
+    this.setData({
+      uploadNum: app.globalData.uploadNum,
+      evaluateNum: app.globalData.evaluateNum
+    })
   },
 
   /**

@@ -94,6 +94,6 @@ App({
     tasks: null,
     courses: null,
     type: null,
-    screenWidth: 0
+    screenWidth: 0,
   }
 })

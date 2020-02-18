@@ -19,18 +19,49 @@ Page({
     screenWidth: 0,
     width: 0,
     margin: 0,
-    disabled: true
+    disabled: true,
+    status: true
   },
   /**
    * 初始化函数
    */
-  init: function() {
+  async init(path) {
+    let files = await this.getFiles(path)
 
+    console.log(files)
+    this.setData({
+      files: files
+    })
   },
   /**
    * 页面其他函数
    */
+  getFiles: function(path) {
+    return new Promise((resolve, reject) => {
+      wx.cloud.getTempFileURL({
+        fileList: path
+      }).then(res => {
+        // get temp file URL
+        const list = res.fileList
+        var files = []
+
+        for (let i = 0; i < list.length; i++) {
+          files.push({
+            path: list[i].tempFileURL
+          })
+        }
+
+        resolve(files)
+      }).catch(error => {
+        // handle error
+        console.log(error)
+        reject('获取失败')
+      })
+    })
+  },
   async submit() {
+    var tasks = app.globalData.tasks
+    var kxg_tasks = app.globalData.kxg_tasks
     const openid = app.globalData.openid
     const title = this.data.title
     const taskid = this.data.taskid
@@ -69,30 +100,59 @@ Page({
       describe: describe,
       path: cloudPaths
     }
-    const work = db.collection('work')
 
-    work.add({
-        data
-      })
-      .then(res => {
-        console.log(res)
-        wx.hideLoading()
-      })
-      .catch(err => {
-        console.log(err)
-      })
-      
-    // 更新全局数据
+    let workid = await this.addItem(data)
+
+    /**
+     * 更新全局数据
+     */
+    // 更新未提交数据
     var wtj_tasks = app.globalData.wtj_tasks
     var temp = []
+    var item = null
 
     for (var i = 0; i < wtj_tasks.length; i++) {
       if (wtj_tasks[i]._id != taskid) {
         temp.push(wtj_tasks[i])
+      } else {
+        item = wtj_tasks[i]
       }
     }
 
+    console.log('全局未提交', temp)
     app.globalData.wtj_tasks = temp
+
+    // 更新所有任务数据
+    item.uploaded = true
+    item.work = {
+      workid: workid,
+      _taskid: taskid,
+      uploadtime: date,
+      title: title,
+      describe: describe,
+      path: cloudPaths
+    }
+
+    for (var i = 0; i < tasks.length; i++) {
+      if (tasks[i]._id == taskid) {
+        tasks[i] = item
+      }
+    }
+
+    console.log('全局所有', tasks)
+    app.globalData.tasks = tasks
+
+    // 更新可修改数据
+    var temp = []
+    temp[0] = item
+    for (var i = 0; i < kxg_tasks.length; i++) {
+      temp[i + 1] = kxg_tasks[i]
+    }
+
+    console.log('全局可修改', temp)
+    app.globalData.kxg_tasks = temp
+
+    app.globalData.uploadNum = app.globalData.uploadNum - 1
 
     // 跳转
     wx.redirectTo({
@@ -188,21 +248,95 @@ Page({
       desc_len: e.detail.value.length
     })
   },
+  addItem: function(data) {
+    return new Promise((resolve, reject) => {
+      const work = wx.cloud.database().collection('work')
+
+      work.add({
+          data
+        })
+        .then(res => {
+          const workid = res._id
+          resolve(workid)
+        })
+        .catch(err => {
+          console.log(err)
+          reject('添加失败')
+        })
+    })
+  },
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function(options) {
-    var taskid = options.taskid
-    var placeholder = null
+    var list = options.data.split('/')
+    var taskid = list[0]
+    var arg = list[1]
+
+    // 页面布局
     var width = app.globalData.screenWidth * 0.8 / 3
     var margin = app.globalData.screenWidth * 0.05
     var screenWidth = app.globalData.screenWidth
-    var wtj_tasks = app.globalData.wtj_tasks
 
-    for (var i = 0; i < wtj_tasks.length; i++) {
-      if (wtj_tasks[i]._id == taskid) {
-        placeholder = wtj_tasks[i].taskname
+    this.setData({
+      taskid: taskid,
+      width: width,
+      margin: margin,
+      screenWidth: screenWidth
+    })
+
+    if (arg == '1') {
+      var placeholder = null
+      var wtj_tasks = app.globalData.wtj_tasks
+
+      for (var i = 0; i < wtj_tasks.length; i++) {
+        if (wtj_tasks[i]._id == taskid) {
+          placeholder = wtj_tasks[i].taskname
+        }
       }
+
+      this.setData({
+        placeholder: placeholder,
+        status: true
+      })
+    } else {
+      var desc_len = 0
+      var title_len = 0
+      var placeholder = null
+      var title = null
+      var describe = null
+      var path = null
+      var kxg_tasks = app.globalData.kxg_tasks
+
+      for (var i = 0; i < kxg_tasks.length; i++) {
+        if (kxg_tasks[i]._id == taskid) {
+          placeholder = kxg_tasks[i].taskname
+          title = kxg_tasks[i].work.title
+          describe = kxg_tasks[i].work.describe
+          path = kxg_tasks[i].work.path
+        }
+      }
+
+      if (describe == null) {
+        desc_len = 0
+      } else {
+        desc_len = describe.length
+      }
+      title_len = title.length
+
+      this.setData({
+        placeholder: placeholder,
+        title: title,
+        describe: describe,
+        desc_len: desc_len,
+        title_len: title_len
+      })
+
+      console.log('title', this.data.title)
+      console.log('desc', this.data.describe)
+
+      this.init(path)
+
     }
 
     // 存储
@@ -211,15 +345,6 @@ Page({
     console.log(width)
     console.log(margin)
     console.log(screenWidth)
-    this.setData({
-      taskid: taskid,
-      placeholder: placeholder,
-      title: placeholder,
-      width: width,
-      margin: margin,
-      screenWidth: screenWidth
-    })
-
   },
 
   /**

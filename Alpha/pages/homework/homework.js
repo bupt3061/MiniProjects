@@ -12,48 +12,24 @@ Page({
     ytj_tasks: [],
     ygq_tasks: [],
     kxg_tasks: [],
-    courses: [],
     uploadNum: 0,
-    ygqNum: 0
+    ygqNum: 0,
   },
   /**
    * 初始化函数
    */
   async init() {
     var tasks = app.globalData.tasks
-    var courses = app.globalData.courses
     var openid = app.globalData.openid
-    const date = new Date()
+    const now = new Date()
 
     wx.showLoading({
       title: '加载中',
     })
 
-    // 处理tasks
-    for (var i = 0; i < tasks.length; i++) {
-      // 获得封面及课程名
-      tasks[i].display = true
-      for (var j = 0; j < courses.length; j++) {
-        if (courses[j]._id == tasks[i]._courseid) {
-          tasks[i].tempFileURL = courses[j].tempFileURL
-          tasks[i].coursename = courses[j].coursename
-        }
-      }
-    }
-
-    // 获得已提交作业
-    let works = await this.getWork(openid)
-    console.log("作业", works)
-
-    for (var i = 0; i < tasks.length; i++) {
-      // 链接作业
-      for (var j = 0; j < works.length; j++) {
-        if (tasks[i]._id == works[j]._taskid) {
-          tasks[i]._workid = works[j]._id
-          tasks[i].uploadtime = works[j].uploadtime
-        }
-      }
-    }
+    /**
+     * 处理tasks
+     */
 
     // 分组
     var wtj_tasks = [] // 未提交
@@ -61,29 +37,32 @@ Page({
     var ytj_tasks = [] // 已提交
     var kxg_tasks = [] // 可修改
 
-    for (var i = 0; i < tasks.length; i++) {
-      if (tasks[i].upload && tasks[i].past_upload) {
-        ytj_tasks.push(tasks[i])
-      } else if (tasks[i].upload && !tasks[i].past_upload) {
-        kxg_tasks.push(tasks[i])
-      } else if (!tasks[i].upload && !tasks[i].past_upload) {
-        wtj_tasks.push(tasks[i])
-      } else {
-        ygq_tasks.push(tasks[i])
+    for(var i = 0; i < tasks.length; i++) {
+      if(tasks[i].status == 1) {
+        if(tasks[i].uploaded) {
+          kxg_tasks.push(tasks[i])
+        }else{
+          wtj_tasks.push(tasks[i])
+        }
+      }
+      if ([2, 3].indexOf(tasks[i].status) != -1) {
+        if (tasks[i].uploaded) {
+          ytj_tasks.push(tasks[i])
+        } else{
+          ygq_tasks.push(tasks[i])
+        }
       }
     }
 
     // 处理未提交
     if (wtj_tasks.length != 0) {
       for (var i = 0; i < wtj_tasks.length; i++) {
-        // 获得截止日期
-        wtj_tasks[i].jiezhi = this.getTimeBetween(date, new Date(wtj_tasks[i].uploadend))
-      }
+        // 获得剩余时间
+        wtj_tasks[i].shengyu = this.getTimeBetween(now, wtj_tasks[i].uploadend)
 
-      for (var i = 0; i < wtj_tasks.length; i++) {
         // 排序
         for (var j = 0; j < wtj_tasks.length - i - 1; j++) {
-          if (new Date(wtj_tasks[j].uploadend) > new Date(wtj_tasks[j + 1].uploadend)) {
+          if (wtj_tasks[j].uploadend > wtj_tasks[j + 1].uploadend) {
             var temp = wtj_tasks[j + 1]
             wtj_tasks[j + 1] = wtj_tasks[j]
             wtj_tasks[j] = temp
@@ -92,17 +71,17 @@ Page({
       }
     }
 
+    console.log("未提交", wtj_tasks)
+
     // 处理可修改
     if (kxg_tasks.length != 0) {
       for (var i = 0; i < kxg_tasks.length; i++) {
-        // 获得截止日期
-        kxg_tasks[i].jiezhi = this.getTimeBetween(date, new Date(kxg_tasks[i].uploadend))
-      }
+        // 获得剩余时间
+        kxg_tasks[i].shengyu = this.getTimeBetween(now, kxg_tasks[i].uploadend)
 
-      for (var i = 0; i < kxg_tasks.length; i++) {
         // 排序
         for (var j = 0; j < kxg_tasks.length - i - 1; j++) {
-          if (new Date(kxg_tasks[j].uploadtime) < new Date(kxg_tasks[j + 1].uploadtime)) {
+          if (kxg_tasks[j].uploadtime < kxg_tasks[j + 1].uploadtime) {
             var temp = kxg_tasks[j]
             kxg_tasks[j] = kxg_tasks[j + 1]
             kxg_tasks[j + 1] = temp
@@ -111,17 +90,19 @@ Page({
       }
     }
 
+    console.log("可修改", kxg_tasks)
+
     // 处理已提交
     if (ytj_tasks.length != 0) {
       for (var i = 0; i < ytj_tasks.length; i++) {
-        // 获得周期
-        ytj_tasks[i].tijiao = dt.formatTime(new Date(ytj_tasks[i].uploadtime))
+        // 获得提交时间
+        ytj_tasks[i].tijiao = dt.formatTime(new Date(ytj_tasks[i].work.uploadtime))
       }
 
       for (var i = 0; i < ytj_tasks.length; i++) {
         // 排序
         for (var j = 0; j < ytj_tasks.length - i - 1; j++) {
-          if (new Date(ytj_tasks[j].uploadtime) < new Date(ytj_tasks[j + 1].uploadtime)) {
+          if (ytj_tasks[j].work.uploadtime < ytj_tasks[j + 1].work.uploadtime) {
             var temp = ytj_tasks[j]
             ytj_tasks[j] = ytj_tasks[j + 1]
             ytj_tasks[j + 1] = temp
@@ -130,17 +111,19 @@ Page({
       }
     }
 
+    console.log("已提交", ytj_tasks)
 
     // 处理已过期
     if (ygq_tasks.length != 0) {
       for (var i = 0; i < ygq_tasks.length; i++) {
+        // 获得周期
         ygq_tasks[i].zhouqi = dt.formatTime(new Date(ygq_tasks[i].uploadstart)) + " - " + dt.formatTime(new Date(ygq_tasks[i].uploadend))
       }
 
       for (var i = 0; i < ygq_tasks.length; i++) {
         // 排序
         for (var j = 0; j < ygq_tasks.length - i - 1; j++) {
-          if (new Date(ygq_tasks[j].uploadstart) > new Date(ygq_tasks[j + 1].uploadstart)) {
+          if (ygq_tasks[j].uploadstart > ygq_tasks[j + 1].uploadstart) {
             var temp = ygq_tasks[j]
             ygq_tasks[j] = ygq_tasks[j + 1]
             ygq_tasks[j + 1] = temp
@@ -149,27 +132,23 @@ Page({
       }
     }
 
-    console.log("未提交", wtj_tasks)
-    console.log("已提交", ytj_tasks)
     console.log("已过期", ygq_tasks)
-    console.log("可修改", kxg_tasks)
 
     wx.hideLoading()
 
     // 存储
+    app.globalData.wtj_tasks = wtj_tasks
+    app.globalData.ytj_tasks = ytj_tasks
+    app.globalData.ygq_tasks = ygq_tasks
+    app.globalData.kxg_tasks = kxg_tasks
+
     this.setData({
       wtj_tasks: wtj_tasks,
       ytj_tasks: ytj_tasks,
       ygq_tasks: ygq_tasks,
       kxg_tasks: kxg_tasks,
       ygqNum: ygq_tasks.length,
-      courses: courses
     })
-
-    app.globalData.wtj_tasks = wtj_tasks
-    app.globalData.ygq_tasks = ygq_tasks
-    app.globalData.ytj_tasks = ytj_tasks
-    app.globalData.kxg_tasks = kxg_tasks
   },
   /**
    * 页面其他函数
@@ -179,33 +158,20 @@ Page({
     console.log(taskid)
 
     wx.navigateTo({
-      url: '../submit/submit?taskid=' + taskid,
+      url: '../submit/submit?data=' + taskid + '/1',
     })
   },
   clickkxg: function (e) {
     const taskid = e.currentTarget.dataset.taskid
     console.log(taskid)
+
+    wx.navigateTo({
+      url: '../submit/submit?data=' + taskid + '/2',
+    })
   },
   clickytj: function (e) {
     const taskid = e.currentTarget.dataset.taskid
     console.log(taskid)
-  },
-  getWork: function(openid) {
-    return new Promise((resolve, reject) => {
-      const db = wx.cloud.database()
-
-      db.collection('work').where({
-          _openid: openid
-        })
-        .get()
-        .then(res => {
-          resolve(res.data)
-        })
-        .catch(err => {
-          console.log(err)
-          reject(err)
-        })
-    })
   },
   getTimeBetween: function(startDateString, endDateString) {
     var startDate = Date.parse(startDateString)
@@ -255,7 +221,13 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function() {
-
+    this.setData({
+      wtj_tasks: app.globalData.wtj_tasks,
+      ytj_tasks: app.globalData.ytj_tasks,
+      ygq_tasks: app.globalData.ygq_tasks,
+      kxg_tasks: app.globalData.kxg_tasks,
+      ygqNum: app.globalData.ygq_tasks.length
+    })
   },
 
   /**

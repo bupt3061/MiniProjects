@@ -1,1 +1,5 @@
 /* pages/success/success.wxss */
+
+page {
+  background: white;
+}
