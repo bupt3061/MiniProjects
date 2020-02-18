@@ -6,7 +6,8 @@
     "pages/loginNext/loginNext",
     "pages/mine/mine",
     "pages/homework/homework",
-    "pages/submit/submit"
+    "pages/submit/submit",
+    "pages/success/success"
   ],
   "enablePullDownRefresh": true,
   "window": {

@@ -1,12 +1,6 @@
 //app.js
 
 // 引入外部js
-const stg = require('./utils/storage.js')
-const upd = require('./utils/update.js')
-const hs = require('./utils/hash.js')
-const dt = require('./utils/date.js')
-
-upd.updateApp()
 
 App({
   async init() {

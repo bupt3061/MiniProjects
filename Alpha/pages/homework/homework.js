@@ -1,6 +1,5 @@
 // pages/homework/homework.js
 const app = getApp()
-
 const dt = require('../../utils/date.js')
 
 Page({

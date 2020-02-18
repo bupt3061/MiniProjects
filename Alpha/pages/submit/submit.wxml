@@ -1,5 +1,5 @@
 <!--pages/submit/submit.wxml-->
-<view class="container zan-font-14 zan-c-black">
+<view class="container zan-font-14 zan-c-black" style="padding-bottom: 96rpx;">
   <view class="title">
     <input class="zan-font-18 title-field" placeholder="{{placeholder}}" maxlength="50" auto-focus bindinput="titleinput" />
     <view class="title-tip">
@@ -16,7 +16,7 @@
     <view class="zan-c-gray-dark" style="width: 90%; padding: 24rpx; margin: 0 auto">点击上传文件</view>
   </view>
 
-  <view style="width: 100%; margin-bottom: 128rpx;">
+  <view style="width: 100%; ">
     <view class="file" style="margin-left: {{margin}}px;">
       <block wx:for="{{files}}" wx:key="{{index}}">
         <view class="fitem" style="height: {{width}}px; width: {{width}}px; margin-right: {{margin}}px">
@@ -31,5 +31,7 @@
       </view>
     </view>
   </view>
+
+  <button class="primary-bg" style="width: 90%;" disabled="{{disabled}}" bindtap="submit">提交</button>
 
 </view>

@@ -53,67 +53,63 @@ Page({
     }
 
     // 获取用户所有任务
-    var temp = []
-    for (var i = 0; i < userInfo.courses.length; i++) {
-      let res = await this.getTasks(userInfo.courses[i])
-      temp = temp.concat(res)
-    }
+   
+    // var temp = []
+    // for (var i = 0; i < userInfo.courses.length; i++) {
+    //   let res = await this.getTasks(userInfo.courses[i])
+    //   temp = temp.concat(res)
+    // }
 
-    var new_temp = []
-    for (var i = 0; i < temp.length; i++) {
-      if (date >= new Date(temp[i].uploadstart)) {
-        new_temp.push(temp[i])
-      }
-    }
+    // console.log('temp', temp)
 
-    let [tasks, uploadNum, evaluateNum] = await this.processTasks(openid, new_temp)
-    console.log('tasks:', tasks)
-    console.log('uploadNum', uploadNum)
-    console.log('evaluateNum', evaluateNum)
+    // let [tasks, uploadNum, evaluateNum] = await this.processTasks(openid, new_temp)
+    // console.log('tasks:', tasks)
+    // console.log('uploadNum', uploadNum)
+    // console.log('evaluateNum', evaluateNum)
 
-    // 获取用户所有课程
-    var courses = []
-    for (var i = 0; i < userInfo.courses.length; i++) {
-      let res = await this.getCourse(userInfo.courses[i])
-      courses = courses.concat(res)
-    }
+    // // 获取用户所有课程
+    // var courses = []
+    // for (var i = 0; i < userInfo.courses.length; i++) {
+    //   let res = await this.getCourse(userInfo.courses[i])
+    //   courses = courses.concat(res)
+    // }
 
-    // 获得课程封面
-    var coverids = []
-    for (var i = 0; i < courses.length; i++) {
-      var temp = {
-        fileID: courses[i].cover,
-        maxAge: 60 * 60, // one hour
-      }
-      coverids.push(temp)
-    }
+    // // 获得课程封面
+    // var coverids = []
+    // for (var i = 0; i < courses.length; i++) {
+    //   var temp = {
+    //     fileID: courses[i].cover,
+    //     maxAge: 60 * 60, // one hour
+    //   }
+    //   coverids.push(temp)
+    // }
 
-    let covers = await this.get_covers(coverids)
+    // let covers = await this.get_covers(coverids)
 
-    for (var i = 0; i < courses.length; i++) {
-      courses[i].tempFileURL = covers[i].tempFileURL
-    }
+    // for (var i = 0; i < courses.length; i++) {
+    //   courses[i].tempFileURL = covers[i].tempFileURL
+    // }
 
-    console.log('courses:', courses)
+    // console.log('courses:', courses)
 
-    // 结束加载
-    wx.hideLoading()
+    // // 结束加载
+    // wx.hideLoading()
 
-    // 设置数据
-    this.setData({
-      openid: openid,
-      type: userInfo.type,
-      courses: courses,
-      tasks: tasks,
-      uploadNum: uploadNum,
-      evaluateNum: evaluateNum
-    })
+    // // 设置数据
+    // this.setData({
+    //   openid: openid,
+    //   type: userInfo.type,
+    //   courses: courses,
+    //   tasks: tasks,
+    //   uploadNum: uploadNum,
+    //   evaluateNum: evaluateNum
+    // })
 
-    app.globalData.userInfo = userInfo
-    app.globalData.tasks = tasks
-    app.globalData.courses = courses
-    app.globalData.type = userInfo.type
-    app.globalData.screenWidth = screenWidth
+    // app.globalData.userInfo = userInfo
+    // app.globalData.tasks = tasks
+    // app.globalData.courses = courses
+    // app.globalData.type = userInfo.type
+    // app.globalData.screenWidth = screenWidth
   },
   /**
    * 页面其他函数
@@ -169,11 +165,11 @@ Page({
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database()
       const _ = db.command
-
-      var date = new Date()
+      const now = new Date()
 
       db.collection('task').where({
-          _courseid: courseid
+          _courseid: courseid,
+          uploadstart: _.lte(now)
         })
         .get()
         .then(res => {
