@@ -31,17 +31,21 @@ Page({
       title: '加载中',
     })
 
-    // 获取设备信息
+    /**
+     * 获取设备信息
+     */
     const info = wx.getSystemInfoSync()
     const screenWidth = info.screenWidth
 
     console.log('screenWidth', screenWidth)
     app.globalData.screenWidth = screenWidth
 
-    // 从数据库获取该用户信息
+    /**
+     * 获取用户信息
+     */
     let openid = await this.getOpenid()
     let userInfo = await this.existInUserlist(openid)
-    var type = 1
+    var type = null
 
     console.log('openid', openid)
     app.globalData.openid = openid
@@ -62,6 +66,10 @@ Page({
       app.globalData.type = type
     }
 
+    /**
+     * 处理课程
+     */
+
     // 获取用户所有课程
     var courses = []
 
@@ -70,35 +78,30 @@ Page({
       courses = courses.concat(course)
     }
 
+    // 添加教师信息
+    for(let i = 0; i < courses.length; i++) {
+      let teacher = await this.getTeacherInfo(courses[i]._openid)
+      courses[i].teacher = teacher
+    }
+
+    // 添加课程封面
+    var covers = []
+    for (let i = 0; i < courses.length; i++) {
+      var temp = {
+        fileID: courses[i].cover,
+        maxAge: 60 * 60, // one hour
+      }
+      covers.push(temp)
+    }
+
+    let coverPaths = await this.getCoverPaths(covers)
+
+    for (let i = 0; i < courses.length; i++) {
+      courses[i].coverPath = coverPaths[i].tempFileURL
+    }
+
     console.log('courses', courses)
     app.globalData.courses = courses
-
-    // // 获得课程封面
-    // var coverids = []
-    // for (var i = 0; i < courses.length; i++) {
-    //   var temp = {
-    //     fileID: courses[i].cover,
-    //     maxAge: 60 * 60, // one hour
-    //   }
-    //   coverids.push(temp)
-    // }
-
-    // let covers = await this.get_covers(coverids)
-
-    // for (var i = 0; i < courses.length; i++) {
-    //   courses[i].tempFileURL = covers[i].tempFileURL
-    // }
-
-    // console.log('courses:', courses)
-
-    // 获取用户所有任务
-    const now = new Date()
-    let tasks = []
-
-    for (let i = 0; i < userInfo.courses.length; i++) {
-      let res = await await this.getTasks(userInfo.courses[i], now)
-      tasks = tasks.concat(res)
-    }
 
     /**
      * 处理任务
@@ -116,6 +119,15 @@ Page({
      * true: 已互评
      * false：未互评
      */
+    // 获取用户所有任务
+    const now = new Date()
+    let tasks = []
+
+    for (let i = 0; i < userInfo.courses.length; i++) {
+      let res = await await this.getTasks(userInfo.courses[i], now)
+      tasks = tasks.concat(res)
+    }
+    
     var uploadNum = 0
     var evaluateNum = 0
 
@@ -164,6 +176,8 @@ Page({
     console.log('uploadNum', uploadNum)
     console.log('evaluateNum', evaluateNum)
 
+    app.globalData.tasks = tasks
+
     // 结束加载
     wx.hideLoading()
 
@@ -181,7 +195,7 @@ Page({
   /**
    * 页面其他函数
    */
-  get_covers: function(covers) {
+  getCoverPaths: function(covers) {
     return new Promise((resolve, reject) => {
       wx.cloud.getTempFileURL({
         fileList: covers
@@ -289,6 +303,24 @@ Page({
       }).catch(err => {
         console.error(err)
         reject("查询失败!")
+      })
+    })
+  },
+  getTeacherInfo: function(openid) {
+    return new Promise((resolve, reject) => {
+      const user = wx.cloud.database().collection('user')
+
+      user.where({
+        _openid: openid
+      })
+      .get()
+      .then(res => {
+        const teacher = res.data[0]
+        resolve(teacher)
+      })
+      .catch(err => {
+        console.log(err)
+        reject('获取失败')
       })
     })
   },
