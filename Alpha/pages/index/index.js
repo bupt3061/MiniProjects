@@ -25,8 +25,6 @@ Page({
    * 初始化函数
    */
   async init() {
-    const app = getApp()
-    const date = new Date()
 
     // 加载
     wx.showLoading({
@@ -34,13 +32,18 @@ Page({
     })
 
     // 获取设备信息
-    var info = wx.getSystemInfoSync()
-    var screenWidth = info.screenWidth
+    const info = wx.getSystemInfoSync()
+    const screenWidth = info.screenWidth
+
+    console.log('screenWidth', screenWidth)
+    app.globalData.screenWidth = screenWidth
 
     // 从数据库获取该用户信息
     let openid = await this.getOpenid()
-    let userInfo = await this.getUserInfo(openid)
-    console.log('userInfo:', userInfo)
+    let userInfo = await this.existInUserlist(openid)
+    var type = 1
+
+    console.log('openid', openid)
     app.globalData.openid = openid
 
     if (!userInfo) {
@@ -50,29 +53,25 @@ Page({
       })
 
       return
+    } else {
+      type = userInfo.type
+
+      console.log('userInfo', userInfo)
+      console.log('type', type)
+      app.globalData.userInfo = userInfo
+      app.globalData.type = type
     }
 
-    // 获取用户所有任务
-   
-    // var temp = []
-    // for (var i = 0; i < userInfo.courses.length; i++) {
-    //   let res = await this.getTasks(userInfo.courses[i])
-    //   temp = temp.concat(res)
-    // }
+    // 获取用户所有课程
+    var courses = []
 
-    // console.log('temp', temp)
+    for (let i = 0; i < userInfo.courses.length; i++) {
+      let course = await this.getCourse(userInfo.courses[i])
+      courses = courses.concat(course)
+    }
 
-    // let [tasks, uploadNum, evaluateNum] = await this.processTasks(openid, new_temp)
-    // console.log('tasks:', tasks)
-    // console.log('uploadNum', uploadNum)
-    // console.log('evaluateNum', evaluateNum)
-
-    // // 获取用户所有课程
-    // var courses = []
-    // for (var i = 0; i < userInfo.courses.length; i++) {
-    //   let res = await this.getCourse(userInfo.courses[i])
-    //   courses = courses.concat(res)
-    // }
+    console.log('courses', courses)
+    app.globalData.courses = courses
 
     // // 获得课程封面
     // var coverids = []
@@ -92,24 +91,92 @@ Page({
 
     // console.log('courses:', courses)
 
-    // // 结束加载
-    // wx.hideLoading()
+    // 获取用户所有任务
+    const now = new Date()
+    let tasks = []
 
-    // // 设置数据
-    // this.setData({
-    //   openid: openid,
-    //   type: userInfo.type,
-    //   courses: courses,
-    //   tasks: tasks,
-    //   uploadNum: uploadNum,
-    //   evaluateNum: evaluateNum
-    // })
+    for (let i = 0; i < userInfo.courses.length; i++) {
+      let res = await await this.getTasks(userInfo.courses[i], now)
+      tasks = tasks.concat(res)
+    }
 
-    // app.globalData.userInfo = userInfo
-    // app.globalData.tasks = tasks
-    // app.globalData.courses = courses
-    // app.globalData.type = userInfo.type
-    // app.globalData.screenWidth = screenWidth
+    /**
+     * 处理任务
+     * 
+     * 状态 status：
+     * 1：提交期
+     * 2：互评期
+     * 3：已过期
+     * 
+     * uploaded：
+     * true：已提交
+     * false：未提交
+     * 
+     * evaluated:
+     * true: 已互评
+     * false：未互评
+     */
+    var uploadNum = 0
+    var evaluateNum = 0
+
+    for (let i = 0; i < tasks.length; i++) {
+      // 状态
+      if (now > tasks[i].evaluateend) {
+        tasks[i].status = 3
+      } else if (now >= tasks[i].uploadstart && now <= tasks[i].uploadend) {
+        tasks[i].status = 1
+      } else {
+        tasks[i].status = 2
+      }
+
+      // 是否提交
+      let [work, uploaded] = await this.judgeUploaded(tasks[i]._id, openid)
+
+      if (uploaded) {
+        tasks[i].work = {
+          workid: work[0]._id,
+          path: work[0].path,
+          title: work[0].title,
+          describe: work[0].describe,
+          uploadtime: work[0].uploadtime
+        }
+      }
+      else {
+        if (tasks[i].status == 1) {
+          uploadNum += 1
+        }
+      }
+      tasks[i].uploaded = uploaded
+
+      // 是否互评
+      let [evaluates, evaluated, total] = await this.judgeEvaluated(tasks[i]._id, openid)
+      if(total > 0) {
+        tasks[i].evaluates = evaluates
+      }
+      if(!evaluated && tasks[i].status == 2) {
+        evaluateNum += 1
+      }
+      tasks[i].evaluated = evaluated
+      tasks[i].total = total
+    }
+
+    console.log('tasks', tasks)
+    console.log('uploadNum', uploadNum)
+    console.log('evaluateNum', evaluateNum)
+
+    // 结束加载
+    wx.hideLoading()
+
+    // 设置数据
+    this.setData({
+      openid: openid,
+      type: type,
+      courses: courses,
+      tasks: tasks,
+      uploadNum: uploadNum,
+      evaluateNum: evaluateNum
+    })
+
   },
   /**
    * 页面其他函数
@@ -131,7 +198,7 @@ Page({
     return new Promise((resolve, reject) => {
       // 获取openid
       wx.cloud.callFunction({
-        name: 'getInfo',
+        name: 'getOpenid',
         data: {},
         success: res => {
           resolve(res.result.OPENID)
@@ -143,111 +210,155 @@ Page({
       })
     })
   },
-  getUserInfo: function(openid) {
-    // 从数据库中获取该用户记录
+  existInUserlist: function(openid) {
+    /**
+     * 判断该用户是否已注册并返回
+     */
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database()
+      const user = db.collection('user')
 
-      db.collection('user').where({
+      user.where({
           _openid: openid
         })
         .get()
         .then(res => {
-          resolve(res.data[0])
+          const item = res.data[0]
+          resolve(item)
         })
         .catch(err => {
           console.log(err)
-          reject(err)
-        })
-    })
-  },
-  getTasks: function(courseid) {
-    return new Promise((resolve, reject) => {
-      const db = wx.cloud.database()
-      const _ = db.command
-      const now = new Date()
-
-      db.collection('task').where({
-          _courseid: courseid,
-          uploadstart: _.lte(now)
-        })
-        .get()
-        .then(res => {
-          resolve(res.data)
-        })
-        .catch(err => {
-          console.log(err)
-          reject(err)
+          reject('查询失败')
         })
     })
   },
   getCourse: function(courseid) {
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database()
+      const course = db.collection('course')
 
-      db.collection('course').where({
+      course.where({
           _id: courseid
         })
         .get()
         .then(res => {
-          resolve(res.data)
+          const course = res.data
+          resolve(course)
         })
         .catch(err => {
           console.log(err)
-          reject(err)
+          reject('获取失败')
         })
     })
   },
-  processTasks: function(openid, tasks) {
-    // 处理任务数据
+  getTasksCount: function(courseid, date) {
     return new Promise((resolve, reject) => {
-      var date = new Date()
-      var uploadNum = 0
-      var evaluateNum = 0
+      const db = wx.cloud.database()
+      const _ = db.command
+      const task = db.collection('task')
 
-      for (var i = 0; i < tasks.length; i++) {
-        var upload = true // 默认已交作业
-        var evaluate = true // 默认已互评
-
-        var past_upload = false // 默认提交未过期
-        var past_evaluate = false // 默认互评未过期
-
-        // 判断是否提交
-        if (!tasks[i].uploaded.includes(openid)) {
-          upload = false
-
-          if (date >= new Date(tasks[i].uploadstart) && date <= new Date(tasks[i].uploadend)) {
-            uploadNum += 1
-          }
-        }
-
-        if (!tasks[i].evaluated.includes(openid)) {
-          evaluate = false
-
-          if (date >= new Date(tasks[i].evaluatestart) && date <= new Date(tasks[i].evaluateend)) {
-            evaluateNum += 1
-          }
-        }
-
-        // 判断是否过期
-        if (date > new Date(tasks[i].evaluateend)) {
-          past_upload = true
-          past_evaluate = true
-        } else if (date > new Date(tasks[i].uploadend)) {
-          past_upload = true
-        }
-
-        tasks[i]['upload'] = upload
-        tasks[i]['evaluate'] = evaluate
-        tasks[i]['past_upload'] = past_upload
-        tasks[i]['past_evaluate'] = past_evaluate
-      }
-      resolve([tasks, uploadNum, evaluateNum])
+      task.where({
+        _courseid: courseid,
+        uploadstart: _.lte(date)
+      }).count().then(res => {
+        const total = res.total
+        resolve(total);
+      }).catch(err => {
+        console.log(err)
+        reject("查询失败")
+      })
     })
   },
-  toMyCourse: function() {
-    wx.switchTab({
-      url: '../mine/mine',
+  getTasksIndexSkip: function(courseid, skip, date) {
+    return new Promise((resolve, reject) => {
+      const db = wx.cloud.database()
+      const _ = db.command
+      const task = db.collection('task')
+
+      let statusList = []
+      let selectPromise;
+
+      selectPromise = task.where({
+        _courseid: courseid,
+        uploadstart: _.lte(date)
+      }).skip(skip).get()
+
+      selectPromise.then(res => {
+        const data = res.data
+        resolve(data);
+      }).catch(err => {
+        console.error(err)
+        reject("查询失败!")
+      })
+    })
+  },
+  async getTasks(courseid, date) {
+    let count = await this.getTasksCount(courseid, date)
+    let list = []
+
+    for (let i = 0; i < count; i += 10) {
+      let res = await this.getTasksIndexSkip(courseid, i, date)
+      list = list.concat(res)
+
+      if (list.length == count) {
+        return list
+      }
+    }
+  },
+  judgeUploaded: function(taskid, openid) {
+    /**
+     * 判断是否上传
+     */
+    return new Promise((resolve, reject) => {
+      const work = wx.cloud.database().collection('work')
+
+      work.where({
+          _taskid: taskid,
+          _openid: openid
+        })
+        .get()
+        .then(res => {
+          const work = res.data
+          var uploaded = true
+
+          if (work.length == 0) {
+            uploaded = false
+          }
+
+          resolve([work, uploaded])
+        })
+        .catch(err => {
+          console.log(err)
+          reject('获取失败')
+        })
+    })
+  },
+  judgeEvaluated: function(taskid, openid) {
+    /**
+     * 判断是否已完成互评（3个）
+     */
+    return new Promise((resolve, reject) => {
+      const evaluate = wx.cloud.database().collection('evaluate')
+
+      evaluate.where({
+          _taskid: taskid,
+          _openid: openid
+        }).get()
+        .then(res => {
+          const evaluates = res.data
+          var evaluated = true
+          const total = evaluates.length
+
+          if (total < 3) {
+            evaluated = false
+          }
+
+          resolve([evaluates, evaluated, total])
+        })
+        .catch(err => {
+          console.log(err)
+          reject('获取失败')
+        })
     })
   },
   toHomework: function() {

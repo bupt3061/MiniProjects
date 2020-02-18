@@ -3,9 +3,12 @@
 // 引入外部js
 
 App({
+  /**
+   * 初始化函数
+   */
   async init() {
 
-    this.login() // 登陆
+    const code = await this.login() // 登陆
 
     if (await this.getSetting()) { // 获取头像、昵称等基本信息
       let basicInfo = await this.getBasicInfo()
@@ -14,17 +17,21 @@ App({
     }
 
   },
+  /**
+   * 其他函数
+   */
   login: function() {
     // 登陆以获取用户基本信息
     return new Promise((resolve, reject) => {
       wx.login({
         success: res => {
           // 发送 res.code 到后台换取 openId, sessionKey, unionId
-          resolve(res.code)
+          const code = res.code
+          resolve(code)
         },
         fail: err => {
           console.log(err)
-          reject(err)
+          reject('登陆失败')
         }
       })
     })
