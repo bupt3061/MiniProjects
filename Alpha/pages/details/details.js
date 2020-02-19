@@ -8,6 +8,7 @@ Page({
    * 页面的初始数据
    */
   data: {
+    show: false,
     taskid: null,
     work: null,
     title: '',
@@ -18,6 +19,7 @@ Page({
     mexisted: false,
     marked: false,
     standard: null,
+    standard_keys: null,
     canEvaluate: false,
     evals: null,
     evalsNum: 0,
@@ -78,8 +80,10 @@ Page({
     let task = await this.getTask(taskid)
     const standard = task.standard
     const evaluateend = task.evaluateend
+    const standard_keys = Object.keys(standard)
 
     console.log('standard', standard)
+    console.log('standard_keys', standard_keys)
 
     // 判断自己是否可评价
     var canEvaluate = true
@@ -99,10 +103,17 @@ Page({
      */
     let evals = await this.getEvals(workid)
     const evalsNum = evals.length
+
+    for(var i = 0; i < evals.length; i++) {
+      var res = this.getTimeBetween(now, evals[i].evaltime) + '前'
+      evals[i].pasttime = res
+    }
+
     console.log('evals', evals)
 
     // 设置数据
     this.setData({
+      show: true,
       taskid: taskid,
       work: work,
       title: title,
@@ -113,6 +124,7 @@ Page({
       mexisted: mexisted,
       marked: marked,
       standard: standard,
+      standard_keys: standard_keys,
       canEvaluate: canEvaluate,
       evals: evals,
       evalsNum: evalsNum,

@@ -19,16 +19,27 @@
     {{describe}}
   </view>
 
-  <view class="content" style="width: 90%">
+  <view class="content" style="width: 90%; margin-bottom: 64rpx;">
     <block wx:for="{{tempUrls}}" wx:key="{{index}}">
       <image src="{{item}}" style="width: 100%" mode="widthFix" data-url="{{item}}" bindtap="preview"></image>
     </block>
   </view>
 
-  <block wx:if="{{evalsNum != 0}}">
-    <view style="width: 100%; height: 12rpx; background-color: #f3f4f6;"></view>
+  <block wx:if="{{show}}">
+    <view wx:if="{{evalsNum != 0}}" style="width: 100%; height: 16rpx; background-color: #f3f4f6;"></view>
     <view class="evals" style="width: 90%">
-      <view class="zan-font-20" style="padding: 32rpx">全部评论({{evalsNum}})</view>
+      <view class="zan-font-20" style="padding: 32rpx 0; font-weight: bold;">全部评论({{evalsNum}})</view>
+      <view class="eval-card">
+        <view class="eval-top" style="display: flex; flex-direction: row; margin-bottom: 24rpx;">
+          <view class="avatar" style="margin-right: 24rpx">
+            <image style="width: 88rpx; height: 88rpx; border-radius: 44rpx; border: 1px solid #999999;" src="../../img/tongxue.png"></image>
+          </view>
+          <view class="info" style="display: flex; flex-direction: column; align-items: center;">
+            <view class="zan-font-18">同学</view>
+            <view class="zan-font-14 zan-c-gray-darker">{{pasttime}}</view>
+          </view>
+        </view>
+      </view>
     </view>
   </block>
 </view>
