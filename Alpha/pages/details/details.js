@@ -8,6 +8,18 @@ Page({
    * 页面的初始数据
    */
   data: {
+    taskid: null,
+    work: null,
+    title: null,
+    describe: null,
+    pasttime: null,
+    mid: null,
+    mexisted: false,
+    marked: false,
+    standard: null,
+    canEvaluate: false,
+    evals: null,
+    evalsNum: 0,
     duration: 1000,
     content: null,
     $zanui: {
@@ -15,10 +27,6 @@ Page({
         show: false
       }
     },
-    marked: false,
-    title: null,
-    time: null,
-    status: null
   },
   /**
    * 初始化函数
@@ -88,13 +96,66 @@ Page({
     /**
      * 获取全部评论
      */
+    let evals = await this.getEvals(workid)
+    const evalsNum = evals.length
+    console.log('evals', evals)
 
-
+    // 设置数据
+    this.setData({
+      taskid: taskid,
+      work: work,
+      title: title,
+      describe: describe,
+      pasttime: pasttime,
+      mid: mid,
+      mexisted: mexisted,
+      marked: marked,
+      standard: standard,
+      canEvaluate: canEvaluate,
+      evals: evals,
+      evalsNum: evalsNum,
+    })
   },
   /**
    * 其他函数
    */
   marked: function() {
+    const marked = wx.cloud.database().collection('marked')
+
+    if(this.data.mexisted) {
+      marked.where({
+        _id: this.data.mid
+      }).update({
+        data: {
+          status: true
+        }
+      })
+      .then(res => {
+        console.log('res', res)
+      })
+      .catch(err => {
+        console.log('err', err)
+      })
+    } else {
+      const now = new Date()
+
+      data = {
+        markedtime: now,
+        _workid: this.data.work._id,
+        status: true
+      }
+
+      marked.add({
+        data
+      })
+      .then(res => {
+        console.log(res)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+    }
+
     this.setData({
       marked: true,
       $zanui: {
@@ -117,6 +178,22 @@ Page({
 
   },
   cancleMarked: function () {
+    const marked = wx.cloud.database().collection('marked')
+
+    marked.where({
+      _id: this.data.mid
+    }).update({
+      data: {
+        status: false
+      }
+    })
+      .then(res => {
+        console.log('res', res)
+      })
+      .catch(err => {
+        console.log('err', err)
+      })
+
     this.setData({
       marked: false,
       $zanui: {
@@ -249,15 +326,14 @@ Page({
       })
     })
   },
-  getEvalsCount: function (courseid, date) {
+  getEvalsCount: function (workid) {
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database()
       const _ = db.command
-      const task = db.collection('task')
+      const evaluate = db.collection('evaluate')
 
-      task.where({
-        _courseid: courseid,
-        uploadstart: _.lte(date)
+      evaluate.where({
+        _workid: workid
       }).count().then(res => {
         const total = res.total
         resolve(total);
@@ -267,18 +343,16 @@ Page({
       })
     })
   },
-  getTasksIndexSkip: function (courseid, skip, date) {
+  getEvalsIndexSkip: function (workid, skip) {
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database()
       const _ = db.command
-      const task = db.collection('task')
+      const evaluate = db.collection('evaluate')
 
-      let statusList = []
       let selectPromise;
 
-      selectPromise = task.where({
-        _courseid: courseid,
-        uploadstart: _.lte(date)
+      selectPromise = evaluate.where({
+        _workid: workid,
       }).skip(skip).get()
 
       selectPromise.then(res => {
@@ -290,30 +364,13 @@ Page({
       })
     })
   },
-  getTeacherInfo: function (openid) {
-    return new Promise((resolve, reject) => {
-      const user = wx.cloud.database().collection('user')
-
-      user.where({
-        _openid: openid
-      })
-        .get()
-        .then(res => {
-          const teacher = res.data[0]
-          resolve(teacher)
-        })
-        .catch(err => {
-          console.log(err)
-          reject('获取失败')
-        })
-    })
-  },
-  async getTasks(courseid, date) {
-    let count = await this.getTasksCount(courseid, date)
+  async getEvals(workid) {
+    let count = await this.getEvalsCount(workid)
     let list = []
 
     for (let i = 0; i < count; i += 10) {
-      let res = await this.getTasksIndexSkip(courseid, i, date)
+      let res = await this.getEvalsIndexSkip(workid, i)
+      console.log('res', res)
       list = list.concat(res)
 
       if (list.length == count) {

@@ -6,8 +6,8 @@
 <view class="container zan-font-16 zan-c-black" style="padding: 32rpx 0px;">
   <view class="top">
     <view class="top-left">
-      <view class="zan-font-20" style="font-weight: bold; margin-bottom: 12rpx;">这是一段标题</view>
-      <view class="zan-font-14 zan-c-gray-darker">12小时前</view>
+      <view class="zan-font-20" style="font-weight: bold; margin-bottom: 12rpx;">{{title}}</view>
+      <view class="zan-font-14 zan-c-gray-darker">{{pasttime}}</view>
     </view>
     <view class="top-right">
       <image class="mark-icon" wx:if="{{!marked}}" src="../../img/mark.png" bindtap="marked"></image>

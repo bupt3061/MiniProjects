@@ -88,7 +88,24 @@ Page({
      * 更新数据
      */
     // 增加用户contribution
-    
+    const db = wx.cloud.database()
+    const _ = db.command
+
+    db.collection('user').where({
+      _openid: openid
+    }).update({
+      data: {
+        contribution: _.inc(1)
+      }
+    })
+    .then(res => {
+      console.log('增加贡献值')
+      console.log(res)
+    })
+    .catch(err => {
+      console.log(err)
+    })
+
     // 更新未提交数据
     var wtj_tasks = app.globalData.wtj_tasks
     var temp = []

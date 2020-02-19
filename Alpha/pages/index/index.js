@@ -124,7 +124,7 @@ Page({
     let tasks = []
 
     for (let i = 0; i < userInfo.courses.length; i++) {
-      let res = await await this.getTasks(userInfo.courses[i], now)
+      let res = await this.getTasks(userInfo.courses[i], now)
       tasks = tasks.concat(res)
     }
 
