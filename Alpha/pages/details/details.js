@@ -17,12 +17,13 @@ Page({
     },
     marked: false,
     title: null,
-    time: null
+    time: null,
+    status: null
   },
   /**
    * 初始化函数
    */
-  async init(taskid) {
+  async init(taskid, status) {
     const openid = app.globalData.openid
     const now = new Date()
 
@@ -45,10 +46,42 @@ Page({
     const pasttime = this.getTimeBetween(now, uploadtime) + '前'
     console.log('pasttime', pasttime)
 
-    // 获得tempurl
+    // 获得tempUrls
     let tempUrls = await this.getTempUrls(cloudPaths)
     console.log(tempUrls)
-    
+
+    // 判断是否收藏
+    const marked = wx.cloud.database().collection('marked')
+
+    marked.where({
+      _workid: workid,
+      _openid: openid
+    }).get()
+    .then(res => {
+      console.log(res)
+    })
+    .catch(err => {
+      console.log('获取失败')
+    })
+
+    /**
+     *  判断是否可以评价：
+     * 1、自己的不可评价
+     * 2、已过期不可评价
+     */
+    const task = wx.cloud.database().collection('task')
+
+    task.doc({
+      _id: taskid
+    }).get()
+    .then(res => {
+      console.log(res)
+    })
+    .catch(err => {
+      console.log(err)
+      // reject('获取失败')
+    })
+
   },
   /**
    * 其他函数
@@ -160,6 +193,9 @@ Page({
    */
   onLoad: function (options) {
     const taskid = options.taskid
+
+    console.log('taskid', taskid)
+
     this.init(taskid)
   },
 
