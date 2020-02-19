@@ -74,8 +74,6 @@ Page({
     console.log('提交', cloudPaths)
 
     // 上传到数据库
-
-
     const data = {
       _taskid: taskid,
       uploadtime: date,
@@ -87,8 +85,10 @@ Page({
     let workid = await this.addItem(data)
 
     /**
-     * 更新全局数据
+     * 更新数据
      */
+    // 增加用户contribution
+    
     // 更新未提交数据
     var wtj_tasks = app.globalData.wtj_tasks
     var temp = []
