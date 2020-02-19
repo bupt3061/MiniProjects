@@ -3,8 +3,8 @@
 
 <zan-toptips backgroundColor="#14d1b5" content="{{content}}" duration="{{ duration }}" is-show="{{ $zanui.toptips.show }}" />
 
-<view class="container zan-font-16 zan-c-black" style="padding: 32rpx 0px;">
-  <view class="top">
+<view class="container zan-font-16 zan-c-black" style="padding: 64rpx 0px;">
+  <view class="top" style="margin-bottom: 32rpx;">
     <view class="top-left">
       <view class="zan-font-20" style="font-weight: bold; margin-bottom: 12rpx;">{{title}}</view>
       <view class="zan-font-14 zan-c-gray-darker">{{pasttime}}</view>
@@ -15,15 +15,17 @@
     </view>
   </view>
 
-  <view class="desc zan-font-18" style="width: 90%; margin-bottom: 32rpx;">
-    这是一段很长很长的描述
+  <view wx:if="{{describe != null}}" class="desc zan-font-18" style="width: 90%; margin-bottom: 32rpx;">
+    {{describe}}
   </view>
 
   <view class="content" style="width: 90%">
-    正文内容
+    <block wx:for="{{tempUrls}}" wx:key="{{index}}">
+      <image src="{{item}}" style="width: 100%" mode="widthFix"></image>
+    </block>
   </view>
 
-  <view class="evaluates" style="width: 90%">
+  <view class="evals" style="width: 90%">
     评论
   </view>
 </view>
