@@ -27,6 +27,7 @@ Page({
    */
   async init(path) {
     let files = await this.getFiles(path)
+    console.log('files', files)
 
     this.setData({
       files: files
@@ -35,45 +36,24 @@ Page({
   /**
    * 页面其他函数
    */
-  getFiles: function(path) {
-    return new Promise((resolve, reject) => {
-      wx.cloud.getTempFileURL({
-        fileList: path
-      }).then(res => {
-        // get temp file URL
-        const list = res.fileList
-        var files = []
-
-        for (let i = 0; i < list.length; i++) {
-          files.push({
-            path: list[i].tempFileURL
-          })
-        }
-
-        resolve(files)
-      }).catch(error => {
-        // handle error
-        console.log(error)
-        reject('获取失败')
-      })
-    })
-  },
   async submit() {
     var tasks = app.globalData.tasks
     var kxg_tasks = app.globalData.kxg_tasks
     const openid = app.globalData.openid
-    const title = this.data.title
+    var title = this.data.title
     const taskid = this.data.taskid
     const describe = this.data.describe
-    const date = dt.formatTimeFull(new Date())
+    const date = new Date()
     const files = this.data.files
-    const db = wx.cloud.database()
-    const _ = db.command
     var paths = []
     var names = []
     var cloudPaths = []
 
-    // 上传到云端
+    if (title == null) {
+      title = this.data.placeholder
+    }
+
+    // 上传图片到云端
     wx.showLoading({
       title: '上传中',
     })
@@ -89,9 +69,13 @@ Page({
       cloudPaths.push(temp)
     }
 
-    console.log(cloudPaths)
+    console.log('paths', paths)
+    console.log('names', names)
+    console.log('提交', cloudPaths)
 
     // 上传到数据库
+
+
     const data = {
       _taskid: taskid,
       uploadtime: date,
@@ -158,6 +142,108 @@ Page({
       url: '../success/success',
     })
   },
+  async update() {
+    var tasks = app.globalData.tasks
+    var kxg_tasks = app.globalData.kxg_tasks
+    const openid = app.globalData.openid
+    const taskid = this.data.taskid
+    const title = this.data.title
+    const describe = this.data.describe
+    const files = this.data.files
+    var paths = []
+    var names = []
+    var cloudPaths = []
+
+    console.log(describe)
+
+    // 上传到云端
+    wx.showLoading({
+      title: '上传中',
+    })
+
+    for (var i = 0; i < files.length; i++) {
+      paths.push(files[i].path)
+      names.push(files[i].name)
+      if (files[i].cloudPath == null) {
+        cloudPaths.push(false)
+      } else {
+        cloudPaths.push(files[i].cloudPath)
+      }
+    }
+
+    console.log('paths', paths)
+    console.log('names', names)
+    console.log('cloudPaths', cloudPaths)
+
+    var temp = null
+    for (var i = 0; i < paths.length; i++) {
+      if (!cloudPaths[i]) {
+        let temp = await this.uploadFile(names[i], paths[i])
+        cloudPaths[i] = temp
+      }
+    }
+
+    console.log('修改', cloudPaths)
+
+    // 上传数据库
+    const db = wx.cloud.database()
+    const work = db.collection('work')
+
+    const data = {
+      title: title,
+      describe: describe,
+      path: cloudPaths
+    }
+
+    work.where({
+      _openid: openid,
+      _taskid: taskid
+    }).update({
+      data,
+      success: res => {
+        console.log(res)
+      },
+      fail: err => {
+        console.log(err)
+        console.log('更新失败')
+      }
+    })
+
+    /**
+     * 更新全局数据
+     */
+
+    // 更新所有任务数据
+    for (var i = 0; i < tasks.length; i++) {
+      if (tasks[i]._id == taskid) {
+        tasks[i].work.title = title
+        tasks[i].work.describe = describe
+        tasks[i].work.path = cloudPaths
+      }
+    }
+
+    console.log('全局所有', tasks)
+    app.globalData.tasks = tasks
+
+    // 更新可修改数据
+    for (var i = 0; i < kxg_tasks.length; i++) {
+      if (kxg_tasks[i]._id == taskid) {
+        kxg_tasks[i].work.title = title
+        kxg_tasks[i].work.describe = describe
+        kxg_tasks[i].work.path = cloudPaths
+      }
+    }
+
+    console.log('全局可修改', kxg_tasks)
+    app.globalData.kxg_tasks = kxg_tasks
+
+    // 跳转
+    wx.redirectTo({
+      url: '../success/success',
+    })
+
+    wx.hideLoading()
+  },
   uploadFile: function(name, path) {
     return new Promise((resolve, reject) => {
       wx.cloud.uploadFile({
@@ -173,9 +259,10 @@ Page({
       })
     })
   },
-  delete: function(e) {
+  deleteItem: function(e) {
     const name = e.currentTarget.dataset.name
     var files = this.data.files
+    var disabled = false
     var temp = []
 
     for (var i = 0; i < files.length; i++) {
@@ -185,13 +272,12 @@ Page({
     }
 
     if (temp.length == 0) {
-      this.setData({
-        disabled: true
-      })
+      disabled = true
     }
 
     this.setData({
-      files: temp
+      files: temp,
+      disabled: disabled
     })
   },
   preview: function(e) {
@@ -212,7 +298,7 @@ Page({
       urls: paths, //所有要预览的图片
     })
   },
-  async addfile() {
+  async addFiles() {
     let filesSrc = await this.chooseFile()
     console.log(filesSrc)
 
@@ -243,8 +329,22 @@ Page({
   },
   descinput: function(e) {
     this.setData({
-      desc: e.detail.value,
+      describe: e.detail.value,
       desc_len: e.detail.value.length
+    })
+  },
+  titleinput2: function (e) {
+    this.setData({
+      title: e.detail.value,
+      title_len: e.detail.value.length,
+      disabled: false
+    })
+  },
+  descinput2: function (e) {
+    this.setData({
+      describe: e.detail.value,
+      desc_len: e.detail.value.length,
+      disabled: false
     })
   },
   addItem: function(data) {
@@ -262,6 +362,61 @@ Page({
           console.log(err)
           reject('添加失败')
         })
+    })
+  },
+  updateItem: function(openid, tasksid, data) {
+    return new Promise((resolve, reject) => {
+      const work = wx.cloud.database().collection('work')
+
+      work.where({
+          _openid: openid,
+          _taskid: taskid
+        }).update({
+          data
+        })
+        .then(res => {
+          const workid = res._id
+          resolve(workid)
+        })
+        .catch(err => {
+          console.log(err)
+          reject('更新失败')
+        })
+    })
+  },
+  getFiles: function(paths) {
+    return new Promise((resolve, reject) => {
+      var names = []
+
+      for (var i = 0; i < paths.length; i++) {
+        var list = paths[i].split('/')
+        var name = list[list.length - 1]
+        console.log('name', name)
+
+        names.push(name)
+      }
+
+      wx.cloud.getTempFileURL({
+        fileList: paths
+      }).then(res => {
+        // get temp file URL
+        const list = res.fileList
+        var files = []
+
+        for (let i = 0; i < list.length; i++) {
+          files.push({
+            path: list[i].tempFileURL,
+            name: names[i],
+            cloudPath: paths[i]
+          })
+        }
+
+        resolve(files)
+      }).catch(error => {
+        // handle error
+        console.log(error)
+        reject('获取失败')
+      })
     })
   },
   /**
@@ -304,7 +459,7 @@ Page({
       var placeholder = null
       var title = null
       var describe = null
-      var path = null
+      var paths = null
       var kxg_tasks = app.globalData.kxg_tasks
 
       for (var i = 0; i < kxg_tasks.length; i++) {
@@ -312,7 +467,7 @@ Page({
           placeholder = kxg_tasks[i].taskname
           title = kxg_tasks[i].work.title
           describe = kxg_tasks[i].work.describe
-          path = kxg_tasks[i].work.path
+          paths = kxg_tasks[i].work.path
         }
       }
 
@@ -331,17 +486,10 @@ Page({
         title_len: title_len,
         status: false
       })
-      
-      this.init(path)
+
+      this.init(paths)
 
     }
-
-    // 存储
-    console.log(taskid)
-    console.log(placeholder)
-    console.log(width)
-    console.log(margin)
-    console.log(screenWidth)
   },
 
   /**

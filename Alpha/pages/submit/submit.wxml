@@ -15,20 +15,20 @@
   </block>
   <block wx:else>
     <view class="title">
-      <input class="zan-font-18 title-field" placeholder="{{placeholder}}" value="{{text}}" maxlength="50" bindinput="titleinput" />
+      <input class="zan-font-18 title-field" placeholder="{{placeholder}}" value="{{title}}" maxlength="50" bindinput="titleinput2" />
       <view class="title-tip">
         <view class="zan-c-gray-dark">{{title_len}}/50</view>
       </view>
     </view>
 
     <view class="describe" style="width: 90%; background-color: white;">
-      <textarea class="zan-font-18 desc-area" value="{{describe}}" placeholder="请输入说明(可选)" maxlength="200" bindinput="descinput"></textarea>
+      <textarea class="zan-font-18 desc-area" value="{{describe}}" placeholder="请输入说明(可选)" maxlength="200" bindinput="descinput2"></textarea>
       <view class="desc-tip zan-c-gray-dark">{{desc_len}}/200</view>
     </view>
   </block>
 
   <view class="tip">
-    <view class="zan-c-gray-dark" style="width: 90%; padding: 24rpx; margin: 0 auto">点击上传文件/点击图片预览</view>
+    <view class="zan-c-gray-dark" style="width: 90%; padding: 24rpx; margin: 0 auto">点击图片预览</view>
   </view>
 
   <view style="width: 100%; ">
@@ -36,17 +36,18 @@
       <block wx:for="{{files}}" wx:key="{{index}}">
         <view class="fitem" style="height: {{width}}px; width: {{width}}px; margin-right: {{margin}}px">
           <image class="slimg" src="{{item.path}}" data-path="{{item.path}}" mode="aspectFill" bindtap="preview"></image>
-          <view class="del" data-name="{{item.name}}" bindtap="delete">
+          <view class="del" data-name="{{item.name}}" bindtap="deleteItem">
             <zan-icon type="close" style="color: white;"></zan-icon>
           </view>
         </view>
       </block>
-      <view class="add" style="height: {{width}}px; width: {{width}}px; margin-right: {{margin}}px" bindtap="addfile">
+      <view class="add" style="height: {{width}}px; width: {{width}}px; margin-right: {{margin}}px" bindtap="addFiles">
         +
       </view>
     </view>
   </view>
 
-  <button class="primary-bg" style="width: 90%;" disabled="{{disabled}}" bindtap="submit">提交</button>
+  <button wx:if="{{status}}" class="primary-bg" style="width: 90%;" disabled="{{disabled}}" bindtap="submit">提交</button>
+  <button wx:else class="primary-bg" style="width: 90%;" disabled="{{disabled}}" bindtap="update">提交</button>
 
 </view>
