@@ -7,7 +7,8 @@
     "pages/mine/mine",
     "pages/homework/homework",
     "pages/submit/submit",
-    "pages/success/success"
+    "pages/success/success",
+    "pages/details/details"
   ],
   "enablePullDownRefresh": true,
   "window": {

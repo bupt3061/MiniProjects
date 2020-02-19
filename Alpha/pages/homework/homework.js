@@ -172,6 +172,12 @@ Page({
   clickytj: function (e) {
     const taskid = e.currentTarget.dataset.taskid
     console.log(taskid)
+
+    console.log('已提交')
+
+    wx.navigateTo({
+      url: '../details/details?taskid=' + taskid,
+    })
   },
   getTimeBetween: function(startDateString, endDateString) {
     var startDate = Date.parse(startDateString)
@@ -187,7 +193,7 @@ Page({
         var mins = hours * 60
         timeString = Math.floor(mins).toString() + "分钟"
       }
-    } else if (days >= 1) {
+    } else if (days >= 2) {
       timeString = Math.floor(days).toString() + "天"
     }
 

@@ -1,0 +1,29 @@
+<!--pages/detail/details.wxml-->
+<import src="../template/template.wxml" />
+
+<zan-toptips backgroundColor="#14d1b5" content="{{content}}" duration="{{ duration }}" is-show="{{ $zanui.toptips.show }}" />
+
+<view class="container zan-font-16 zan-c-black" style="padding: 32rpx 0px;">
+  <view class="top">
+    <view class="top-left">
+      <view class="zan-font-20" style="font-weight: bold; margin-bottom: 12rpx;">这是一段标题</view>
+      <view class="zan-font-14 zan-c-gray-darker">12小时前</view>
+    </view>
+    <view class="top-right">
+      <image class="mark-icon" wx:if="{{!marked}}" src="../../img/mark.png" bindtap="marked"></image>
+      <image class="mark-icon" wx:else src="../../img/marked.png" bindtap="cancleMarked"></image>
+    </view>
+  </view>
+
+  <view class="desc zan-font-18" style="width: 90%; margin-bottom: 32rpx;">
+    这是一段很长很长的描述
+  </view>
+
+  <view class="content" style="width: 90%">
+    正文内容
+  </view>
+
+  <view class="evaluates" style="width: 90%">
+    评论
+  </view>
+</view>
