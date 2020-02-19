@@ -68,3 +68,25 @@
     </view>
   </view>
 </template>
+
+<template name="eval-card">
+  <view class="eval-card" style="padding: 32rpx 0 0 0;" data-id="{{_id}}">
+    <view class="eval-top" style="display: flex; flex-direction: row; margin-bottom: 24rpx;">
+      <view class="avatar" style="margin-right: 24rpx">
+        <image style="width: 88rpx; height: 88rpx; border-radius: 44rpx; border: 1px solid #f3f3f3;" src="../../img/tongxue.png"></image>
+      </view>
+      <view class="info" style="display: flex; flex-direction: column; align-items: center;">
+        <view class="zan-font-18">同学</view>
+        <view class="zan-font-14 zan-c-gray-darker">{{pasttime}}</view>
+      </view>
+    </view>
+    <view class="eval-content" style="width: 100%; margin-left: 112rpx; border-bottom: 1px solid #f3f3f3;">
+      <view class="positive" style="margin-bottom: 24rpx;">
+        优点：{{positive}}
+      </view>
+      <view class="nagtive" style="margin-bottom: 32rpx;">
+        缺点：{{nagtive}}
+      </view>
+    </view>
+  </view>
+</template>

@@ -81,7 +81,7 @@ Page({
 
         // 排序
         for (var j = 0; j < kxg_tasks.length - i - 1; j++) {
-          if (kxg_tasks[j].uploadtime < kxg_tasks[j + 1].uploadtime) {
+          if (kxg_tasks[j].work.uploadtime < kxg_tasks[j + 1].work.uploadtime) {
             var temp = kxg_tasks[j]
             kxg_tasks[j] = kxg_tasks[j + 1]
             kxg_tasks[j + 1] = temp
@@ -185,7 +185,15 @@ Page({
     var days = (endDate - startDate) / (1 * 24 * 60 * 60 * 1000)
     var timeString = null
 
-    if (days < 2) {
+    if (days > 30) {
+      var months = days / 30
+      timeString = Math.floor(months).toString() + "月"
+
+      if (days >= 365) {
+        var years = days / 365
+        timeString = Math.floor(years).toString() + "年"
+      }
+    } else if (days < 2) {
       var hours = days * 24
       timeString = Math.floor(hours).toString() + "小时"
 
@@ -193,7 +201,7 @@ Page({
         var mins = hours * 60
         timeString = Math.floor(mins).toString() + "分钟"
       }
-    } else if (days >= 2) {
+    } else {
       timeString = Math.floor(days).toString() + "天"
     }
 

@@ -38,6 +38,10 @@ Page({
     const openid = app.globalData.openid
     const now = new Date()
 
+    wx.showLoading({
+      title: '加载中',
+    })
+
     // 获取作品
     let work = await this.getWork(taskid, openid)
     const title = work.title
@@ -104,12 +108,26 @@ Page({
     let evals = await this.getEvals(workid)
     const evalsNum = evals.length
 
-    for(var i = 0; i < evals.length; i++) {
-      var res = this.getTimeBetween(now, evals[i].evaltime) + '前'
-      evals[i].pasttime = res
-    }
+    if(evalsNum != 0) {
+      for (var i = 0; i < evals.length; i++) {
+        var res = this.getTimeBetween(now, evals[i].evaltime) + '前'
+        evals[i].pasttime = res
+
+        // 排序
+        for (var j = 0; j < evals.length - i - 1; j++) {
+          if (evals[j].evaltime < evals[j + 1].evaltime) {
+            var temp = evals[j]
+            evals[j] = evals[j + 1]
+            evals[j + 1] = temp
+          }
+        }
+      }
+    } 
 
     console.log('evals', evals)
+    console.log('evalsNum', evalsNum)
+
+    wx.hideLoading()
 
     // 设置数据
     this.setData({
@@ -251,7 +269,15 @@ Page({
     var days = (startDate - endDate) / (1 * 24 * 60 * 60 * 1000)
     var timeString = null
 
-    if (days < 1) {
+    if (days > 30) {
+      var months = days / 30
+      timeString = Math.floor(months).toString() + "月"
+
+      if(days >= 365) {
+        var years = days / 365
+        timeString = Math.floor(years).toString() + "年"
+      } 
+    } else if (days < 1) {
       var hours = days * 24
       timeString = Math.floor(hours).toString() + "小时"
 
@@ -259,7 +285,7 @@ Page({
         var mins = hours * 60
         timeString = Math.floor(mins).toString() + "分钟"
       }
-    } else if (days >= 1) {
+    } else {
       timeString = Math.floor(days).toString() + "天"
     }
 
@@ -381,6 +407,10 @@ Page({
   async getEvals(workid) {
     let count = await this.getEvalsCount(workid)
     let list = []
+
+    if(count == 0) {
+      return list
+    }
 
     for (let i = 0; i < count; i += 10) {
       let res = await this.getEvalsIndexSkip(workid, i)

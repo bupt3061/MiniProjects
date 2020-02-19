@@ -3,13 +3,13 @@
 
 <zan-toptips backgroundColor="#14d1b5" content="{{content}}" duration="{{ duration }}" is-show="{{ $zanui.toptips.show }}" />
 
-<view class="container zan-font-16 zan-c-black" style="padding: 64rpx 0px;">
+<view class="container zan-font-16 zan-c-black" style="padding: 64rpx 0 160rpx 0;">
   <view class="top" style="margin-bottom: 32rpx;">
     <view class="top-left">
       <view class="zan-font-20" style="font-weight: bold; margin-bottom: 12rpx;">{{title}}</view>
       <view class="zan-font-14 zan-c-gray-darker">{{pasttime}}</view>
     </view>
-    <view class="top-right">
+    <view wx:if="{{show}}" class="top-right">
       <image class="mark-icon" wx:if="{{!marked}}" src="../../img/mark.png" bindtap="marked"></image>
       <image class="mark-icon" wx:else src="../../img/marked.png" bindtap="cancleMarked"></image>
     </view>
@@ -25,21 +25,15 @@
     </block>
   </view>
 
-  <block wx:if="{{show}}">
-    <view wx:if="{{evalsNum != 0}}" style="width: 100%; height: 16rpx; background-color: #f3f4f6;"></view>
+  <block wx:if="{{show && evalsNum != 0}}">
+    <view style="width: 100%; height: 16rpx; background-color: #f3f4f6;"></view>
     <view class="evals" style="width: 90%">
-      <view class="zan-font-20" style="padding: 32rpx 0; font-weight: bold;">全部评论({{evalsNum}})</view>
-      <view class="eval-card">
-        <view class="eval-top" style="display: flex; flex-direction: row; margin-bottom: 24rpx;">
-          <view class="avatar" style="margin-right: 24rpx">
-            <image style="width: 88rpx; height: 88rpx; border-radius: 44rpx; border: 1px solid #999999;" src="../../img/tongxue.png"></image>
-          </view>
-          <view class="info" style="display: flex; flex-direction: column; align-items: center;">
-            <view class="zan-font-18">同学</view>
-            <view class="zan-font-14 zan-c-gray-darker">{{pasttime}}</view>
-          </view>
-        </view>
-      </view>
+      <view class="zan-font-20" style="padding: 32rpx 0 0 0; font-weight: bold;">全部评论({{evalsNum}})</view>
+      <block wx:for="{{evals}}" wx:key="{{index}}">
+        <template is="eval-card" data="{{...item}}"></template>
+      </block>
     </view>
   </block>
 </view>
+
+<button class="primary-bg" style="width: 90%; position: fixed; bottom: 32rpx; left: 5%;">评价</button>
