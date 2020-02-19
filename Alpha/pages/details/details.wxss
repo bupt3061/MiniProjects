@@ -22,3 +22,12 @@ page {
   width: 56rpx;
   height: 56rpx;
 }
+
+.bottom {
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  background-color: white;
+  border-top: 1px solid #f3f3f3;
+  padding: 32rpx 0;
+}

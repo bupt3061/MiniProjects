@@ -36,4 +36,6 @@
   </block>
 </view>
 
-<button class="primary-bg" style="width: 90%; position: fixed; bottom: 32rpx; left: 5%;">评价</button>
+<view wx:if="{{canEvaluate}}" class="bottom">
+  <button class="primary-bg" style="width: 90%; margin: 0 auto;">评价</button>
+</view>
