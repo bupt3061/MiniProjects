@@ -10,10 +10,10 @@ Page({
   data: {
     taskid: null,
     work: null,
-    title: null,
-    describe: null,
+    title: '',
+    describe: '',
     tempUrls: null,
-    pasttime: null,
+    pasttime: '',
     mid: null,
     mexisted: false,
     marked: false,
@@ -57,7 +57,7 @@ Page({
 
     // 获得tempUrls
     let tempUrls = await this.getTempUrls(cloudPaths)
-    console.log(tempUrls)
+    console.log('tempUrls', tempUrls)
 
     // 判断是否收藏
     let mdata = await this.judgeMarked(workid, openid)
@@ -379,6 +379,24 @@ Page({
         return list
       }
     }
+  },
+  preview: function (e) {
+    const url = e.currentTarget.dataset.url
+    var tempUrls = this.data.tempUrls
+    var idx = 0
+    var list = []
+
+    for (var i = 0; i < tempUrls.length; i++) {
+      list.push(tempUrls[i])
+      if (tempUrls[i] == url) {
+        idx = i
+      }
+    }
+
+    wx.previewImage({
+      current: tempUrls[idx], //当前预览的图片
+      urls: tempUrls, //所有要预览的图片
+    })
   },
   /**
    * 生命周期函数--监听页面加载
