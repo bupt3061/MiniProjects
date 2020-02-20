@@ -102,6 +102,9 @@ Page({
       inUploadNum = inUploadTasks.length - uploadedTasks.length
       console.log('inUploadNum', inUploadNum)
 
+      /**
+       * 获取未提交及可修改任务
+       */
       var wtjTasks = []
       var kxgTasks = []
 
@@ -135,14 +138,44 @@ Page({
         inEvalTaskids.push(inEvalTasks[i]._id)
       }
 
-      let evaledTaskNum = await this.getEvaledTaskNum(openid, inEvalTaskids)
+      let [evaledTaskNum, evaledTasks] = await this.getEvaledTasks(openid, inEvalTaskids)
       inEvalNum = inEvalTasks.length - evaledTaskNum
 
       console.log('inEvalNum', inEvalNum)
 
-      // 更新数据
-      app.globalData.openid = openid
+      /**
+       * 获取未互评及未完成任务
+       */
+      var whpTasks = []
+      var wwcTasks = []
+      
+      for(var i = 0; i < inEvalTasks.length; i++) {
+        var flag = true
+        for(var j = 0; j < evaledTasks.length; j++) {
+          if(inEvalTasks[i]._id == evaledTasks[j]._id) {
+            flag = false
 
+            if (evaledTasks[j].num < 3) {
+              inEvalTasks[i].evalNum = evaledTasks[j].num
+              wwcTasks.push(inEvalTasks[i])
+            }
+
+            continue
+          }
+        }
+
+        if(flag) {
+          inEvalTasks[i].evalNum = 0
+          whpTasks.push(inEvalTasks[i])
+        }
+      }
+
+      console.log('wwcTasks', wwcTasks)
+      console.log('whpTasks', whpTasks)
+      app.globalData.whpTasks = whpTasks
+      app.globalData.wwcTasks = wwcTasks
+
+      // 更新数据
       this.setData({
         inUploadNum: inUploadNum,
         inEvalNum: inEvalNum,
@@ -228,6 +261,7 @@ Page({
           evaluatestart: _.lte(now),
           evaluateend: _.gte(now)
         })
+        .orderBy('evaluateend', 'asc')
         .get()
         .then(res => {
           const data = res.data
@@ -239,7 +273,7 @@ Page({
         })
     })
   },
-  getEvaledTaskNum: function(openid, inEvalTaskids) {
+  getEvaledTasks: function(openid, inEvalTaskids) {
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database()
       const _ = db.command
@@ -263,7 +297,7 @@ Page({
               num += 1
             }
           }
-          resolve(num)
+          resolve([num, list])
         })
         .catch(err => {
           console.log(err)

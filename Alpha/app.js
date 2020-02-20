@@ -59,6 +59,8 @@ App({
     ytjTasks: [],
     ygqTasks: [],
     kxgTasks: [],
+    whpTasks: [],
+    wwcTasks: [],
     courses: null,
     courseids: null,
     users: null,
