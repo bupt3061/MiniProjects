@@ -1,13 +1,12 @@
 <!--index.wxml-->
 <block wx:if="{{type == 1}}">
-  <zan-toptips wx:if="{{courses == []}}" backgroundColor=" #14d1b5" content="{{ content }}" is-show="{{ $zanui.toptips.show }}" bindtap="toMyCourse" />
   <view class="container zan-font-14 zan-c-gray-darker" style="padding-top: 160rpx">
     <view class="card" bindtap="toHomework">
-      <text class="zan-font-18">作业<text wx:if="{{uploadNum != 0}}"class="zan-font-18 primary"> ({{uploadNum}}) </text></text>
+      <text class="zan-font-18">作业<text wx:if="{{inUploadNum != 0}}"class="zan-font-18 primary"> ({{inUploadNum}}) </text></text>
       <zan-icon class="primary" type="pending-orders" style="font-size: 80rpx"></zan-icon>
     </view>
     <view class="card">
-      <text class="zan-font-18">互评<text wx:if="{{evaluateNum != 0}}" class="zan-font-18 primary"> ({{evaluateNum}}) </text></text>
+      <text class="zan-font-18">互评<text wx:if="{{inEvalNum != 0}}" class="zan-font-18 primary"> ({{inEvalNum}}) </text></text>
       <zan-icon class="primary" type="chat" style="font-size: 80rpx"></zan-icon>
     </view>
   </view>

@@ -8,28 +8,29 @@ Page({
    * 页面的初始数据
    */
   data: {
-    wtj_tasks: [],
-    ytj_tasks: [],
-    ygq_tasks: [],
-    kxg_tasks: [],
-    uploadNum: 0,
+    wtjTasks: [],
+    ytjTasks: [],
+    ygqTasks: [],
+    kxgTasks: [],
+    inUploadNum: 0,
     ygqNum: 0,
   },
   /**
    * 初始化函数
    */
   async init() {
-    var tasks = app.globalData.tasks
-    var openid = app.globalData.openid
-    const now = new Date()
+    const courses = app.globalData.courses
+    const courseids = app.globalData.courseids
+    const openid = app.globalData.openid
 
     wx.showLoading({
       title: '加载中',
     })
 
-    /**
-     * 处理tasks
-     */
+    // 获得待提交及可修改任务
+    let inUploadTasks = await this.getInUploadTasks(courseids)
+
+    console.log('inUploadTasks', inUploadTasks)
 
     // 分组
     var wtj_tasks = [] // 未提交
@@ -37,18 +38,18 @@ Page({
     var ytj_tasks = [] // 已提交
     var kxg_tasks = [] // 可修改
 
-    for(var i = 0; i < tasks.length; i++) {
-      if(tasks[i].status == 1) {
-        if(tasks[i].uploaded) {
+    for (var i = 0; i < tasks.length; i++) {
+      if (tasks[i].status == 1) {
+        if (tasks[i].uploaded) {
           kxg_tasks.push(tasks[i])
-        }else{
+        } else {
           wtj_tasks.push(tasks[i])
         }
       }
       if ([2, 3].indexOf(tasks[i].status) != -1) {
         if (tasks[i].uploaded) {
           ytj_tasks.push(tasks[i])
-        } else{
+        } else {
           ygq_tasks.push(tasks[i])
         }
       }
@@ -153,6 +154,29 @@ Page({
   /**
    * 页面其他函数
    */
+  getInUploadTasks: function(courseids) {
+    return new Promise((resolve, reject) => {
+      const db = wx.cloud.database()
+      const _ = db.command
+      const now = new Date()
+
+      db.collection('task')
+        .where({
+          _courseid: _.in(courseids),
+          uploadstart: _.lte(now),
+          uploadend: _.gte(now)
+        })
+        .get()
+        .then(res => {
+          const data = res.data
+          resolve(data)
+        })
+        .catch(err => {
+          console.log(err)
+          reject('获取失败')
+        })
+    })
+  },
   clickwtj: function(e) {
     const taskid = e.currentTarget.dataset.taskid
     console.log(taskid)
@@ -161,7 +185,7 @@ Page({
       url: '../submit/submit?data=' + taskid + '/1',
     })
   },
-  clickkxg: function (e) {
+  clickkxg: function(e) {
     const taskid = e.currentTarget.dataset.taskid
     console.log(taskid)
 
@@ -169,7 +193,7 @@ Page({
       url: '../submit/submit?data=' + taskid + '/2',
     })
   },
-  clickytj: function (e) {
+  clickytj: function(e) {
     const taskid = e.currentTarget.dataset.taskid
     console.log(taskid)
 
@@ -218,9 +242,6 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function(options) {
-    this.setData({
-      uploadNum: options.uploadNum
-    })
     this.init()
   },
 
@@ -236,11 +257,11 @@ Page({
    */
   onShow: function() {
     this.setData({
-      wtj_tasks: app.globalData.wtj_tasks,
-      ytj_tasks: app.globalData.ytj_tasks,
-      ygq_tasks: app.globalData.ygq_tasks,
-      kxg_tasks: app.globalData.kxg_tasks,
-      ygqNum: app.globalData.ygq_tasks.length
+      wtjTasks: app.globalData.wtjTasks,
+      ytjTasks: app.globalData.ytjTasks,
+      ygqTasks: app.globalData.ygqTasks,
+      kxgTasks: app.globalData.kxgTasks,
+      ygqNum: app.globalData.ygqTasks.length
     })
   },
 
