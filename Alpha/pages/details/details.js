@@ -440,6 +440,13 @@ Page({
       urls: tempUrls, //所有要预览的图片
     })
   },
+  toComment: function() {
+    const workid = this.data.work._id
+
+    wx.navigateTo({
+      url: '../comment/comment?workid=' + workid,
+    })
+  },
   /**
    * 生命周期函数--监听页面加载
    */

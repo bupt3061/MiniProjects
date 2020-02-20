@@ -14,12 +14,6 @@ Page({
     tasks: null,
     uploadNum: 0,
     evaluateNum: 0,
-    content: '添加课程 >>',
-    $zanui: {
-      toptips: {
-        show: true
-      }
-    }
   },
   /**
    * 初始化函数
@@ -30,15 +24,6 @@ Page({
     wx.showLoading({
       title: '加载中',
     })
-
-    /**
-     * 获取设备信息
-     */
-    const info = wx.getSystemInfoSync()
-    const screenWidth = info.screenWidth
-
-    console.log('screenWidth', screenWidth)
-    app.globalData.screenWidth = screenWidth
 
     /**
      * 获取用户信息
@@ -61,10 +46,54 @@ Page({
       type = userInfo.type
 
       console.log('userInfo', userInfo)
-      console.log('type', type)
       app.globalData.userInfo = userInfo
-      app.globalData.type = type
     }
+
+    /**
+     * 获取未提交课程数
+     */
+    const courseids = userInfo.courses
+
+    wx.cloud.callFunction({
+      name: 'test',
+      data: {
+        courseids: courseids
+      }
+    })
+    .then(res => {
+      console.log(res)
+    })
+    .catch(err => {
+      console.log(err)
+    })
+
+    // db.collection("task").aggregate()
+    //   .lookup({
+    //     from: 'work',
+    //     localField: '_id',
+    //     foreignField: '_taskid',
+    //     as: 'wtj',
+    //   })
+    //   .end()
+    //   .then(res => {
+    //     console.log(res)
+    //   })
+    //   .catch(err => {
+    //     console.log(err)
+    //   })
+
+    // db.collection("task").where({
+    //     _courseid: _.in(courseids),
+    //     uploadstart: _.lte(date),
+    //     uploadend: _.gte(date)
+    //   }).get()
+    //   .then(res => {
+    //     console.log(res)
+    //   })
+    //   .catch(err => {
+    //     console.log(err)
+    //   })
+
 
     /**
      * 处理课程
@@ -79,7 +108,7 @@ Page({
     }
 
     // 添加教师信息
-    for(let i = 0; i < courses.length; i++) {
+    for (let i = 0; i < courses.length; i++) {
       let teacher = await this.getTeacherInfo(courses[i]._openid)
       courses[i].teacher = teacher
     }
@@ -129,9 +158,9 @@ Page({
     }
 
     // 添加课程信息
-    for(var i = 0; i < tasks.length; i++) {
-      for(var j = 0; j < courses.length; j++) {
-        if(tasks[i]._courseid == courses[j]._id) {
+    for (var i = 0; i < tasks.length; i++) {
+      for (var j = 0; j < courses.length; j++) {
+        if (tasks[i]._courseid == courses[j]._id) {
           tasks[i].coursename = courses[j].coursename
           tasks[i].courseCover = courses[j].coverPath
         }
@@ -162,8 +191,7 @@ Page({
           describe: work[0].describe,
           uploadtime: work[0].uploadtime
         }
-      }
-      else {
+      } else {
         if (tasks[i].status == 1) {
           uploadNum += 1
         }
@@ -172,10 +200,10 @@ Page({
 
       // 是否互评
       let [evaluates, evaluated, total] = await this.judgeEvaluated(tasks[i]._id, openid)
-      if(total > 0) {
+      if (total > 0) {
         tasks[i].evaluates = evaluates
       }
-      if(!evaluated && tasks[i].status == 2) {
+      if (!evaluated && tasks[i].status == 2) {
         evaluateNum += 1
       }
       tasks[i].evaluated = evaluated
@@ -323,17 +351,17 @@ Page({
       const user = wx.cloud.database().collection('user')
 
       user.where({
-        _openid: openid
-      })
-      .get()
-      .then(res => {
-        const teacher = res.data[0]
-        resolve(teacher)
-      })
-      .catch(err => {
-        console.log(err)
-        reject('获取失败')
-      })
+          _openid: openid
+        })
+        .get()
+        .then(res => {
+          const teacher = res.data[0]
+          resolve(teacher)
+        })
+        .catch(err => {
+          console.log(err)
+          reject('获取失败')
+        })
     })
   },
   async getTasks(courseid, date) {
@@ -411,20 +439,23 @@ Page({
     })
   },
   /**
-   * 生命周期函数--监听页面加载
+   * 生命周期函数--监听页面加载（1）
+   * 页面加载完成，一个页面只会调用一次
    */
   onLoad: function() {
     this.init()
   },
   /**
-   * 生命周期函数--监听页面初次渲染完成
+   * 生命周期函数--监听页面初次渲染完成（3）
+   * 页面渲染完成，一个页面只会调用一次
    */
   onReady: function() {
 
   },
 
   /**
-   * 生命周期函数--监听页面显示
+   * 生命周期函数--监听页面显示（2）
+   * 页面打开一次就会显示
    */
   onShow: function() {
     this.setData({
@@ -435,6 +466,7 @@ Page({
 
   /**
    * 生命周期函数--监听页面隐藏
+   * 当navigateTo或底部tab切换时调用
    */
   onHide: function() {
 
@@ -442,6 +474,7 @@ Page({
 
   /**
    * 生命周期函数--监听页面卸载
+   * 当使用重定向方法wx.redirectTo(OBJECT)或关闭当前页返回上一页wx.navigateBack的时候调用
    */
   onUnload: function() {
 

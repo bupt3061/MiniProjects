@@ -15,7 +15,7 @@
     </view>
   </view>
 
-  <view wx:if="{{describe != ''}}" class="desc zan-font-18" style="width: 90%; margin-bottom: 32rpx;">
+  <view wx:if="{{describe != '' && describe != null}}" class="desc zan-font-18" style="width: 90%; margin-bottom: 32rpx;">
     {{describe}}
   </view>
 
@@ -36,6 +36,10 @@
   </block>
 </view>
 
-<view wx:if="{{canEvaluate}}" class="bottom">
-  <button class="primary-bg" style="width: 90%; margin: 0 auto;">评价</button>
+<view class="bottom">
+  <button class="primary-bg" style="width: 90%; margin: 0 auto;" bindtap="toComment">评价</button>
 </view>
+
+<!-- <view wx:if="{{canEvaluate}}" class="bottom">
+  <button class="primary-bg" style="width: 90%; margin: 0 auto;">评价</button>
+</view> -->

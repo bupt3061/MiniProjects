@@ -8,7 +8,8 @@
     "pages/homework/homework",
     "pages/submit/submit",
     "pages/success/success",
-    "pages/details/details"
+    "pages/details/details",
+    "pages/comment/comment"
   ],
   "enablePullDownRefresh": true,
   "window": {
