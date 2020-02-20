@@ -7,7 +7,7 @@ Page({
    * 页面的初始数据
    */
   data: {
-    wtj_tasks: null,
+    wtjTasks: null,
     wtjNum: 0
   },
   /**
@@ -25,13 +25,13 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    var wtj_tasks = app.globalData.wtj_tasks
+    var wtjTasks = app.globalData.wtjTasks
 
     this.setData({
-      wtj_tasks: wtj_tasks,
-      wtjNum: wtj_tasks.length
+      wtjTasks: wtjTasks,
+      wtjNum: wtjTasks.length
     })
-    console.log(wtj_tasks)
+    console.log(wtjTasks)
   },
 
   /**

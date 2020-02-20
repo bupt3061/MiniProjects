@@ -101,6 +101,7 @@ Page({
 
       inUploadNum = inUploadTasks.length - uploadedTasks.length
       console.log('inUploadNum', inUploadNum)
+      app.globalData.inUploadNum = inUploadNum
 
       /**
        * 获取未提交及可修改任务
@@ -109,16 +110,22 @@ Page({
       var kxgTasks = []
 
       for (var i = 0; i < inUploadTasks.length; i++) {
-        var flag = false
         for (var j = 0; j < uploadedTasks.length; j++) {
-          if (inUploadTasks[i]._id == uploadedTasks[j].taskid) {
-            flag = true
+          if (inUploadTasks[i]._id == uploadedTasks[j]._taskid) {
+            kxgTasks.push(inUploadTasks[i])
             continue
           }
         }
-        if (flag) {
-          kxgTasks.push(inUploadTasks[i])
-        } else {
+      }
+
+      for (var i = 0; i < inUploadTasks.length; i++) {
+        var flag = true
+        for (var j = 0; j < uploadedTasks.length; j++) {
+          if (inUploadTasks[i]._id == uploadedTasks[j]._taskid) {
+            flag = false
+          }
+        }
+        if(flag) {
           wtjTasks.push(inUploadTasks[i])
         }
       }
@@ -142,6 +149,7 @@ Page({
       inEvalNum = inEvalTasks.length - evaledTaskNum
 
       console.log('inEvalNum', inEvalNum)
+      app.globalData.inEvalNum = inEvalNum
 
       /**
        * 获取未互评及未完成任务

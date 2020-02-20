@@ -25,39 +25,89 @@ Page({
   /**
    * 初始化函数
    */
-  async init(path) {
-    let files = await this.getFiles(path)
-    console.log('files', files)
+  async init(arg, taskid) {
+    if (arg == '1') {
+      // 提交
+      var placeholder = null
+      var wtjTasks = app.globalData.wtjTasks
 
-    this.setData({
-      files: files
-    })
+      for (var i = 0; i < wtjTasks.length; i++) {
+        // 获得placeholder
+        if (wtjTasks[i]._id == taskid) {
+          placeholder = wtjTasks[i].taskname
+        }
+      }
+      console.log('提交placeholder', placeholder)
+
+      // 更新数据
+      this.setData({
+        placeholder: placeholder,
+        status: true
+      })
+    } else if (arg == '2') {
+      // 修改
+      var desclen = 0
+      var titlelen = 0
+      var placeholder = null
+      var title = null
+      var describe = null
+      var cloudPaths = null
+      var kxgTasks = app.globalData.kxgTasks
+
+      for (var i = 0; i < kxgTasks.length; i++) {
+        if (kxgTasks[i]._id == taskid) {
+          placeholder = kxgTasks[i].taskname
+          title = kxgTasks[i].work.title
+          describe = kxgTasks[i].work.describe
+          cloudPaths = kxgTasks[i].work.path
+        }
+      }
+      console.log('修改placeholder', placeholder)
+      console.log('title', title)
+      console.log('describe', describe)
+
+      if (describe != null) {
+        desclen = describe.length
+      }
+      titlelen = title.length
+      console.log('titlelen', titlelen)
+      console.log('desclen', desclen)
+
+      let files = await this.getFiles(cloudPaths)
+      console.log('files', files)
+
+      this.setData({
+        placeholder: placeholder,
+        title: title,
+        describe: describe,
+        desclen: desclen,
+        titlelen: titlelen,
+        files: files,
+        status: false
+      })
+
+    }
   },
   /**
    * 页面其他函数
    */
   async submit() {
-    var tasks = app.globalData.tasks
-    var kxg_tasks = app.globalData.kxg_tasks
+    var kxgTasks = app.globalData.kxgTasks
     const openid = app.globalData.openid
     var title = this.data.title
     const taskid = this.data.taskid
     const describe = this.data.describe
-    const date = new Date()
     const files = this.data.files
+    const now = new Date()
     var paths = []
     var names = []
     var cloudPaths = []
 
-    if (title == null) {
-      title = this.data.placeholder
-    }
-
-    // 上传图片到云端
     wx.showLoading({
       title: '上传中',
     })
 
+    // 上传图片到云端并返回cloudPath
     for (var i = 0; i < files.length; i++) {
       paths.push(files[i].path)
       names.push(files[i].name)
@@ -74,9 +124,13 @@ Page({
     console.log('提交', cloudPaths)
 
     // 上传到数据库
+    if (title == null) {
+      title = this.data.placeholder
+    }
+
     const data = {
       _taskid: taskid,
-      uploadtime: date,
+      uploadtime: now,
       title: title,
       describe: describe,
       path: cloudPaths
@@ -107,52 +161,42 @@ Page({
     })
 
     // 更新未提交数据
-    var wtj_tasks = app.globalData.wtj_tasks
+    var wtjTasks = app.globalData.wtjTasks
     var temp = []
     var item = null
 
-    for (var i = 0; i < wtj_tasks.length; i++) {
-      if (wtj_tasks[i]._id != taskid) {
-        temp.push(wtj_tasks[i])
+    for (var i = 0; i < wtjTasks.length; i++) {
+      if (wtjTasks[i]._id != taskid) {
+        temp.push(wtjTasks[i])
       } else {
-        item = wtj_tasks[i]
+        item = wtjTasks[i]
       }
     }
 
-    console.log('全局未提交', temp)
-    app.globalData.wtj_tasks = temp
-
-    // 更新所有任务数据
     item.uploaded = true
     item.work = {
-      workid: workid,
+      _id: workid,
       _taskid: taskid,
-      uploadtime: date,
+      uploadtime: now,
       title: title,
       describe: describe,
       path: cloudPaths
     }
 
-    for (var i = 0; i < tasks.length; i++) {
-      if (tasks[i]._id == taskid) {
-        tasks[i] = item
-      }
-    }
-
-    console.log('全局所有', tasks)
-    app.globalData.tasks = tasks
+    console.log('全局未提交', temp)
+    app.globalData.wtjTasks = temp
 
     // 更新可修改数据
     var temp = []
     temp[0] = item
-    for (var i = 0; i < kxg_tasks.length; i++) {
-      temp[i + 1] = kxg_tasks[i]
+    for (var i = 0; i < kxgTasks.length; i++) {
+      temp[i + 1] = kxgTasks[i]
     }
 
     console.log('全局可修改', temp)
-    app.globalData.kxg_tasks = temp
+    app.globalData.kxgTasks = temp
 
-    app.globalData.uploadNum = app.globalData.uploadNum - 1
+    app.globalData.inUploadNum = app.globalData.inUploadNum - 1
 
     // 跳转
     wx.redirectTo({
@@ -160,8 +204,7 @@ Page({
     })
   },
   async update() {
-    var tasks = app.globalData.tasks
-    var kxg_tasks = app.globalData.kxg_tasks
+    var kxgTasks = app.globalData.kxgTasks
     const openid = app.globalData.openid
     const taskid = this.data.taskid
     const title = this.data.title
@@ -171,13 +214,11 @@ Page({
     var names = []
     var cloudPaths = []
 
-    console.log(describe)
-
-    // 上传到云端
     wx.showLoading({
       title: '上传中',
     })
 
+    // 上传到云端
     for (var i = 0; i < files.length; i++) {
       paths.push(files[i].path)
       names.push(files[i].name)
@@ -200,7 +241,7 @@ Page({
       }
     }
 
-    console.log('修改', cloudPaths)
+    console.log('修改cloudPaths', cloudPaths)
 
     // 上传数据库
     const db = wx.cloud.database()
@@ -226,33 +267,17 @@ Page({
       }
     })
 
-    /**
-     * 更新全局数据
-     */
-
-    // 更新所有任务数据
-    for (var i = 0; i < tasks.length; i++) {
-      if (tasks[i]._id == taskid) {
-        tasks[i].work.title = title
-        tasks[i].work.describe = describe
-        tasks[i].work.path = cloudPaths
-      }
-    }
-
-    console.log('全局所有', tasks)
-    app.globalData.tasks = tasks
-
     // 更新可修改数据
-    for (var i = 0; i < kxg_tasks.length; i++) {
-      if (kxg_tasks[i]._id == taskid) {
-        kxg_tasks[i].work.title = title
-        kxg_tasks[i].work.describe = describe
-        kxg_tasks[i].work.path = cloudPaths
+    for (var i = 0; i < kxgTasks.length; i++) {
+      if (kxgTasks[i]._id == taskid) {
+        kxgTasks[i].work.title = title
+        kxgTasks[i].work.describe = describe
+        kxgTasks[i].work.path = cloudPaths
       }
     }
 
-    console.log('全局可修改', kxg_tasks)
-    app.globalData.kxg_tasks = kxg_tasks
+    console.log('全局可修改', kxgTasks)
+    app.globalData.kxgTasks = kxgTasks
 
     // 跳转
     wx.redirectTo({
@@ -442,12 +467,12 @@ Page({
   onLoad: function(options) {
     var list = options.data.split('/')
     var taskid = list[0]
-    var arg = list[1]
+    var arg = list[1]  // '1'：提交；'2'：修改
 
     // 页面布局
-    var width = app.globalData.screenWidth * 0.8 / 3
-    var margin = app.globalData.screenWidth * 0.05
-    var screenWidth = app.globalData.screenWidth
+    const width = app.globalData.screenWidth * 0.8 / 3
+    const margin = app.globalData.screenWidth * 0.05
+    const screenWidth = app.globalData.screenWidth
 
     this.setData({
       taskid: taskid,
@@ -456,57 +481,7 @@ Page({
       screenWidth: screenWidth
     })
 
-    if (arg == '1') {
-      var placeholder = null
-      var wtj_tasks = app.globalData.wtj_tasks
-
-      for (var i = 0; i < wtj_tasks.length; i++) {
-        if (wtj_tasks[i]._id == taskid) {
-          placeholder = wtj_tasks[i].taskname
-        }
-      }
-
-      this.setData({
-        placeholder: placeholder,
-        status: true
-      })
-    } else {
-      var desc_len = 0
-      var title_len = 0
-      var placeholder = null
-      var title = null
-      var describe = null
-      var paths = null
-      var kxg_tasks = app.globalData.kxg_tasks
-
-      for (var i = 0; i < kxg_tasks.length; i++) {
-        if (kxg_tasks[i]._id == taskid) {
-          placeholder = kxg_tasks[i].taskname
-          title = kxg_tasks[i].work.title
-          describe = kxg_tasks[i].work.describe
-          paths = kxg_tasks[i].work.path
-        }
-      }
-
-      if (describe == null) {
-        desc_len = 0
-      } else {
-        desc_len = describe.length
-      }
-      title_len = title.length
-
-      this.setData({
-        placeholder: placeholder,
-        title: title,
-        describe: describe,
-        desc_len: desc_len,
-        title_len: title_len,
-        status: false
-      })
-
-      this.init(paths)
-
-    }
+    this.init(arg, taskid)
   },
 
   /**

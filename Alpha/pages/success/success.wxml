@@ -6,7 +6,7 @@
   <view class="zan-font-18" style="padding: 0 64rpx 64rpx 64rpx;">提交成功</view>
   <block wx:if="{{wtjNum > 0}}">
     <view style="width: 90%; padding: 32rpx 0; border-top: 1px solid #f3f3f3">继续提交</view>
-    <block wx:for="{{wtj_tasks}}" wx:key="{{index}}">
+    <block wx:for="{{wtjTasks}}" wx:key="{{index}}">
       <template is="wtj-card" data="{{...item}}"></template>
     </block>
   </block>
