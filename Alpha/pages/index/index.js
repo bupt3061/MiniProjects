@@ -17,7 +17,7 @@ Page({
    * 初始化函数
    */
   async init() {
-    
+
     // 加载
     wx.showLoading({
       title: '加载中',
@@ -102,6 +102,29 @@ Page({
       inUploadNum = inUploadTasks.length - uploadedTasks.length
       console.log('inUploadNum', inUploadNum)
 
+      var wtjTasks = []
+      var kxgTasks = []
+
+      for (var i = 0; i < inUploadTasks.length; i++) {
+        var flag = false
+        for (var j = 0; j < uploadedTasks.length; j++) {
+          if (inUploadTasks[i]._id == uploadedTasks[j].taskid) {
+            flag = true
+            continue
+          }
+        }
+        if (flag) {
+          kxgTasks.push(inUploadTasks[i])
+        } else {
+          wtjTasks.push(inUploadTasks[i])
+        }
+      }
+
+      console.log('kxgTasks', kxgTasks)
+      console.log('wtjTasks', wtjTasks)
+      app.globalData.kxgTasks = kxgTasks
+      app.globalData.wtjTasks = wtjTasks
+
       /**
        * 获取待互评任务数
        */
@@ -152,6 +175,7 @@ Page({
           uploadstart: _.lte(now),
           uploadend: _.gte(now)
         })
+        .orderBy('uploadend', 'asc')
         .get()
         .then(res => {
           const data = res.data
