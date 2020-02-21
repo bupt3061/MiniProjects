@@ -8,7 +8,6 @@ Page({
    * 页面的初始数据
    */
   data: {
-    show: false,
     taskid: null,
     work: null,
     title: '',
@@ -34,7 +33,7 @@ Page({
   /**
    * 初始化函数
    */
-  async init(taskid, status) {
+  async init(taskid, arg) {
     const openid = app.globalData.openid
     const now = new Date()
 
@@ -42,7 +41,50 @@ Page({
       title: '加载中',
     })
 
-    // 获取作品
+    if (arg == '1') {
+      /**
+       * 1：自己的作品，不可评价
+       * 2：别人的作品
+       */
+      this.setData({
+        canEvaluate: false
+      })
+    } else if (arg == '2') {
+      // 获取一个非自己的且未评价过的的作品
+      const db = wx.cloud.database()
+      const _ = db.command
+
+      // 获得评价过的作品
+      let evaledWorks = await this.getEvaledWorks(openid, taskid)
+
+      var evaledWorkids = []
+      for(var i = 0; i < evaledWorks.length; i++) {
+        evaledWorkids.push(evaledWorks[i]._workid)
+      }
+      console.log('evaledWorkids', evaledWorkids)
+
+      // 获得未评价且不属于我的作品
+      db.collection("work")
+        .where({
+          _id: _.nin(evaledWorkids),
+          _taskid: taskid,
+          _openid: _.nin([openid, ])
+        })
+        .get()
+        .then(res => {
+          const data = res.data
+          console.log(data)
+        })
+        .catch(err => {
+          console.log(err)
+        })
+
+      this.setData({
+        canEvaluate: true
+      })
+    }
+
+    // 获取作品信息
     let work = await this.getWork(taskid, openid)
     const title = work.title
     const describe = work.describe
@@ -74,33 +116,6 @@ Page({
     console.log('mid', mid)
     console.log('marked', marked)
     console.log('mexisted', mexisted)
-
-    /**
-     *  判断是否可以评价：
-     * 1、自己的不可评价
-     * 2、已过期不可评价
-     */
-    // 获取task信息
-    let taskInfo = await this.getTaskInfo(taskid)
-    const standard = taskInfo.standard
-    const evaluateend = taskInfo.evaluateend
-    const standardKeys = Object.keys(standard)
-
-    console.log('standard', standard)
-    console.log('standardKeys', standardKeys)
-
-    // 判断自己是否可评价
-    var canEvaluate = true
-    if (openid == work._openid) {
-      canEvaluate = false
-    }
-
-    // 判断是否过期
-    if (now > evaluateend) {
-      canEvaluate = false
-    }
-
-    console.log("canEvaluate", canEvaluate)
 
     /**
      * 获取全部评论
@@ -148,7 +163,6 @@ Page({
       marked: marked,
       standard: standard,
       standardKeys: standardKeys,
-      canEvaluate: canEvaluate,
       evals: evals,
       evalsNum: evalsNum,
     })
@@ -268,7 +282,7 @@ Page({
         })
     })
   },
-  getTimeBetween: function (startDate, endDate) {
+  getTimeBetween: function(startDate, endDate) {
     var days = (endDate - startDate) / (1 * 24 * 60 * 60 * 1000)
     var timeString = null
 
@@ -460,7 +474,31 @@ Page({
     const taskid = this.data.taskid
 
     wx.navigateTo({
-      url: '../comment/comment?data=' + workid + '/' +taskid,
+      url: '../comment/comment?data=' + workid + '/' + taskid,
+    })
+  },
+  getEvaledWorks: function(openid, taskid) {
+    return new Promise((resolve, reject) => {
+      const db = wx.cloud.database()
+      const _ = db.command
+
+      db.collection('evaluate')
+        .where({
+          _openid: openid,
+          _taskid: taskid
+        })
+        .field({
+          _workid: true
+        })
+        .get()
+        .then(res => {
+          const data = res.data
+          resolve(data)
+        })
+        .catch(err => {
+          console.log(err)
+          reject('获取失败')
+        })
     })
   },
   /**
@@ -474,7 +512,7 @@ Page({
     console.log('taskid', taskid)
     console.log('arg', arg)
 
-    this.init(taskid)
+    this.init(taskid, arg)
   },
 
   /**
