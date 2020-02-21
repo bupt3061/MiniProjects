@@ -10,13 +10,29 @@ Page({
     workid: null,
     standard: null,
     standardKeys: null,
+    scores: [],
     min: 0,
-    max: 100,
-    step: 5,
+    max: 10,
+    step: 0.5,
     selectedColor: "#14d1b5",
     blockSize: 24
   },
+  /**
+   * 页面其他函数
+   */
+  changeValue: function(e) {
+    const value = e.detail.value
+    const idx = e.target.dataset.index
 
+    console.log('value', value)
+    console.log('index', idx)
+
+    // 更新数据
+    this.data.scores[idx] = value
+  },
+  comment: function() {
+    
+  },
   /**
    * 生命周期函数--监听页面加载
    */

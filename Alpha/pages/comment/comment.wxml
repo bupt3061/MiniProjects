@@ -1,8 +1,20 @@
 <!--pages/comment/comment.wxml-->
 
-<view class="container zan-font-16 zan-c-black" style="padding: 64rpx 0;">
-  <view style="width: 90%">
-    <view>创新性</view>
-    <slider block-size="{{blockSize}}" min="{{min}}" max="{{max}}" step="{{step}}" show-value selected-color="{{selectedColor}}"></slider>
+<view class="container zan-font-16 zan-c-black" style="padding: 64rpx 0 160rpx 0;">
+  <block wx:for="{{standardKeys}}" wx:key="{{index}}">
+    <view class="standards" style="width: 90%; margin-bottom: 32rpx">
+      <view style="font-weight: bold; margin-bottom: 18rpx; background-color: red;">{{item}}</view>
+      <slider data-index="{{index}}" block-size="{{blockSize}}" min="{{min}}" max="{{max}}" step="{{step}}" show-value selected-color="{{selectedColor}}" bindchange="changeValue" style="background-color: blue;"></slider>
+    </view>
+  </block>
+  <view style="width: 90%;">
+    <view style="font-weight: bold; margin-bottom: 18rpx; background-color: red;">优点</view>
+    <view style="height: 180rpx; background-color: #f2f3f5; border-radius: 18rpx; padding: 24rpx;">
+      <textarea placeholder="请输入" style="background-color: blue;"/>
+    </view>
   </view>
+</view>
+
+<view class="bottom">
+  <button class="primary-bg" style="width: 90%; margin: 0 auto;" bindtap="comment">发布</button>
 </view>
