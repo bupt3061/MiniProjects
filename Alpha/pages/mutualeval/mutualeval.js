@@ -1,18 +1,110 @@
 // pages/mutualeval/mutualeval.js
+const app = getApp()
+
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
-
+    wwcTasks: null,
+    whpTasks: null
   },
+  /**
+   * 初始化函数
+   */
+  init: function() {
+    var wwcTasks = app.globalData.wwcTasks
+    var whpTasks = app.globalData.whpTasks
 
+    // 处理时间
+    const now = new Date()
+
+    for (var i = 0; i < wwcTasks.length; i++) {
+      wwcTasks[i].shengyu = this.getTimeBetween(now, wwcTasks[i].evaluateend)
+    }
+
+    for (var i = 0; i < whpTasks.length; i++) {
+      whpTasks[i].shengyu = this.getTimeBetween(now, whpTasks[i].evaluateend)
+    }
+
+    // 添加课程信息
+    wwcTasks = this.addCourseInfo(wwcTasks)
+    whpTasks = this.addCourseInfo(whpTasks)
+
+    // 更新数据
+    app.globalData.wwcTasks = wwcTasks
+    app.globalData.whpTasks = whpTasks
+    console.log('未完成', wwcTasks)
+    console.log('未互评', whpTasks)
+
+    this.setData({
+      wwcTasks: wwcTasks,
+      whpTasks: whpTasks
+    })
+  },
+  /**
+   * 页面其他函数
+   */
+  addCourseInfo: function (tasks) {
+    const courses = app.globalData.courses
+
+    for (var i = 0; i < tasks.length; i++) {
+      for (var j = 0; j < courses.length; j++) {
+        if (tasks[i]._courseid == courses[j]._id) {
+          tasks[i].coursename = courses[j].coursename
+          tasks[i].courseCover = courses[j].coverPath
+          continue
+        }
+      }
+    }
+
+    return tasks
+  },
+  getTimeBetween: function (startDate, endDate) {
+    var days = (endDate - startDate) / (1 * 24 * 60 * 60 * 1000)
+    var timeString = null
+
+    if (days > 30) {
+      var months = days / 30
+      timeString = Math.floor(months).toString() + "月"
+
+      if (days >= 365) {
+        var years = days / 365
+        timeString = Math.floor(years).toString() + "年"
+      }
+    } else if (days < 2) {
+      var hours = days * 24
+      timeString = Math.floor(hours).toString() + "小时"
+
+      if (hours < 1) {
+        var mins = hours * 60
+        timeString = Math.floor(mins).toString() + "分钟"
+
+        if (mins < 1) {
+          var secs = mins * 60
+          timeString = Math.floor(secs).toString() + "秒"
+        }
+      }
+    } else {
+      timeString = Math.floor(days).toString() + "天"
+    }
+
+    return timeString
+  },
+  clickhp: function(e) {
+    const taskid = e.currentTarget.dataset.taskid
+    console.log('taskid', taskid)
+
+    wx.navigateTo({
+      url: '../details/details?data=' + taskid + '/2',
+    })
+  },
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-
+    this.init()
   },
 
   /**
@@ -26,7 +118,15 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
+    const wwcTasks = app.globalData.wwcTasks
+    const whpTasks = app.globalData.whpTasks
 
+    if(wwcTasks.length != 0 || whpTasks.length != 0) {
+      this.setData({
+        wwcTasks: wwcTasks,
+        whpTasks: whpTasks
+      })
+    }
   },
 
   /**

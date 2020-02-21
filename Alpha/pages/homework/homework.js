@@ -289,7 +289,7 @@ Page({
     console.log('已提交')
 
     wx.navigateTo({
-      url: '../details/details?taskid=' + taskid,
+      url: '../details/details?data=' + taskid + '/1',
     })
   },
   getTimeBetween: function(startDate, endDate) {

@@ -440,7 +440,7 @@ Page({
   },
   toHomework: function() {
     wx.navigateTo({
-      url: '../homework/homework?uploadNum=' + this.data.uploadNum,
+      url: '../homework/homework',
     })
   },
   toMutualEval: function() {

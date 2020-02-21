@@ -467,9 +467,12 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function(options) {
-    const taskid = options.taskid
+    const list = options.data.split('/')
+    const taskid = list[0]
+    const arg = list[1]
 
     console.log('taskid', taskid)
+    console.log('arg', arg)
 
     this.init(taskid)
   },

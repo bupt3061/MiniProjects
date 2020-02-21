@@ -1,2 +1,17 @@
 <!--pages/mutualeval/mutualeval.wxml-->
-<text>pages/mutualeval/mutualeval.wxml</text>
+<import src="../template/template.wxml" />
+
+<view class="container zan-font-14 zan-c-black" style="padding: 32rpx 0 64rpx 0;">
+  <block wx:if="{{wwcTasks.length != 0}}">
+    <template is="title" data="{{title: '未完成'}}" />
+    <block wx:for="{{wwcTasks}}" wx:key="{{index}}">
+        <template is="hp-card" data="{{...item}}"></template>
+    </block>
+  </block>
+  <block wx:if="{{whpTasks.length != 0}}">
+    <template is="title" data="{{title: '未互评'}}" />
+    <block wx:for="{{whpTasks}}" wx:key="{{index}}">
+      <template is="hp-card" data="{{...item}}"></template>
+    </block>
+  </block>
+</view>
