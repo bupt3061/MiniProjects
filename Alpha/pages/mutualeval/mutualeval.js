@@ -1,5 +1,6 @@
 // pages/mutualeval/mutualeval.js
 const app = getApp()
+const dt = require('../../utils/date.js')
 
 Page({
 
@@ -8,8 +9,10 @@ Page({
    */
   data: {
     hasTask: true,
+    show: false,
     wwcTasks: null,
-    whpTasks: null
+    whpTasks: null,
+    ygqETasks: null
   },
   /**
    * 初始化函数
@@ -21,15 +24,11 @@ Page({
     const courseids = app.globalData.courseids
     const openid = app.globalData.openid
 
-    if (inEvalNum == 0) {
-      this.setData({
-        hasTask: false
-      })
+    wx.showLoading({
+      title: '加载中',
+    })
 
-      return
-    }
-
-    // 获取已过期任务
+    // 获取所有已过期任务
     let pastedEvalTasks = await this.getPastedEvalTasks(courseids)
 
     var pastedEvalTaskids = []
@@ -45,6 +44,44 @@ Page({
     console.log('evaledTasks', evaledTasks)
     console.log('evaledNum', evaledNum)
 
+    // 获得已过期任务
+    var ygqETasks = []
+    for (var i = 0; i < pastedEvalTasks.length; i++) {
+      var flag = true
+      for(var j = 0; j < evaledTasks.length; j++) {
+        if(pastedEvalTasks[i]._id == evaledTasks[j]._id) {
+          flag = false
+          if(evaledTasks[j].num < 3) {
+            ygqETasks.push(pastedEvalTasks[i])
+          }
+        }
+      }
+      if(flag) {
+        ygqETasks.push(pastedEvalTasks[i])
+      }
+    }
+
+    if (wwcTasks.length == 0 && ygqETasks.length == 0 && whpTasks.length == 0) {
+      wx.hideLoading()
+
+      this.setData({
+        hasTask: false
+      })
+
+      return
+    }
+
+    for (var i = 0; i < ygqETasks.length; i++) {
+      // 排序
+      for (var j = 0; j < ygqETasks.length - i - 1; j++) {
+        if (ygqETasks[j].evaluatestart < ygqETasks[j + 1].evaluatestart) {
+          var temp = ygqETasks[j]
+          ygqETasks[j] = ygqETasks[j + 1]
+          ygqETasks[j + 1] = temp
+        }
+      }
+    }
+
     // 处理时间
     const now = new Date()
 
@@ -56,20 +93,45 @@ Page({
       whpTasks[i].shengyu = this.getTimeBetween(now, whpTasks[i].evaluateend)
     }
 
+    for(var i = 0; i < ygqETasks.length; i++) {
+      ygqETasks[i].zhouqi = dt.formatTime(ygqETasks[i].uploadstart) + " - " + dt.formatTime(ygqETasks[i].uploadend)
+    }
+
     // 添加课程信息
     wwcTasks = this.addCourseInfo(wwcTasks)
     whpTasks = this.addCourseInfo(whpTasks)
+    ygqETasks = this.addCourseInfo(ygqETasks)
 
     // 更新数据
     app.globalData.wwcTasks = wwcTasks
     app.globalData.whpTasks = whpTasks
+    app.globalData.ygqETasks = ygqETasks
+    app.globalData.storedEvalTasks = true
     console.log('未完成', wwcTasks)
     console.log('未互评', whpTasks)
+    console.log('已过期', ygqETasks)
+
+    var wwcShow = true
+    var whpShow = true
+
+    if (whpTasks.length == 0) {
+      whpShow = false
+    }
+
+    if (wwcTasks.length == 0 && ygqETasks.length == 0) {
+      wwcShow = false
+    }
 
     this.setData({
       wwcTasks: wwcTasks,
-      whpTasks: whpTasks
+      whpTasks: whpTasks,
+      ygqETasks: ygqETasks,
+      wwcShow: wwcShow,
+      whpShow: whpShow,
+      show: true
     })
+
+    wx.hideLoading()
   },
   /**
    * 页面其他函数
@@ -187,6 +249,35 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function(options) {
+    const storedEvalTasks = app.globalData.storedEvalTasks
+
+    if (storedEvalTasks) {
+      const wwcTasks = app.globalData.wwcTasks
+      const whpTasks = app.globalData.whpTasks
+      const ygqETasks = app.globalData.ygqETasks
+
+      var wwcShow = true
+      var whpShow = true
+
+      if (whpTasks.length == 0) {
+        whpShow = false
+      }
+
+      if (wwcTasks.length == 0 && ygqETasks.length == 0) {
+        wwcShow = false
+      }
+
+      this.setData({
+        wwcTasks: wwcTasks,
+        whpTasks: whpTasks,
+        ygqETasks: ygqETasks,
+        wwcShow: wwcShow,
+        whpShow: whpShow,
+        show: true
+      })
+
+      return 
+    }
     this.init()
   },
 
@@ -203,9 +294,11 @@ Page({
   onShow: function() {
     const wwcTasks = app.globalData.wwcTasks
     const whpTasks = app.globalData.whpTasks
-    const inEvalNum = app.globalData.inEvalNum
+    const ygqETasks = app.globalData.ygqETasks
+    const storedEvalTasks = app.globalData.storedEvalTasks
 
-    if (inEvalNum == 0) {
+    if (wwcTasks.length == 0 && ygqETasks.length == 0 && whpTasks.length == 0) {
+
       this.setData({
         hasTask: false
       })
@@ -213,10 +306,25 @@ Page({
       return
     }
 
-    if (wwcTasks.length != 0 || whpTasks.length != 0) {
+    if (storedEvalTasks) {
+      var wwcShow = true
+      var whpShow = true
+
+      if (whpTasks.length == 0) {
+        whpShow = false
+      }
+
+      if (wwcTasks.length == 0 && ygqETasks.length == 0) {
+        wwcShow = false
+      }
+
       this.setData({
         wwcTasks: wwcTasks,
-        whpTasks: whpTasks
+        whpTasks: whpTasks,
+        ygqETasks: ygqETasks,
+        wwcShow: wwcShow,
+        whpShow: whpShow,
+        show: true
       })
     }
   },

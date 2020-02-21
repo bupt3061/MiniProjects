@@ -7,7 +7,7 @@
 </view>
 
 <view wx:if="{{hasTask && show}}" class="container zan-font-14 zan-c-black" style="padding: 32rpx 0 64rpx 0;">
-  <block wx:if="{{inUploadNum > 0 || ygqNum > 0}}">
+  <block wx:if="{{wtjShow}}">
     <template is="title" data="{{title: '未提交'}}" />
     <block wx:for="{{wtjTasks}}" wx:key="{{index}}">
         <template is="wtj-card" data="{{...item}}"></template>
@@ -16,7 +16,7 @@
       <template is="ygq-card" data="{{...item}}"></template>
     </block>
   </block>
-  <block wx:if="{{show}}">
+  <block wx:if="{{ytjShow}}">
     <template is="title" data="{{title: '已提交'}}" />
     <block wx:for="{{kxgTasks}}" wx:key="{{index}}">
       <template is="kxg-card" data="{{...item}}"></template>

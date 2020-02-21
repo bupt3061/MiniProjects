@@ -301,7 +301,7 @@ Page({
           const list = res.list
           var num = 0
           for (var i = 0; i < list.length; i++) {
-            if (list[i].num < 3) {
+            if (list[i].num >= 3) {
               num += 1
             }
           }

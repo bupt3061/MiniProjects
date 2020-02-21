@@ -9,13 +9,13 @@ Page({
    */
   data: {
     hasTask: true,
+    show: false,
     wtjTasks: [],
     ytjTasks: [],
     ygqTasks: [],
     kxgTasks: [],
-    inUploadNum: 0,
-    ygqNum: 0,
-    show: false
+    wtjShow: false,
+    ytjShow: false
   },
   /**
    * 初始化函数
@@ -28,27 +28,8 @@ Page({
     const openid = app.globalData.openid
     const now = new Date()
     const inUploadNum = app.globalData.inUploadNum
-
-    if(inUploadNum == 0) {
-      this.setData({
-        hasTask: false
-      })
-
-      return
-    }
-
-    if (app.globalData.ytjTasks.length != 0) {
-      this.setData({
-        wtjTasks: wtjTasks,
-        ytjTasks: app.globalData.ytjTasks,
-        ygqTasks: app.globalData.ygqTasks,
-        kxgTasks: kxgTasks,
-        ygqNum: app.globalData.ygqTasks.length,
-        show: true
-      })
-
-      return 
-    }
+    var wtjShow = true
+    var ytjShow = true
 
     wx.showLoading({
       title: '加载中',
@@ -94,6 +75,20 @@ Page({
       if (flag) {
         ygqTasks.push(pastedUploadTasks[i])
       }
+    }
+
+    console.log('已过期', ygqTasks)
+    console.log('已提交', ytjTasks)
+
+    if(ytjTasks.length == 0 && wtjTasks.length == 0 && kxgTasks.length == 0 && ygqTasks.length == 0) {
+      // 空状态
+      wx.hideLoading()
+
+      this.setData({
+        hasTask: false
+      })
+
+      return 
     }
 
     /**
@@ -173,7 +168,7 @@ Page({
 
     wx.hideLoading()
 
-    // 存储
+    // 更新数据
     wtjTasks = this.addCourseInfo(wtjTasks)
     ytjTasks = this.addCourseInfo(ytjTasks)
     ygqTasks = this.addCourseInfo(ygqTasks)
@@ -182,13 +177,23 @@ Page({
     app.globalData.ytjTasks = ytjTasks
     app.globalData.ygqTasks = ygqTasks
     app.globalData.kxgTasks = kxgTasks
+    app.globalData.storedUploadTasks = true
+
+    if(wtjTasks.length == 0 && kxgTasks.length == 0) {
+      wtjShow = false
+    }
+
+    if(kxgTasks.length == 0 && ytjTasks.length == 0) {
+      ytjShow = false
+    }
 
     this.setData({
       wtjTasks: wtjTasks,
       ytjTasks: ytjTasks,
       ygqTasks: ygqTasks,
       kxgTasks: kxgTasks,
-      ygqNum: ygqTasks.length,
+      wtjShow: wtjShow,
+      ytjShow: ytjShow,
       show: true
     })
   },
@@ -352,6 +357,38 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function(options) {
+    // 判断是否已存储数据
+    const storedUploadTasks = app.globalData.storedUploadTasks
+
+    if (storedUploadTasks) {
+      const ytjTasks = app.globalData.ytjTasks
+      const ygqTasks = app.globalData.ygqTasks
+      const wtjTasks = app.globalData.wtjTasks
+      const kxgTasks = app.globalData.kxgTasks
+      var wtjShow = true
+      var ytjShow = true
+
+      if (wtjTasks.length == 0 && kxgTasks.length == 0) {
+        wtjShow = false
+      }
+
+      if (kxgTasks.length == 0 && ytjTasks.length == 0) {
+        ytjShow = false
+      }
+
+      this.setData({
+        wtjTasks: wtjTasks,
+        ytjTasks: ytjTasks,
+        ygqTasks: ygqTasks,
+        kxgTasks: kxgTasks,
+        wtjShow: wtjShow,
+        ytjShow: ytjShow,
+        show: true
+      })
+
+      return
+    }
+
     this.init()
   },
 
@@ -366,13 +403,45 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function() {
-    this.setData({
-      wtjTasks: app.globalData.wtjTasks,
-      ytjTasks: app.globalData.ytjTasks,
-      ygqTasks: app.globalData.ygqTasks,
-      kxgTasks: app.globalData.kxgTasks,
-      ygqNum: app.globalData.ygqTasks.length
-    })
+    const wtjTasks = app.globalData.wtjTasks
+    const ytjTasks = app.globalData.ytjTasks
+    const ygqTasks = app.globalData.ygqTasks
+    const kxgTasks = app.globalData.kxgTasks
+    const storedUploadTasks = app.globalData.storedUploadTasks
+
+    if (ytjTasks.length == 0 && wtjTasks.length == 0 && kxgTasks.length == 0 && ygqTasks.length == 0) {
+      wx.hideLoading()
+
+      this.setData({
+        hasTask: false
+      })
+
+      return
+    }
+
+    if(storedUploadTasks) {
+      // 非初次显示
+      var wtjShow = true
+      var ytjShow = true
+
+      if (wtjTasks.length == 0 && kxgTasks.length == 0) {
+        wtjShow = false
+      }
+
+      if (kxgTasks.length == 0 && ytjTasks.length == 0) {
+        ytjShow = false
+      }
+
+      this.setData({
+        wtjTasks: wtjTasks,
+        ytjTasks: ytjTasks,
+        ygqTasks: ygqTasks,
+        kxgTasks: kxgTasks,
+        wtjShow: wtjShow,
+        ytjShow: ytjShow,
+        show: true
+      })
+    }
   },
 
   /**

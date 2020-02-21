@@ -6,14 +6,17 @@
   <view class="zan-font-20 zan-c-gray-darker" style="font-weight: bold; margin: 24rpx">暂无任务</view>
 </view>
 
-<view wx:if="{{hasTask}}" class="container zan-font-14 zan-c-black" style="padding: 32rpx 0 64rpx 0;">
-  <block wx:if="{{wwcTasks.length != 0}}">
+<view wx:if="{{hasTask && show}}" class="container zan-font-14 zan-c-black" style="padding: 32rpx 0 64rpx 0;">
+  <block wx:if="{{wwcShow}}">
     <template is="title" data="{{title: '未完成'}}" />
     <block wx:for="{{wwcTasks}}" wx:key="{{index}}">
-        <template is="hp-card" data="{{...item}}"></template>
+      <template is="hp-card" data="{{...item}}"></template>
+    </block>
+    <block wx:for="{{ygqETasks}}" wx:key="{{index}}">
+      <template is="ygqE-card" data="{{...item}}"></template>
     </block>
   </block>
-  <block wx:if="{{whpTasks.length != 0}}">
+  <block wx:if="{{whpShow}}">
     <template is="title" data="{{title: '未互评'}}" />
     <block wx:for="{{whpTasks}}" wx:key="{{index}}">
       <template is="hp-card" data="{{...item}}"></template>

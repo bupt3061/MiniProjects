@@ -61,6 +61,7 @@ App({
     kxgTasks: [],
     whpTasks: [],
     wwcTasks: [],
+    ygqETasks: [],
     courses: null,
     courseids: null,
     users: null,
@@ -68,6 +69,8 @@ App({
     inEvalNum: null,
     screenWidth: null,
     standard: null,
-    standardKeys: null
+    standardKeys: null,
+    storedUploadTasks: false,
+    storedEvalTasks: false
   }
 })
