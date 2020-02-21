@@ -36,7 +36,7 @@
   </block>
 </view>
 
-<view class="bottom">
+<view wx:if="{{show}}" class="bottom">
   <button class="primary-bg" style="width: 90%; margin: 0 auto;" bindtap="toComment">评价</button>
 </view>
 

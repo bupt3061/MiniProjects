@@ -66,6 +66,8 @@ App({
     users: null,
     inUploadNum: null,
     inEvalNum: null,
-    screenWidth: null
+    screenWidth: null,
+    standard: null,
+    standardKeys: null
   }
 })

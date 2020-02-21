@@ -12,7 +12,6 @@ Page({
     ytjTasks: [],
     ygqTasks: [],
     kxgTasks: [],
-    courses: [],
     inUploadNum: 0,
     ygqNum: 0,
     show: false
@@ -28,6 +27,19 @@ Page({
     const openid = app.globalData.openid
     const now = new Date()
 
+    if (app.globalData.ytjTasks.length != 0) {
+      this.setData({
+        wtjTasks: wtjTasks,
+        ytjTasks: app.globalData.ytjTasks,
+        ygqTasks: app.globalData.ygqTasks,
+        kxgTasks: kxgTasks,
+        ygqNum: app.globalData.ygqTasks.length,
+        show: true
+      })
+
+      return 
+    }
+
     wx.showLoading({
       title: '加载中',
     })
@@ -37,7 +49,7 @@ Page({
      */
 
     // 获得所有过期的任务
-    let pastedUploadTasks = await this.getPastedUploadTasks(courseids, now) // 包括已提交和已过期
+    let pastedUploadTasks = await this.getTasks(courseids, now) // 包括已提交和已过期
     console.log('pastedUploadTasks', pastedUploadTasks)
 
     var pastedUploadTaskids = []
@@ -138,9 +150,9 @@ Page({
       for (var i = 0; i < ygqTasks.length; i++) {
         // 排序
         for (var j = 0; j < ygqTasks.length - i - 1; j++) {
-          if (ygqTasks[j].uploadstart > ygqTasks[j + 1].uploadstart) {
+          if (ygqTasks[j].uploadstart < ygqTasks[j + 1].uploadstart) {
             var temp = ygqTasks[j]
-            ygqTasks[j] = yygqTasks[j + 1]
+            ygqTasks[j] = ygqTasks[j + 1]
             ygqTasks[j + 1] = temp
           }
         }
@@ -166,7 +178,6 @@ Page({
       ytjTasks: ytjTasks,
       ygqTasks: ygqTasks,
       kxgTasks: kxgTasks,
-      courses: courses,
       ygqNum: ygqTasks.length,
       show: true
     })
@@ -220,7 +231,7 @@ Page({
         })
     })
   },
-  async getPastedUploadTasks(courseids, now) {
+  async getTasks(courseids, now) {
     let count = await this.getTasksCount(courseids, now)
     let list = []
 
@@ -315,7 +326,7 @@ Page({
     for (var i = 0; i < tasks.length; i++) {
       for (var j = 0; j < courses.length; j++) {
         if (tasks[i]._courseid == courses[j]._id) {
-          tasks[i].coursename = courses[j].name
+          tasks[i].coursename = courses[j].coursename
           tasks[i].courseCover = courses[j].coverPath
           continue
         }
@@ -347,7 +358,6 @@ Page({
       ytjTasks: app.globalData.ytjTasks,
       ygqTasks: app.globalData.ygqTasks,
       kxgTasks: app.globalData.kxgTasks,
-      courses: app.globalData.courses,
       ygqNum: app.globalData.ygqTasks.length
     })
   },

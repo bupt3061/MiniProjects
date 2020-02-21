@@ -1,2 +1,8 @@
 <!--pages/comment/comment.wxml-->
-<text>pages/comment/comment.wxml</text>
+
+<view class="container zan-font-16 zan-c-black" style="padding: 64rpx 0;">
+  <view style="width: 90%">
+    <view>创新性</view>
+    <slider block-size="{{blockSize}}" min="{{min}}" max="{{max}}" step="{{step}}" show-value selected-color="{{selectedColor}}"></slider>
+  </view>
+</view>

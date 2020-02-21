@@ -1,18 +1,39 @@
 // pages/comment/comment.js
+const app = getApp()
+
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
-
+    workid: null,
+    standard: null,
+    standardKeys: null,
+    min: 0,
+    max: 100,
+    step: 5,
+    selectedColor: "#14d1b5",
+    blockSize: 24
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
+    const workid = options.workid
+    const standard = app.globalData.standard
+    const standardKeys = app.globalData.standardKeys
 
+    console.log('workid', workid)
+    console.log('standard', standard)
+    console.log('standardKeys', standardKeys)
+
+    this.setData({
+      workid: workid,
+      standard: standard,
+      standardKeys: standardKeys
+    })
   },
 
   /**

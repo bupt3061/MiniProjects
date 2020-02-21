@@ -19,7 +19,7 @@ Page({
     mexisted: false,
     marked: false,
     standard: null,
-    standard_keys: null,
+    standardKeys: null,
     canEvaluate: false,
     evals: null,
     evalsNum: 0,
@@ -81,22 +81,22 @@ Page({
      * 2、已过期不可评价
      */
     // 获取task信息
-    let task = await this.getTask(taskid)
-    const standard = task.standard
-    const evaluateend = task.evaluateend
-    const standard_keys = Object.keys(standard)
+    let taskInfo = await this.getTaskInfo(taskid)
+    const standard = taskInfo.standard
+    const evaluateend = taskInfo.evaluateend
+    const standardKeys = Object.keys(standard)
 
     console.log('standard', standard)
-    console.log('standard_keys', standard_keys)
+    console.log('standardKeys', standardKeys)
 
     // 判断自己是否可评价
     var canEvaluate = true
-    if(openid == work._openid) {
+    if (openid == work._openid) {
       canEvaluate = false
     }
 
     // 判断是否过期
-    if(now > evaluateend) {
+    if (now > evaluateend) {
       canEvaluate = false
     }
 
@@ -108,7 +108,7 @@ Page({
     let evals = await this.getEvals(workid)
     const evalsNum = evals.length
 
-    if(evalsNum != 0) {
+    if (evalsNum != 0) {
       for (var i = 0; i < evals.length; i++) {
         var res = this.getTimeBetween(now, evals[i].evaltime) + '前'
         evals[i].pasttime = res
@@ -122,7 +122,7 @@ Page({
           }
         }
       }
-    } 
+    }
 
     console.log('evals', evals)
     console.log('evalsNum', evalsNum)
@@ -130,6 +130,9 @@ Page({
     wx.hideLoading()
 
     // 设置数据
+    app.globalData.standard = standard
+    app.globalData.standardKeys = standardKeys
+
     this.setData({
       show: true,
       taskid: taskid,
@@ -142,7 +145,7 @@ Page({
       mexisted: mexisted,
       marked: marked,
       standard: standard,
-      standard_keys: standard_keys,
+      standardKeys: standardKeys,
       canEvaluate: canEvaluate,
       evals: evals,
       evalsNum: evalsNum,
@@ -154,38 +157,36 @@ Page({
   marked: function() {
     const marked = wx.cloud.database().collection('marked')
 
-    if(this.data.mexisted) {
+    if (this.data.mexisted) {
       marked.where({
-        _id: this.data.mid
-      }).update({
-        data: {
-          status: true
-        }
-      })
-      .then(res => {
-        console.log('res', res)
-      })
-      .catch(err => {
-        console.log('err', err)
-      })
+          _id: this.data.mid
+        }).update({
+          data: {
+            status: true
+          }
+        })
+        .then(res => {
+          console.log('res', res)
+        })
+        .catch(err => {
+          console.log('err', err)
+        })
     } else {
       const now = new Date()
 
-      data = {
-        markedtime: now,
-        _workid: this.data.work._id,
-        status: true
-      }
-
       marked.add({
-        data
-      })
-      .then(res => {
-        console.log(res)
-      })
-      .catch(err => {
-        console.log(err)
-      })
+          data: {
+            markedtime: now,
+            _workid: this.data.work._id,
+            status: true
+          }
+        })
+        .then(res => {
+          console.log(res)
+        })
+        .catch(err => {
+          console.log(err)
+        })
     }
 
     this.setData({
@@ -209,16 +210,16 @@ Page({
     }, this.data.duration)
 
   },
-  cancleMarked: function () {
+  cancleMarked: function() {
     const marked = wx.cloud.database().collection('marked')
 
     marked.where({
-      _id: this.data.mid
-    }).update({
-      data: {
-        status: false
-      }
-    })
+        _id: this.data.mid
+      }).update({
+        data: {
+          status: false
+        }
+      })
       .then(res => {
         console.log('res', res)
       })
@@ -250,22 +251,22 @@ Page({
   getWork: function(taskid, openid) {
     return new Promise((resolve, reject) => {
       const work = wx.cloud.database().collection('work')
-      
+
       work.where({
-        _openid: openid,
-        _taskid: taskid
-      }).get()
-      .then(res => {
-        const data = res.data[0]
-        resolve(data)
-      })
-      .catch(err => {
-        console.log(err)
-        reject('获取失败')
-      })
+          _openid: openid,
+          _taskid: taskid
+        }).get()
+        .then(res => {
+          const data = res.data[0]
+          resolve(data)
+        })
+        .catch(err => {
+          console.log(err)
+          reject('获取失败')
+        })
     })
   },
-  getTimeBetween: function (startDate, endDate) {
+  getTimeBetween: function(startDate, endDate) {
     var days = (startDate - endDate) / (1 * 24 * 60 * 60 * 1000)
     var timeString = null
 
@@ -273,10 +274,10 @@ Page({
       var months = days / 30
       timeString = Math.floor(months).toString() + "月"
 
-      if(days >= 365) {
+      if (days >= 365) {
         var years = days / 365
         timeString = Math.floor(years).toString() + "年"
-      } 
+      }
     } else if (days < 1) {
       var hours = days * 24
       timeString = Math.floor(hours).toString() + "小时"
@@ -291,7 +292,7 @@ Page({
 
     return timeString
   },
-  getTempUrls: function (cloudPaths) {
+  getTempUrls: function(cloudPaths) {
     return new Promise((resolve, reject) => {
 
       wx.cloud.getTempFileURL({
@@ -321,9 +322,9 @@ Page({
       var mid = null
 
       marked.where({
-        _workid: workid,
-        _openid: openid
-      }).get()
+          _workid: workid,
+          _openid: openid
+        }).get()
         .then(res => {
           const temp = res.data
 
@@ -349,41 +350,44 @@ Page({
         })
     })
   },
-  getTask: function(taskid) {
+  getTaskInfo: function(taskid) {
     return new Promise((resolve, reject) => {
       const task = wx.cloud.database().collection('task')
 
       task.where({
-        _id: taskid
-      }).get()
-      .then(res => {
-        const data = res.data[0]
-        resolve(data)
-      })
-      .catch(err => {
-        console.log(err)
-        reject('获取失败')
-      })
+          _id: taskid
+        }).get()
+        .then(res => {
+          const data = res.data[0]
+          resolve(data)
+        })
+        .catch(err => {
+          console.log(err)
+          reject('获取失败')
+        })
     })
   },
-  getEvalsCount: function (workid) {
+  getEvalsCount: function(workid) {
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database()
       const _ = db.command
       const evaluate = db.collection('evaluate')
 
-      evaluate.where({
-        _workid: workid
-      }).count().then(res => {
-        const total = res.total
-        resolve(total);
-      }).catch(err => {
-        console.log(err)
-        reject("查询失败")
-      })
+      evaluate
+        .where({
+          _workid: workid
+        })
+        .count()
+        .then(res => {
+          const total = res.total
+          resolve(total);
+        }).catch(err => {
+          console.log(err)
+          reject("查询失败")
+        })
     })
   },
-  getEvalsIndexSkip: function (workid, skip) {
+  getEvalsIndexSkip: function(workid, skip) {
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database()
       const _ = db.command
@@ -391,28 +395,33 @@ Page({
 
       let selectPromise;
 
-      selectPromise = evaluate.where({
-        _workid: workid,
-      }).skip(skip).get()
+      selectPromise = evaluate
+        .where({
+          _workid: workid,
+        })
+        .skip(skip)
+        .get()
 
-      selectPromise.then(res => {
-        const data = res.data
-        resolve(data);
-      }).catch(err => {
-        console.error(err)
-        reject("查询失败!")
-      })
+      selectPromise
+        .then(res => {
+          const data = res.data
+          resolve(data);
+        })
+        .catch(err => {
+          console.error(err)
+          reject("查询失败!")
+        })
     })
   },
   async getEvals(workid) {
     let count = await this.getEvalsCount(workid)
     let list = []
 
-    if(count == 0) {
+    if (count == 0) {
       return list
     }
 
-    for (let i = 0; i < count; i += 10) {
+    for (let i = 0; i < count; i += 20) {
       let res = await this.getEvalsIndexSkip(workid, i)
       console.log('res', res)
       list = list.concat(res)
@@ -422,7 +431,7 @@ Page({
       }
     }
   },
-  preview: function (e) {
+  preview: function(e) {
     const url = e.currentTarget.dataset.url
     var tempUrls = this.data.tempUrls
     var idx = 0
@@ -450,7 +459,7 @@ Page({
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad: function (options) {
+  onLoad: function(options) {
     const taskid = options.taskid
 
     console.log('taskid', taskid)
@@ -461,49 +470,49 @@ Page({
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
-  onReady: function () {
+  onReady: function() {
 
   },
 
   /**
    * 生命周期函数--监听页面显示
    */
-  onShow: function () {
+  onShow: function() {
 
   },
 
   /**
    * 生命周期函数--监听页面隐藏
    */
-  onHide: function () {
+  onHide: function() {
 
   },
 
   /**
    * 生命周期函数--监听页面卸载
    */
-  onUnload: function () {
+  onUnload: function() {
 
   },
 
   /**
    * 页面相关事件处理函数--监听用户下拉动作
    */
-  onPullDownRefresh: function () {
+  onPullDownRefresh: function() {
 
   },
 
   /**
    * 页面上拉触底事件的处理函数
    */
-  onReachBottom: function () {
+  onReachBottom: function() {
 
   },
 
   /**
    * 用户点击右上角分享
    */
-  onShareAppMessage: function () {
+  onShareAppMessage: function() {
 
   }
 })

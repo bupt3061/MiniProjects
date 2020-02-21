@@ -1,1 +1,5 @@
 /* pages/comment/comment.wxss */
+
+page {
+  background-color: white
+}
