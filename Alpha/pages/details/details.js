@@ -451,9 +451,10 @@ Page({
   },
   toComment: function() {
     const workid = this.data.work._id
+    const taskid = this.data.taskid
 
     wx.navigateTo({
-      url: '../comment/comment?workid=' + workid,
+      url: '../comment/comment?data=' + workid + '/' +taskid,
     })
   },
   /**

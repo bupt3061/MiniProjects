@@ -12,3 +12,9 @@ page {
   border-top: 1px solid #f3f3f3;
   padding: 32rpx 0;
 }
+
+.textarea-wrp {
+  width: 100%;
+  padding: 25rpx;
+  background-color: #fff;
+}

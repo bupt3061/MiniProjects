@@ -1,16 +1,28 @@
 <!--pages/comment/comment.wxml-->
 
-<view class="container zan-font-16 zan-c-black" style="padding: 64rpx 0 160rpx 0;">
+<zan-toptips content="{{content}}" duration="{{ duration }}" is-show="{{ $zanui.toptips.show }}" backgroundColor="#FAAD14" />
+
+<view class="container zan-font-18 zan-c-black" style="padding: 64rpx 0 180rpx 0;">
   <block wx:for="{{standardKeys}}" wx:key="{{index}}">
     <view class="standards" style="width: 90%; margin-bottom: 32rpx">
-      <view style="font-weight: bold; margin-bottom: 18rpx; background-color: red;">{{item}}</view>
-      <slider data-index="{{index}}" block-size="{{blockSize}}" min="{{min}}" max="{{max}}" step="{{step}}" show-value selected-color="{{selectedColor}}" bindchange="changeValue" style="background-color: blue;"></slider>
+      <view style="font-weight: bold; margin-bottom: 12rpx;">{{item}}</view>
+      <slider data-index="{{index}}" block-size="{{blockSize}}" min="{{min}}" max="{{max}}" step="{{step}}" show-value selected-color="{{selectedColor}}" bindchange="changeValue"></slider>
     </view>
   </block>
-  <view style="width: 90%;">
-    <view style="font-weight: bold; margin-bottom: 18rpx; background-color: red;">优点</view>
-    <view style="height: 180rpx; background-color: #f2f3f5; border-radius: 18rpx; padding: 24rpx;">
-      <textarea placeholder="请输入" style="background-color: blue;"/>
+
+  <view style="width: 90%; margin-bottom: 32rpx">
+    <view style="font-weight: bold; margin-bottom: 12rpx;">优点</view>
+    <view style="background-color: #f2f3f5; border-radius: 18rpx; padding: 32rpx;">
+      <textarea style="width: 100%;" maxlength="{{maxlength}}" bindinput="posInput" focus="{{posFocus}}"></textarea>
+      <view class="zan-c-gray-dark zan-font-14" style="text-align: right; padding-yop: 32rpx;">{{poslen}}/{{maxlength}}</view>
+    </view>
+  </view>
+
+  <view style="width: 90%; margin-bottom: 32rpx">
+    <view style="font-weight: bold; margin-bottom: 12rpx;">缺点</view>
+    <view style="background-color: #f2f3f5; border-radius: 18rpx; padding: 32rpx;">
+      <textarea style="width: 100%;" maxlength="{{maxlength}}" bindinput="nagInput" focus="{{nagFocus}}"></textarea>
+      <view class="zan-c-gray-dark zan-font-14" style="text-align: right; padding-top: 32rpx;">{{naglen}}/{{maxlength}}</view>
     </view>
   </view>
 </view>
