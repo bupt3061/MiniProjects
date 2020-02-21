@@ -292,9 +292,7 @@ Page({
       url: '../details/details?taskid=' + taskid,
     })
   },
-  getTimeBetween: function(startDateString, endDateString) {
-    var startDate = Date.parse(startDateString)
-    var endDate = Date.parse(endDateString)
+  getTimeBetween: function(startDate, endDate) {
     var days = (endDate - startDate) / (1 * 24 * 60 * 60 * 1000)
     var timeString = null
 
@@ -313,6 +311,11 @@ Page({
       if (hours < 1) {
         var mins = hours * 60
         timeString = Math.floor(mins).toString() + "分钟"
+
+        if (mins < 1) {
+          var secs = mins * 60
+          timeString = Math.floor(secs).toString() + "秒"
+        }
       }
     } else {
       timeString = Math.floor(days).toString() + "天"

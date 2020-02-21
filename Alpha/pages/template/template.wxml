@@ -75,7 +75,7 @@
       <view class="avatar" style="margin-right: 24rpx">
         <image style="width: 88rpx; height: 88rpx; border-radius: 44rpx; border: 1px solid #f3f3f3;" src="../../img/tongxue.png"></image>
       </view>
-      <view class="info" style="display: flex; flex-direction: column; align-items: center;">
+      <view class="info" style="display: flex; flex-direction: column;">
         <view class="zan-font-18">同学</view>
         <view class="zan-font-14 zan-c-gray-darker">{{pasttime}}</view>
       </view>

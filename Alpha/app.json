@@ -9,7 +9,8 @@
     "pages/submit/submit",
     "pages/success/success",
     "pages/details/details",
-    "pages/comment/comment"
+    "pages/comment/comment",
+    "pages/mutualeval/mutualeval"
   ],
   "enablePullDownRefresh": true,
   "window": {

@@ -5,7 +5,7 @@
       <text class="zan-font-18">作业<text wx:if="{{inUploadNum != 0}}"class="zan-font-18 primary"> ({{inUploadNum}}) </text></text>
       <zan-icon class="primary" type="pending-orders" style="font-size: 80rpx"></zan-icon>
     </view>
-    <view class="card">
+    <view class="card" bindtap="toMutualEval">
       <text class="zan-font-18">互评<text wx:if="{{inEvalNum != 0}}" class="zan-font-18 primary"> ({{inEvalNum}}) </text></text>
       <zan-icon class="primary" type="chat" style="font-size: 80rpx"></zan-icon>
     </view>

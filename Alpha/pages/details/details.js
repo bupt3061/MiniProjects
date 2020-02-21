@@ -58,7 +58,7 @@ Page({
     console.log('cloudPaths', cloudPaths)
 
     // 处理时间
-    const pasttime = this.getTimeBetween(now, uploadtime) + '前'
+    const pasttime = this.getTimeBetween(uploadtime, now)
     console.log('pasttime', pasttime)
 
     // 获得tempUrls
@@ -110,9 +110,11 @@ Page({
 
     if (evalsNum != 0) {
       for (var i = 0; i < evals.length; i++) {
-        var res = this.getTimeBetween(now, evals[i].evaltime) + '前'
+        var res = this.getTimeBetween(evals[i].evaltime, now)
         evals[i].pasttime = res
+      }
 
+      for (var i = 0; i < evals.length; i++) {
         // 排序
         for (var j = 0; j < evals.length - i - 1; j++) {
           if (evals[j].evaltime < evals[j + 1].evaltime) {
@@ -266,25 +268,29 @@ Page({
         })
     })
   },
-  getTimeBetween: function(startDate, endDate) {
-    var days = (startDate - endDate) / (1 * 24 * 60 * 60 * 1000)
+  getTimeBetween: function (startDate, endDate) {
+    var days = (endDate - startDate) / (1 * 24 * 60 * 60 * 1000)
     var timeString = null
 
     if (days > 30) {
       var months = days / 30
-      timeString = Math.floor(months).toString() + "月"
+      timeString = Math.floor(months).toString() + "月前"
 
       if (days >= 365) {
         var years = days / 365
-        timeString = Math.floor(years).toString() + "年"
+        timeString = Math.floor(years).toString() + "年前"
       }
-    } else if (days < 1) {
+    } else if (days < 2) {
       var hours = days * 24
-      timeString = Math.floor(hours).toString() + "小时"
+      timeString = Math.floor(hours).toString() + "小时前"
 
       if (hours < 1) {
         var mins = hours * 60
-        timeString = Math.floor(mins).toString() + "分钟"
+        timeString = Math.floor(mins).toString() + "分钟前"
+
+        if (mins < 1) {
+          timeString = "刚刚"
+        }
       }
     } else {
       timeString = Math.floor(days).toString() + "天"

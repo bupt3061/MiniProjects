@@ -438,65 +438,14 @@ Page({
       }
     }
   },
-  judgeUploaded: function(taskid, openid) {
-    /**
-     * 判断是否上传
-     */
-    return new Promise((resolve, reject) => {
-      const work = wx.cloud.database().collection('work')
-
-      work.where({
-          _taskid: taskid,
-          _openid: openid
-        })
-        .get()
-        .then(res => {
-          const work = res.data
-          var uploaded = true
-
-          if (work.length == 0) {
-            uploaded = false
-          }
-
-          resolve([work, uploaded])
-        })
-        .catch(err => {
-          console.log(err)
-          reject('获取失败')
-        })
-    })
-  },
-  judgeEvaluated: function(taskid, openid) {
-    /**
-     * 判断是否已完成互评（3个）
-     */
-    return new Promise((resolve, reject) => {
-      const evaluate = wx.cloud.database().collection('evaluate')
-
-      evaluate.where({
-          _taskid: taskid,
-          _openid: openid
-        }).get()
-        .then(res => {
-          const evaluates = res.data
-          var evaluated = true
-          const total = evaluates.length
-
-          if (total < 3) {
-            evaluated = false
-          }
-
-          resolve([evaluates, evaluated, total])
-        })
-        .catch(err => {
-          console.log(err)
-          reject('获取失败')
-        })
-    })
-  },
   toHomework: function() {
     wx.navigateTo({
       url: '../homework/homework?uploadNum=' + this.data.uploadNum,
+    })
+  },
+  toMutualEval: function() {
+    wx.navigateTo({
+      url: '../mutualeval/mutualeval',
     })
   },
   /**
