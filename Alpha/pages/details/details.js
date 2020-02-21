@@ -30,6 +30,7 @@ Page({
         show: false
       }
     },
+    evaledNum: 0
   },
   /**
    * 初始化函数
@@ -38,38 +39,78 @@ Page({
     const openid = app.globalData.openid
     const now = new Date()
     let work
-    var canEvaluate = false  // 默认不能评论
+    var canEvaluate = false // 默认不能评论
 
     wx.showLoading({
       title: '加载中',
     })
 
     if (arg == '1') {
+      /**
+       * 1：查看
+       */
       work = await this.getWork(taskid, openid)
     } else if (arg == '2') {
+      /**
+       * 2：未完成
+       */
+      var wwcTasks = app.globalData.wwcTasks
       canEvaluate = true
-      // 获得评价过的作品
+
+      // 获得评价过的所有作品
       let evaledWorks = await this.getEvaledWorks(openid, taskid)
 
       var evaledWorkids = []
-      for(var i = 0; i < evaledWorks.length; i++) {
+      for (var i = 0; i < evaledWorks.length; i++) {
         evaledWorkids.push(evaledWorks[i]._workid)
       }
       console.log('evaledWorkids', evaledWorkids)
 
-      // 获得一个未评价且不属于我的作品
-      work = await this.getNotMyWork(evaledWorkids, taskid, openid)
-      console.log('work', work)
+      // 获得需要评价的作品
+      let needEvalTasks = await this.getNeedEvalTasks(evaledWorkids, taskid, openid)
+      console.log('workList', workList)
 
-      if(!work) {
+      if (!work) {
         console.log('无作品')
         this.setData({
           hasWork: false
         })
         wx.hideLoading()
 
-        return 
+        return
       }
+
+    } else if (arg == '3') {
+      /**
+       * 3：未互评
+       */
+      canEvaluate = true
+
+      const db = wx.database()
+      const _ = db.command
+
+      db.collection('work')
+        .where({
+          _openid: _.nin([openid, ]),
+          _taskid: taskid
+        })
+        .field({
+          _id: true
+        })
+        .get()
+        .then(res => {
+          const data = res.data
+          console.log(data)
+        })
+        .catch(err => {
+          console.log(err)
+        })
+
+    } else if (arg == '4') {
+      /**
+       * 已完成
+       */
+      canEvaluate = true
     }
 
     // 获得任务信息
@@ -504,9 +545,30 @@ Page({
         .where({
           _id: _.nin(evaledWorkids),
           _taskid: taskid,
-          _openid: _.nin([openid,])
+          _openid: _.nin([openid, ])
         })
-        .limit(1)
+        .get()
+        .then(res => {
+          const data = res.data[0]
+          resolve(data)
+        })
+        .catch(err => {
+          console.log(err)
+          reject('获取失败')
+        })
+    })
+  },
+  getWorksCount: function(evaledWorkids, taskid, openid) {
+    return new Promise((resolve, reject) => {
+      const db = wx.cloud.database()
+      const _ = db.command
+
+      db.collection("work")
+        .where({
+          _id: _.nin(evaledWorkids),
+          _taskid: taskid,
+          _openid: _.nin([openid, ])
+        })
         .get()
         .then(res => {
           const data = res.data[0]

@@ -182,7 +182,15 @@ Page({
 
     return timeString
   },
-  clickhp: function(e) {
+  clickwhp: function(e) {
+    const taskid = e.currentTarget.dataset.taskid
+    console.log('taskid', taskid)
+
+    wx.navigateTo({
+      url: '../details/details?data=' + taskid + '/3',
+    })
+  },
+  clickwwc: function (e) {
     const taskid = e.currentTarget.dataset.taskid
     console.log('taskid', taskid)
 

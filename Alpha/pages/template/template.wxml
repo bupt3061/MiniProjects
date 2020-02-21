@@ -91,8 +91,24 @@
   </view>
 </template>
 
-<template name="hp-card">
-  <view style="background-color: white; border-radius: 18rpx; width: 90%; margin-bottom: 32rpx; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2); display: flex; flex-direction: row;" data-taskid="{{_id}}" bindtap="clickhp">
+<template name="whp-card">
+  <view style="background-color: white; border-radius: 18rpx; width: 90%; margin-bottom: 32rpx; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2); display: flex; flex-direction: row;" data-taskid="{{_id}}" bindtap="clickwhp">
+    <view style="position: relative; height: 160rpx; width: 30%;">
+      <image style="position: absolute; width: 100%; height: 100%; left: 0; top: 0; border-radius: 18rpx;" mode="scaleToFill" src="{{courseCover}}" />
+      <view style="position: absolute; width: 100%; text-align: center; line-height: 160rpx; color: white; font-weight: bold; background-color: rgba(0, 0, 0, 0.2); border-radius: 18rpx">{{coursename}}</view>
+    </view>
+    <view style="padding: 32rpx; width: 45%;">
+      <view style="margin-bottom: 14rpx; font-weight: bold">{{taskname}}</view>
+      <view class="zan-font-12 zan-c-gray-darker">剩余时间：{{shengyu}}</view>
+    </view>
+    <view style="width: 25%; display: flex; justify-content: flex-start; align-items: center;">
+      <view class="zan-font-12 primary-bg" style="padding: 12rpx 0; border-radius: 50rpx; text-align: center; width: 85%;">互评</view>
+    </view>
+  </view>
+</template>
+
+<template name="wwc-card">
+  <view style="background-color: white; border-radius: 18rpx; width: 90%; margin-bottom: 32rpx; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2); display: flex; flex-direction: row;" data-taskid="{{_id}}" bindtap="clickwwc">
     <view style="position: relative; height: 160rpx; width: 30%;">
       <image style="position: absolute; width: 100%; height: 100%; left: 0; top: 0; border-radius: 18rpx;" mode="scaleToFill" src="{{courseCover}}" />
       <view style="position: absolute; width: 100%; text-align: center; line-height: 160rpx; color: white; font-weight: bold; background-color: rgba(0, 0, 0, 0.2); border-radius: 18rpx">{{coursename}}</view>
