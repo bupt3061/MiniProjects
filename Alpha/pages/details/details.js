@@ -30,7 +30,7 @@ Page({
         show: false
       }
     },
-    evaledNum: 0
+    progress: null
   },
   /**
    * 初始化函数
@@ -52,10 +52,21 @@ Page({
       work = await this.getWork(taskid, openid)
     } else if (arg == '2') {
       /**
-       * 2：未完成
+       * 2：互评
        */
-      var wwcTasks = app.globalData.wwcTasks
       canEvaluate = true
+
+      // 获得所有作品总数，取其五分之一作为需要互评的作品数
+      let worksCount = await this.getWorksCount(taskid)
+      console.log('worksCount', worksCount)
+
+      var num = Math.ceil(worksCount / 20)
+
+      if(num < 1) {
+        num = 1
+      }
+
+      console.log('num', num)
 
       // 获得评价过的所有作品
       let evaledWorks = await this.getEvaledWorks(openid, taskid)
@@ -64,11 +75,32 @@ Page({
       for (var i = 0; i < evaledWorks.length; i++) {
         evaledWorkids.push(evaledWorks[i]._workid)
       }
+      var evaledNum = evaledWorkids.length
+      var needEvalNum = num - evaledNum
       console.log('evaledWorkids', evaledWorkids)
+      console.log('evaledNum', evaledNum)
+
+      var progress = (evaledNum / num) * 100
+      console.log('progress', progress)
+
+      // 获取随机数
+      var randList = []
+      for (var i = 0; i < needEvalNum; i++) {
+        var temp = Math.floor(Math.random() * worksCount);
+        randList.push(temp)
+      }
+
+      console.log('randList', randList)
 
       // 获得需要评价的作品
-      let needEvalTasks = await this.getNeedEvalTasks(evaledWorkids, taskid, openid)
-      console.log('workList', workList)
+      var needEvalTasks = []
+      for (var i = 0; i < needEvalNum; i++) {
+        let temp = await this.getNeedEvalTask(evaledWorkids, taskid, openid, randList[i])
+        needEvalTasks.push(temp)
+      }
+      console.log('needEvalTasks', needEvalTasks)
+
+      work = needEvalTasks[0]
 
       if (!work) {
         console.log('无作品')
@@ -80,37 +112,6 @@ Page({
         return
       }
 
-    } else if (arg == '3') {
-      /**
-       * 3：未互评
-       */
-      canEvaluate = true
-
-      const db = wx.database()
-      const _ = db.command
-
-      db.collection('work')
-        .where({
-          _openid: _.nin([openid, ]),
-          _taskid: taskid
-        })
-        .field({
-          _id: true
-        })
-        .get()
-        .then(res => {
-          const data = res.data
-          console.log(data)
-        })
-        .catch(err => {
-          console.log(err)
-        })
-
-    } else if (arg == '4') {
-      /**
-       * 已完成
-       */
-      canEvaluate = true
     }
 
     // 获得任务信息
@@ -536,7 +537,7 @@ Page({
         })
     })
   },
-  getNotMyWork: function(evaledWorkids, taskid, openid) {
+  getNeedEvalTask: function(evaledWorkids, taskid, openid, skip) {
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database()
       const _ = db.command
@@ -547,6 +548,7 @@ Page({
           _taskid: taskid,
           _openid: _.nin([openid, ])
         })
+        .skip(skip)
         .get()
         .then(res => {
           const data = res.data[0]
@@ -558,7 +560,7 @@ Page({
         })
     })
   },
-  getWorksCount: function(evaledWorkids, taskid, openid) {
+  getNeedEvalTasksCount: function(evaledWorkids, taskid, openid) {
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database()
       const _ = db.command
@@ -569,10 +571,30 @@ Page({
           _taskid: taskid,
           _openid: _.nin([openid, ])
         })
-        .get()
+        .count()
         .then(res => {
-          const data = res.data[0]
-          resolve(data)
+          const total = res.total
+          resolve(total)
+        })
+        .catch(err => {
+          console.log(err)
+          reject('获取失败')
+        })
+    })
+  },
+  getWorksCount: function(taskid) {
+    return new Promise((resolve, reject) => {
+      const db = wx.cloud.database()
+      const _ = db.command
+
+      db.collection('work')
+        .where({
+          _taskid: taskid
+        })
+        .count()
+        .then(res => {
+          const total = res.total
+          resolve(total)
         })
         .catch(err => {
           console.log(err)

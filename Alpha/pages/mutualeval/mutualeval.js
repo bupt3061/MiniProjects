@@ -187,7 +187,7 @@ Page({
     console.log('taskid', taskid)
 
     wx.navigateTo({
-      url: '../details/details?data=' + taskid + '/3',
+      url: '../details/details?data=' + taskid + '/2',
     })
   },
   clickwwc: function (e) {
