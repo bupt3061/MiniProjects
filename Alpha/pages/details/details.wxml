@@ -3,9 +3,12 @@
 
 <zan-toptips backgroundColor="#14d1b5" content="{{content}}" duration="{{ duration }}" is-show="{{ $zanui.toptips.show }}" />
 
-<view></view>
+<view class="container" wx:if="{{!hasWork}}" style="padding: 320rpx 0;">
+  <image src="../../img/quexing.png" style="width: 50%;" mode="widthFix"></image>
+  <view class="zan-font-20 zan-c-gray-darker" style="font-weight: bold; margin: 24rpx">暂无作品</view>
+</view>
 
-<view class="container zan-font-16 zan-c-black" style="padding: 64rpx 0 180rpx 0;">
+<view wx:if="{{hasWork}}" class="container zan-font-16 zan-c-black" style="padding: 64rpx 0 180rpx 0;">
   <view class="top" style="margin-bottom: 32rpx;">
     <view class="top-left">
       <view class="zan-font-20" style="font-weight: bold; margin-bottom: 12rpx;">{{title}}</view>
@@ -38,10 +41,6 @@
   </block>
 </view>
 
-<view wx:if="{{canEvaluate}}" class="bottom">
+<view wx:if="{{hasWork && canEvaluate}}" class="bottom">
   <button class="primary-bg" style="width: 90%; margin: 0 auto;" bindtap="toComment">评价</button>
 </view>
-
-<!-- <view wx:if="{{canEvaluate}}" class="bottom">
-  <button class="primary-bg" style="width: 90%; margin: 0 auto;">评价</button>
-</view> -->

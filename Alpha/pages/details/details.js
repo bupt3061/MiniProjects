@@ -8,6 +8,7 @@ Page({
    * 页面的初始数据
    */
   data: {
+    hasWork: true,
     taskid: null,
     work: null,
     title: '',
@@ -36,24 +37,17 @@ Page({
   async init(taskid, arg) {
     const openid = app.globalData.openid
     const now = new Date()
+    let work
+    var canEvaluate = false  // 默认不能评论
 
     wx.showLoading({
       title: '加载中',
     })
 
     if (arg == '1') {
-      /**
-       * 1：自己的作品，不可评价
-       * 2：别人的作品
-       */
-      this.setData({
-        canEvaluate: false
-      })
+      work = await this.getWork(taskid, openid)
     } else if (arg == '2') {
-      // 获取一个非自己的且未评价过的的作品
-      const db = wx.cloud.database()
-      const _ = db.command
-
+      canEvaluate = true
       // 获得评价过的作品
       let evaledWorks = await this.getEvaledWorks(openid, taskid)
 
@@ -63,29 +57,32 @@ Page({
       }
       console.log('evaledWorkids', evaledWorkids)
 
-      // 获得未评价且不属于我的作品
-      db.collection("work")
-        .where({
-          _id: _.nin(evaledWorkids),
-          _taskid: taskid,
-          _openid: _.nin([openid, ])
-        })
-        .get()
-        .then(res => {
-          const data = res.data
-          console.log(data)
-        })
-        .catch(err => {
-          console.log(err)
-        })
+      // 获得一个未评价且不属于我的作品
+      work = await this.getNotMyWork(evaledWorkids, taskid, openid)
+      console.log('work', work)
 
-      this.setData({
-        canEvaluate: true
-      })
+      if(!work) {
+        console.log('无作品')
+        this.setData({
+          hasWork: false
+        })
+        wx.hideLoading()
+
+        return 
+      }
     }
 
+    // 获得任务信息
+    let taskInfo = await this.getTaskInfo(taskid)
+    const standard = taskInfo.standard
+    const standardKeys = Object.keys(standard)
+
+    console.log('standard', standard)
+    console.log('standardKeys', standardKeys)
+    app.globalData.standard = standard
+    app.globalData.standardKeys = standardKeys
+
     // 获取作品信息
-    let work = await this.getWork(taskid, openid)
     const title = work.title
     const describe = work.describe
     const uploadtime = work.uploadtime
@@ -146,10 +143,6 @@ Page({
 
     wx.hideLoading()
 
-    // 设置数据
-    app.globalData.standard = standard
-    app.globalData.standardKeys = standardKeys
-
     this.setData({
       show: true,
       taskid: taskid,
@@ -165,6 +158,7 @@ Page({
       standardKeys: standardKeys,
       evals: evals,
       evalsNum: evalsNum,
+      canEvaluate: canEvaluate
     })
   },
   /**
@@ -493,6 +487,29 @@ Page({
         .get()
         .then(res => {
           const data = res.data
+          resolve(data)
+        })
+        .catch(err => {
+          console.log(err)
+          reject('获取失败')
+        })
+    })
+  },
+  getNotMyWork: function(evaledWorkids, taskid, openid) {
+    return new Promise((resolve, reject) => {
+      const db = wx.cloud.database()
+      const _ = db.command
+
+      db.collection("work")
+        .where({
+          _id: _.nin(evaledWorkids),
+          _taskid: taskid,
+          _openid: _.nin([openid,])
+        })
+        .limit(1)
+        .get()
+        .then(res => {
+          const data = res.data[0]
           resolve(data)
         })
         .catch(err => {

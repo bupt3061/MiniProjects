@@ -8,6 +8,7 @@ Page({
    * 页面的初始数据
    */
   data: {
+    hasTask: true,
     wtjTasks: [],
     ytjTasks: [],
     ygqTasks: [],
@@ -26,6 +27,15 @@ Page({
     const courseids = app.globalData.courseids
     const openid = app.globalData.openid
     const now = new Date()
+    const inUploadNum = app.globalData.inUploadNum
+
+    if(inUploadNum == 0) {
+      this.setData({
+        hasTask: false
+      })
+
+      return
+    }
 
     if (app.globalData.ytjTasks.length != 0) {
       this.setData({
