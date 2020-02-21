@@ -264,6 +264,15 @@ Page({
       const whpTasks = app.globalData.whpTasks
       const ygqETasks = app.globalData.ygqETasks
 
+      if (wwcTasks.length == 0 && ygqETasks.length == 0 && whpTasks.length == 0) {
+
+        this.setData({
+          hasTask: false
+        })
+
+        return
+      }
+
       var wwcShow = true
       var whpShow = true
 
@@ -304,15 +313,6 @@ Page({
     const whpTasks = app.globalData.whpTasks
     const ygqETasks = app.globalData.ygqETasks
     const storedEvalTasks = app.globalData.storedEvalTasks
-
-    if (wwcTasks.length == 0 && ygqETasks.length == 0 && whpTasks.length == 0) {
-
-      this.setData({
-        hasTask: false
-      })
-
-      return
-    }
 
     if (storedEvalTasks) {
       var wwcShow = true

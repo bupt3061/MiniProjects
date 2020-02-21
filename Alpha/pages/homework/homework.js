@@ -77,8 +77,8 @@ Page({
       }
     }
 
-    console.log('已过期', ygqTasks)
-    console.log('已提交', ytjTasks)
+    console.log('ygqTasks', ygqTasks)
+    console.log('ytjTasks', ytjTasks)
 
     if(ytjTasks.length == 0 && wtjTasks.length == 0 && kxgTasks.length == 0 && ygqTasks.length == 0) {
       // 空状态
@@ -103,7 +103,7 @@ Page({
       }
     }
 
-    console.log("未提交", wtjTasks)
+    console.log("wtjTasks", wtjTasks)
 
     /**
      * 处理可修改
@@ -133,7 +133,7 @@ Page({
       }
     }
 
-    console.log("可修改", kxgTasks)
+    console.log("kxgTasks", kxgTasks)
 
     // 处理已提交
     if (ytjTasks.length != 0) {
@@ -143,7 +143,7 @@ Page({
       }
     }
 
-    console.log("已提交", ytjTasks)
+    console.log("ytjTasks", ytjTasks)
 
     // 处理已过期
     if (ygqTasks.length != 0) {
@@ -164,7 +164,7 @@ Page({
       }
     }
 
-    console.log("已过期", ygqTasks)
+    console.log("ygqTasks", ygqTasks)
 
     wx.hideLoading()
 
@@ -173,13 +173,18 @@ Page({
     ytjTasks = this.addCourseInfo(ytjTasks)
     ygqTasks = this.addCourseInfo(ygqTasks)
     kxgTasks = this.addCourseInfo(kxgTasks)
+
+    console.log('已过期', ygqTasks)
+    console.log('已提交', ytjTasks)
+    console.log('可修改', kxgTasks)
+    console.log('未提交', wtjTasks)
     app.globalData.wtjTasks = wtjTasks
     app.globalData.ytjTasks = ytjTasks
     app.globalData.ygqTasks = ygqTasks
     app.globalData.kxgTasks = kxgTasks
     app.globalData.storedUploadTasks = true
 
-    if(wtjTasks.length == 0 && kxgTasks.length == 0) {
+    if(wtjTasks.length == 0 && ygqTasks.length == 0) {
       wtjShow = false
     }
 
@@ -368,7 +373,17 @@ Page({
       var wtjShow = true
       var ytjShow = true
 
-      if (wtjTasks.length == 0 && kxgTasks.length == 0) {
+      if (ytjTasks.length == 0 && wtjTasks.length == 0 && kxgTasks.length == 0 && ygqTasks.length == 0) {
+        wx.hideLoading()
+
+        this.setData({
+          hasTask: false
+        })
+
+        return
+      }
+
+      if (wtjTasks.length == 0 && ygqTasks.length == 0) {
         wtjShow = false
       }
 
@@ -409,22 +424,12 @@ Page({
     const kxgTasks = app.globalData.kxgTasks
     const storedUploadTasks = app.globalData.storedUploadTasks
 
-    if (ytjTasks.length == 0 && wtjTasks.length == 0 && kxgTasks.length == 0 && ygqTasks.length == 0) {
-      wx.hideLoading()
-
-      this.setData({
-        hasTask: false
-      })
-
-      return
-    }
-
     if(storedUploadTasks) {
       // 非初次显示
       var wtjShow = true
       var ytjShow = true
 
-      if (wtjTasks.length == 0 && kxgTasks.length == 0) {
+      if (wtjTasks.length == 0 && ygqTasks.length == 0) {
         wtjShow = false
       }
 
