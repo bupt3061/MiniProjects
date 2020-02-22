@@ -82,7 +82,7 @@ Page({
           if (wwcTasks[i]._id == taskid) {
             evaledNum = wwcTasks[i].evaledNum
             console.log('evaledNum', evaledNum)
-            if (!wwcTasks[i].needEvalWorkList) {
+            if (wwcTasks[i].needEvalWorkList) {
               flag = true  // 存在信息
               console.log('存在互评信息')
 
@@ -96,8 +96,8 @@ Page({
               var idx = wwcTasks[i].idx
               var randomList = wwcTasks[i].randomList
               var index = randomList[idx]
-              var needEvalWorkList = wwcTasks[i].needEvalWorkList
-              var workid = needEvalWorkList[index]
+              var needEvalWorksList = wwcTasks[i].needEvalWorksList
+              var workid = needEvalWorksList[index]
               work = await this.getNeedEvalWork(workid)
               console.log('work', work)
 
@@ -147,10 +147,25 @@ Page({
         console.log('evaledWorks', evaledWorks)
         console.log('evaledWorkids', evaledWorkids)
 
-        let needEvalWorks = await this.getNeedEvalWorks(evaledWorkids, taskid, openid)
-        console.log('needEvalWorks', needEvalWorks)
+        // 获取所有待互评任务
+        let needEvalWorksCount = await this.getNeedEvalWorksCount(evaledWorkids, taskid, openid)
+        console.log('needEvalWorksCount', needEvalWorksCount)
 
-        // 获得所有
+        var needEvalWorksList = []
+
+        if (needEvalWorksCount != 0) {
+          for (var i = 0; i < needEvalWorksCount; i += 20) {
+            let res = await this.getNeedEvalWorksSkip(evaledWorkids, taskid, openid, i)
+            console.log('res', res)
+            needEvalWorkListt = needEvalWorkList.concat(res)
+
+            if (needEvalWorkList.length == count) {
+              break
+            }
+          }
+        }
+
+        console.log('needEvalWorksList', needEvalWorksList)
 
         if (!work) {
           console.log('无作品')
@@ -637,12 +652,12 @@ Page({
         .where({
           _id: _.nin(evaledWorkids),
           _taskid: taskid,
-          _openid: _.nin([openid, ])
+          _openid: _.nin([openid,])
         })
         .skip(skip)
         .get()
         .then(res => {
-          const data = res.data[0]
+          const data = data
           resolve(data)
         })
         .catch(err => {
@@ -650,24 +665,6 @@ Page({
           reject('获取失败')
         })
     })
-  },
-  async getNeedEvalWorks (evaledWorkids, taskid, openid) {
-    let count = await this.getNeedEvalWorksCount(evaledWorkids, taskid, openid)
-    let list = []
-
-    if (count == 0) {
-      return list
-    }
-
-    for (let i = 0; i < count; i += 20) {
-      let res = await this.getEvalsIndexSkip(evaledWorkids, taskid, openid, i)
-      console.log('res', res)
-      list = list.concat(res)
-
-      if (list.length == count) {
-        return list
-      }
-    }
   },
   getWorksCount: function(taskid) {
     return new Promise((resolve, reject) => {
