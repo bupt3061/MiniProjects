@@ -1,2 +1,11 @@
 <!--pages/msg/msg.wxml-->
-<text>pages/msg/msg.wxml</text>
+
+<view class="container zan-font-18 zan-c-black" style="padding: 64rpx 0;;">
+  <view class="card" style="padding: 48rpx 64rpx; box-sizing: border-box">
+    <view class="msg-left">
+      <view>作业名</view>
+      <view class="zan-font-12 zan-c-gray-darker">提交时间</view>
+    </view>
+    <view class="msg-right primary">8.5</view>
+  </view>
+</view>

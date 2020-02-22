@@ -1,6 +1,7 @@
 /**app.wxss**/
 @import "/dist/index.wxss";
 @import "/iconfont/iconfont.wxss";
+@import "/pages/template/template.wxss";
 
 page {
   background-color: #f3f4f6;

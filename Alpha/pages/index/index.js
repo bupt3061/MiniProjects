@@ -104,6 +104,30 @@ Page({
       // 学生端
 
       /**
+       * 1、获得消息数目并设置提示红点
+       * 2、消息数目 = 已过期任务数 - 已存在消息数
+       */
+      let pastedEvalTasksNum = await this.pastedEvalTasksNum(courseids)
+      let msgNum = await this.getMsgNum(openid)
+
+      const newMsgNum = pastedEvalTasksNum - msgNum
+      console.log('pastedEvalTasksNum', pastedEvalTasksNum)
+      console.log('msgNum', msgNum)
+      console.log('newMsgNum', newMsgNum)
+
+      if(newMsgNum > 0) {
+        wx.showTabBarRedDot({
+          index: 1,
+          success: res => {
+            console.log(res)
+          },
+          fail: err => {
+            console.log(err)
+          }
+        })
+      }
+
+      /**
        * 1、获取所有待提交任务数并存储到全局
        * 2、需提交任务数 = 所有待提交 - 所有已提交
        * 3、获取未提交及可修改任务并存储到全局
@@ -406,6 +430,48 @@ Page({
         .catch(err => {
           console.log(err)
           reject('查询失败')
+        })
+    })
+  },
+  pastedEvalTasksNum: function(courseids) {
+    return new Promise((resolve, reject) => {
+      const now = new Date()
+      const db = wx.cloud.database()
+      const _ = db.command
+
+      db.collection('task')
+        .where({
+          _courseid: _.in(courseids),
+          evaluateend: _.lt(now)
+        })
+        .count()
+        .then(res => {
+          const total = res.total
+          resolve(total)
+        })
+        .catch(err => {
+          console.log(err)
+          reject('获取失败')
+        })
+    })
+  },
+  getMsgNum: function (openid) {
+    return new Promise((resolve, reject) => {
+      const db = wx.cloud.database()
+      const _ = db.command
+
+      db.collection('msg')
+        .where({
+          _openid: openid
+        })
+        .count()
+        .then(res => {
+          const total = res.total
+          resolve(total)
+        })
+        .catch(err => {
+          console.log(err)
+          reject('获取失败')
         })
     })
   },
