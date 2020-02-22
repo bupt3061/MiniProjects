@@ -70,7 +70,7 @@ Page({
     // 更新数据
     this.data.scores[idx] = value
   },
-  comment: function() {
+  async comment() {
     const now = new Date()
     const arg = this.data.arg
     const workid = this.data.workid
@@ -227,9 +227,6 @@ Page({
       })
 
     // 更新全局数据
-    var inEvalTask = app.globalData.inEvalTask
-    inEvalTask.status = true
-    console.log('inEvalTask', inEvalTask)
 
     if (arg == '2') {
       for (var i = 0; i < wwcTasks.length; i++) {
@@ -263,8 +260,15 @@ Page({
       app.globalData.wwcTasks = wwcTasks
     }
 
-    var inEvalTaskData = this.getData(taskid)
+    let inEvalTaskData = await this.inEvalTaskData(taskid)
     console.log('inEvalTaskData', inEvalTaskData)
+
+    var inEvalTask = app.globalData.inEvalTask
+    inEvalTask.status = true
+    inEvalTask.data = inEvalTaskData
+
+    app.globalData.inEvalTask = inEvalTask
+    console.log('inEvalTask', inEvalTask)
 
     wx.navigateBack({
       url: '../details/details'
@@ -272,7 +276,7 @@ Page({
 
     wx.hideLoading()
   },
-  async getData(taskid) {
+  async inEvalTaskData(taskid) {
     var wwcTasks = app.globalData.wwcTasks
     var evaledNum = 0
     var needEvalNum = 3
@@ -291,11 +295,14 @@ Page({
     const show = true
     var data = null
     let tempUrls
-    const mid = null
-    const marked = null
-    const mexisted = null
+    var mid = null
+    var marked = null
+    var mexisted = null
     let evals
     var evalsNum = null
+    const now = new Date()
+    const openid = app.globalData.openid
+    const canEvaluate = true
 
     for (var i = 0; i < wwcTasks.length; i++) {
       if (wwcTasks[i]._id == taskid) {
@@ -317,6 +324,7 @@ Page({
           hasWork = false
 
           data = {
+            progress: progress,
             hasWork: hasWork,
             show: show
           }

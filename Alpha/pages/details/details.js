@@ -794,7 +794,8 @@ Page({
     const status = inEvalTask.status
 
     if(status) {
-      this.init(taskid, '2')
+      // this.init(taskid, '2')
+      this.setData(inEvalTask.data)
     }
   },
 
