@@ -10,6 +10,7 @@ Page({
   data: {
     hasTask: true,
     show: false,
+    content: null,
     wtjTasks: [],
     ytjTasks: [],
     ygqTasks: [],
@@ -26,69 +27,87 @@ Page({
     const courses = app.globalData.courses
     const courseids = app.globalData.courseids
     const openid = app.globalData.openid
-    const now = new Date()
     const inUploadNum = app.globalData.inUploadNum
-    var wtjShow = true
-    var ytjShow = true
+
+    if (courseids.length == 0) { // 未添加课程
+      wx.hideLoading()
+
+      this.setData({
+        hasTask: false,
+        content: '尚未添加课程'
+      })
+
+      return
+    }
 
     wx.showLoading({
       title: '加载中',
     })
 
     /**
-     * 获得已提交和过期未提交的任务
+     * 1、获得已提交和过期未提交的任务并存储到全局
      */
-
-    // 获得所有过期的任务
-    let pastedUploadTasks = await this.getTasks(courseids, now) // 包括已提交和已过期
-    console.log('pastedUploadTasks', pastedUploadTasks)
-
-    var pastedUploadTaskids = []
-    for (var i = 0; i < pastedUploadTasks.length; i++) {
-      pastedUploadTaskids.push(pastedUploadTasks[i]._id)
-    }
-
-    // 获得任务对应的作品
-    let works = await this.getWorks(pastedUploadTaskids, openid)
-    console.log('works', works)
 
     var ygqTasks = []
     var ytjTasks = []
 
-    for (var i = 0; i < works.length; i++) {
-      for (var j = 0; j < pastedUploadTasks.length; j++) {
-        if (works[i]._taskid == pastedUploadTasks[j]._id) {
-          pastedUploadTasks[j].work = works[i]
-          ytjTasks.push(pastedUploadTasks[j])
-          continue
-        }
+    // 获得所有已过提交期的任务：已过期+已提交
+    const now = new Date()
+    let count = await this.getTasksCount(courseids, now)
+    console.log('count', count)
+
+    let pastedUploadTasks = []
+
+    for (let i = 0; i < count; i += 20) {
+      let res = await this.getTasksIndexSkip(courseids, i, now)
+      pastedUploadTasks = pastedUploadTasks.concat(res)
+
+      if (pastedUploadTasks.length == count) {
+        break
       }
     }
 
-    for (var i = 0; i < pastedUploadTasks.length; i++) {
-      var flag = true
-      for (var j = 0; j < works.length; j++) {
-        if (pastedUploadTasks[i]._id == works[j]._taskid) {
-          flag = false
-        }
+    console.log('pastedUploadTasks', pastedUploadTasks)
+
+    if (pastedUploadTasks.length !== 0) {  // 存在已过提交期的任务
+      var pastedUploadTaskids = []
+      for (var i = 0; i < pastedUploadTasks.length; i++) {
+        pastedUploadTaskids.push(pastedUploadTasks[i]._id)
       }
-      if (flag) {
-        ygqTasks.push(pastedUploadTasks[i])
+
+      // 获得已提交的作品
+      let works = await this.getWorks(pastedUploadTaskids, openid)
+      console.log('works', works)
+      
+      // 获得已提交和已过期的任务
+      for (var i = 0; i < pastedUploadTasks.length; i++) {
+        var flag = true
+        for (var j = 0; j < works.length; j++) {
+          if (pastedUploadTasks[i]._id == works[j]._taskid) {
+            flag = false
+            pastedUploadTasks[i].work = works[j]
+            ytjTasks.push(pastedUploadTasks[i])
+          }
+        }
+        if (flag) {
+          ygqTasks.push(pastedUploadTasks[i])
+        }
       }
     }
 
     console.log('ygqTasks', ygqTasks)
     console.log('ytjTasks', ytjTasks)
 
-    if(ytjTasks.length == 0 && wtjTasks.length == 0 && kxgTasks.length == 0 && ygqTasks.length == 0) {
+    if (ytjTasks.length == 0 && wtjTasks.length == 0 && kxgTasks.length == 0 && ygqTasks.length == 0) {
       // 空状态
       wx.hideLoading()
 
       this.setData({
-        hasTask: false
+        hasTask: false,
+        content: '暂无提交任务'
       })
 
-      return 
+      return
     }
 
     /**
@@ -108,14 +127,14 @@ Page({
     /**
      * 处理可修改
      */
-    // 获得剩余时间
     if (kxgTasks.length != 0) {
+      // 获得剩余时间
       for (var i = 0; i < kxgTasks.length; i++) {
         kxgTasks[i].shengyu = this.getTimeBetween(now, kxgTasks[i].uploadend)
       }
     }
 
-    // 连结作品
+    // 添加作品信息
     var kxgTaskids = []
     for (var i = 0; i < kxgTasks.length; i++) {
       kxgTaskids.push(kxgTasks[i]._id)
@@ -124,9 +143,9 @@ Page({
     let kxgWorks = await this.getWorks(kxgTaskids, openid)
     console.log('kxgWorks', kxgWorks)
 
-    for(var i = 0; i < kxgTasks.length; i++) {
-      for(var j = 0; j < kxgWorks.length; j++) {
-        if(kxgTasks[i]._id == kxgWorks[j]._taskid) {
+    for (var i = 0; i < kxgTasks.length; i++) {
+      for (var j = 0; j < kxgWorks.length; j++) {
+        if (kxgTasks[i]._id == kxgWorks[j]._taskid) {
           kxgTasks[i].work = kxgWorks[j]
           continue
         }
@@ -166,14 +185,13 @@ Page({
 
     console.log("ygqTasks", ygqTasks)
 
-    wx.hideLoading()
-
-    // 更新数据
+    // 添加课程信息
     wtjTasks = this.addCourseInfo(wtjTasks)
     ytjTasks = this.addCourseInfo(ytjTasks)
     ygqTasks = this.addCourseInfo(ygqTasks)
     kxgTasks = this.addCourseInfo(kxgTasks)
 
+    // 更新数据
     console.log('已过期', ygqTasks)
     console.log('已提交', ytjTasks)
     console.log('可修改', kxgTasks)
@@ -184,11 +202,14 @@ Page({
     app.globalData.kxgTasks = kxgTasks
     app.globalData.storedUploadTasks = true
 
-    if(wtjTasks.length == 0 && ygqTasks.length == 0) {
+    var wtjShow = true
+    var ytjShow = true
+
+    if (wtjTasks.length == 0 && ygqTasks.length == 0) {
       wtjShow = false
     }
 
-    if(kxgTasks.length == 0 && ytjTasks.length == 0) {
+    if (kxgTasks.length == 0 && ytjTasks.length == 0) {
       ytjShow = false
     }
 
@@ -201,6 +222,8 @@ Page({
       ytjShow: ytjShow,
       show: true
     })
+
+    wx.hideLoading()
   },
   /**
    * 页面其他函数
@@ -250,19 +273,6 @@ Page({
           reject("查询失败!")
         })
     })
-  },
-  async getTasks(courseids, now) {
-    let count = await this.getTasksCount(courseids, now)
-    let list = []
-
-    for (let i = 0; i < count; i += 20) {
-      let res = await this.getTasksIndexSkip(courseids, i, now)
-      list = list.concat(res)
-
-      if (list.length == count) {
-        return list
-      }
-    }
   },
   getWorks: function(pastedUploadTaskids, openid) {
     return new Promise((resolve, reject) => {
@@ -370,18 +380,29 @@ Page({
       const ygqTasks = app.globalData.ygqTasks
       const wtjTasks = app.globalData.wtjTasks
       const kxgTasks = app.globalData.kxgTasks
-      var wtjShow = true
-      var ytjShow = true
+      const courseids = app.globalData.courseids
 
-      if (ytjTasks.length == 0 && wtjTasks.length == 0 && kxgTasks.length == 0 && ygqTasks.length == 0) {
-        wx.hideLoading()
-
+      if(courseids.length == 0) {  // 未添加课程
         this.setData({
-          hasTask: false
+          hasTask: false,
+          content: '尚未添加课程'
         })
 
         return
       }
+
+      if (ytjTasks.length == 0 && wtjTasks.length == 0 && kxgTasks.length == 0 && ygqTasks.length == 0) {
+        // 无任务
+        this.setData({
+          hasTask: false,
+          content: '暂无提交任务'
+        })
+
+        return
+      }
+
+      var wtjShow = true
+      var ytjShow = true
 
       if (wtjTasks.length == 0 && ygqTasks.length == 0) {
         wtjShow = false
@@ -418,14 +439,34 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function() {
-    const wtjTasks = app.globalData.wtjTasks
-    const ytjTasks = app.globalData.ytjTasks
-    const ygqTasks = app.globalData.ygqTasks
-    const kxgTasks = app.globalData.kxgTasks
     const storedUploadTasks = app.globalData.storedUploadTasks
 
-    if(storedUploadTasks) {
-      // 非初次显示
+    if (storedUploadTasks) {
+      const wtjTasks = app.globalData.wtjTasks
+      const ytjTasks = app.globalData.ytjTasks
+      const ygqTasks = app.globalData.ygqTasks
+      const kxgTasks = app.globalData.kxgTasks
+      const courseids = app.globalData.courseids
+
+      if (courseids.length == 0) {  // 未添加课程
+        this.setData({
+          hasTask: false,
+          content: '尚未添加课程'
+        })
+
+        return
+      }
+
+      if (ytjTasks.length == 0 && wtjTasks.length == 0 && kxgTasks.length == 0 && ygqTasks.length == 0) {
+        // 无任务
+        this.setData({
+          hasTask: false,
+          content: '暂无提交任务'
+        })
+
+        return
+      }
+
       var wtjShow = true
       var ytjShow = true
 

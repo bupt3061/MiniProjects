@@ -11,20 +11,22 @@ Page({
     openid: null,
     type: null,
     inUploadNum: 0,
-    inEvalNum: 0
+    inEvalNum: 0,
+    hasCourse: true
   },
   /**
    * 初始化函数
    */
   async init() {
 
-    // 加载
+    // 显示加载
     wx.showLoading({
       title: '加载中',
     })
 
     /**
-     * 获取用户信息
+     * 1、获取用户信息并存储到全局
+     * 2、若数据库中和不存在该用户则跳转到登陆界面
      */
     let openid = await this.getOpenid()
     let userInfo = await this.getUserInfo(openid)
@@ -35,6 +37,8 @@ Page({
 
     if (!userInfo) {
       // 数据库中不存在该条记录
+      wx.hideLoading()
+
       wx.redirectTo({
         url: '../login/login?openid=' + openid,
       })
@@ -50,136 +54,159 @@ Page({
     }
 
     /**
-     * 获取课程信息
+     * 1、获取课程信息
+     * 2、若未添加课程则显示顶部提示
      */
-
-    // 获取用户所有课程
     const courseids = userInfo.courses
-    let courses = await this.getCourses(courseids)
+    if (courseids.length == 0) {
+      wx.hideLoading()
+      console.log('尚未添加课程')
 
-    // 添加课程封面
-    var coverCloudPaths = []
-    for (var i = 0; i < courses.length; i++) {
-      var temp = {
-        fileID: courses[i].cover,
-        maxAge: 60 * 60, // 一小时
+      this.setData({
+        inUploadNum: 0,
+        inEvalNum: 0,
+        type: type,
+        openid: openid,
+        hasCourse: false
+      })
+
+      return
+    } else {
+      let courses = await this.getCourses(courseids)
+
+      // 添加课程封面
+      var coverCloudPaths = []
+      for (var i = 0; i < courses.length; i++) {
+        var temp = {
+          fileID: courses[i].cover,
+          maxAge: 60 * 60, // 一小时
+        }
+        coverCloudPaths.push(temp)
       }
-      coverCloudPaths.push(temp)
+
+      let coverPaths = await this.getCoverPaths(coverCloudPaths)
+
+      for (let i = 0; i < courses.length; i++) {
+        courses[i].coverPath = coverPaths[i].tempFileURL
+      }
+
+      // 设置数据
+      console.log('courses', courses)
+      console.log('courseids', courseids)
+      app.globalData.courseids = courseids
+      app.globalData.courses = courses
     }
-
-    let coverPaths = await this.getCoverPaths(coverCloudPaths)
-
-    for (let i = 0; i < courses.length; i++) {
-      courses[i].coverPath = coverPaths[i].tempFileURL
-    }
-
-    // 设置数据
-    console.log('courses', courses)
-    console.log('courseids', courseids)
-    app.globalData.courseids = courseids
-    app.globalData.courses = courses
 
     /**
      * 分别处理学生和教师的信息
      */
     if (type == 1) {
       // 学生端
-      var inUploadNum = null // 待提交任务数
-      var inEvalNum = null // 待互评任务数
 
       /**
-       * 获取待提交任务数
+       * 1、获取所有待提交任务数并存储到全局
+       * 2、需提交任务数 = 所有待提交 - 所有已提交
+       * 3、获取未提交及可修改任务并存储到全局
        */
-      let inUploadTasks = await this.getInUploadTasks(courseids)
-
-      var inUploadTaskids = []
-      for (var i = 0; i < inUploadTasks.length; i++) {
-        inUploadTaskids.push(inUploadTasks[i]._id)
-      }
-
-      let uploadedTasks = await this.getUploadedTasks(openid, inUploadTaskids)
-
-      inUploadNum = inUploadTasks.length - uploadedTasks.length
-      console.log('inUploadNum', inUploadNum)
-      app.globalData.inUploadNum = inUploadNum
-
-      /**
-       * 获取未提交及可修改任务
-       */
+      var inUploadNum = 0
       var wtjTasks = []
       var kxgTasks = []
 
-      for (var i = 0; i < inUploadTasks.length; i++) {
-        for (var j = 0; j < uploadedTasks.length; j++) {
-          if (inUploadTasks[i]._id == uploadedTasks[j]._taskid) {
-            kxgTasks.push(inUploadTasks[i])
-            continue
+      let inUploadTasks = await this.getInUploadTasks(courseids) // 所有处在提交期的任务：未提交+可修改
+      console.log('inUploadTasks', inUploadTasks)
+
+      if (inUploadTasks.length != 0) { // 存在处在提交期的任务
+        var inUploadTaskids = []
+        for (var i = 0; i < inUploadTasks.length; i++) {
+          inUploadTaskids.push(inUploadTasks[i]._id)
+        }
+
+        // 获得未提交数
+        let uploadedTasks = await this.getUploadedTasks(openid, inUploadTaskids)
+        console.log('uploadedTasks', uploadedTasks)
+
+        inUploadNum = inUploadTasks.length - uploadedTasks.length
+
+        for (var i = 0; i < inUploadTasks.length; i++) {
+          // 可修改任务
+          for (var j = 0; j < uploadedTasks.length; j++) {
+            if (inUploadTasks[i]._id == uploadedTasks[j]._taskid) {
+              kxgTasks.push(inUploadTasks[i])
+              continue
+            }
+          }
+        }
+
+        for (var i = 0; i < inUploadTasks.length; i++) {
+          // 未提交任务
+          var flag = true
+          for (var j = 0; j < uploadedTasks.length; j++) {
+            if (inUploadTasks[i]._id == uploadedTasks[j]._taskid) {
+              flag = false
+            }
+          }
+          if (flag) {
+            wtjTasks.push(inUploadTasks[i])
           }
         }
       }
 
-      for (var i = 0; i < inUploadTasks.length; i++) {
-        var flag = true
-        for (var j = 0; j < uploadedTasks.length; j++) {
-          if (inUploadTasks[i]._id == uploadedTasks[j]._taskid) {
-            flag = false
-          }
-        }
-        if(flag) {
-          wtjTasks.push(inUploadTasks[i])
-        }
-      }
-
-      console.log('kxgTasks', kxgTasks)
-      console.log('wtjTasks', wtjTasks)
+      console.log('待提交', inUploadNum)
+      console.log('可修改', kxgTasks)
+      console.log('未提交', wtjTasks)
+      app.globalData.inUploadNum = inUploadNum
       app.globalData.kxgTasks = kxgTasks
       app.globalData.wtjTasks = wtjTasks
 
       /**
-       * 获取待互评任务数
+       * 1、获取待互评任务数并存储到全局
+       * 2、获得未互评及未完成互评任务并存储到全局
        */
-      let inEvalTasks = await this.getInEvalTasks(courseids)
-
-      var inEvalTaskids = []
-      for (var i = 0; i < inEvalTasks.length; i++) {
-        inEvalTaskids.push(inEvalTasks[i]._id)
-      }
-
-      let [evaledTaskNum, evaledTasks] = await this.getEvaledTasks(openid, inEvalTaskids)
-      inEvalNum = inEvalTasks.length - evaledTaskNum
-
-      console.log('inEvalNum', inEvalNum)
-      app.globalData.inEvalNum = inEvalNum
-
-      /**
-       * 获取未互评及未完成任务
-       */
+      var inEvalNum = 0
       var whpTasks = []
       var wwcTasks = []
-      
-      for(var i = 0; i < inEvalTasks.length; i++) {
-        var flag = true
-        for(var j = 0; j < evaledTasks.length; j++) {
-          if(inEvalTasks[i]._id == evaledTasks[j]._id) {
-            flag = false
 
-            if (evaledTasks[j].num < 3) {
-              inEvalTasks[i].evalNum = evaledTasks[j].num
-              wwcTasks.push(inEvalTasks[i])
-            }
+      let inEvalTasks = await this.getInEvalTasks(courseids)
+      console.log('inEvalTasks', inEvalTasks)
 
-            continue
-          }
+      if (inEvalTasks.length != 0) { // 存在处在提交期的任务：未完成+未互评
+        var inEvalTaskids = []
+        for (var i = 0; i < inEvalTasks.length; i++) {
+          inEvalTaskids.push(inEvalTasks[i]._id)
         }
 
-        if(flag) {
-          inEvalTasks[i].evalNum = 0
-          whpTasks.push(inEvalTasks[i])
+        // 获得未互评数
+        let [evaledTaskNum, evaledTasks] = await this.getEvaledTasks(openid, inEvalTaskids)
+        inEvalNum = inEvalTasks.length - evaledTaskNum
+        console.log('evaledTasks', evaledTasks)
+
+        // 获取未互评及未完成任务并存储到全局
+        for (var i = 0; i < inEvalTasks.length; i++) {
+          var flag = true
+          for (var j = 0; j < evaledTasks.length; j++) {
+            if (inEvalTasks[i]._id == evaledTasks[j]._id) {
+              flag = false
+
+              if (evaledTasks[j].num < 3) {
+                inEvalTasks[i].evalNum = evaledTasks[j].num
+                wwcTasks.push(inEvalTasks[i])
+              }
+
+              continue
+            }
+          }
+
+          if (flag) {
+            inEvalTasks[i].evalNum = 0
+            whpTasks.push(inEvalTasks[i])
+          }
         }
       }
 
-      console.log('wwcTasks', wwcTasks)
-      console.log('whpTasks', whpTasks)
+      console.log('待互评', inEvalNum)
+      console.log('未完成', wwcTasks)
+      console.log('未互评', whpTasks)
+      app.globalData.inEvalNum = inEvalNum
       app.globalData.whpTasks = whpTasks
       app.globalData.wwcTasks = wwcTasks
 
@@ -204,7 +231,6 @@ Page({
     /**
      * 获取当前处在提交期的任务
      */
-
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database()
       const _ = db.command
@@ -231,7 +257,7 @@ Page({
   getUploadedTasks: function(openid, inUploadTaskids) {
     /**
      * 获取已提交的任务数
-     * 待提交任务数 = 所有提交任务数 - 已提交任务数
+     * 待提交任务数 = 所有提交任务数 - 已提交任务数（作品数）
      */
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database()
@@ -257,7 +283,6 @@ Page({
     /**
      * 获取当前处在互评期的任务
      */
-
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database()
       const _ = db.command
@@ -384,60 +409,6 @@ Page({
         })
     })
   },
-  getTasksCount: function(courseid, date) {
-    return new Promise((resolve, reject) => {
-      const db = wx.cloud.database()
-      const _ = db.command
-      const task = db.collection('task')
-
-      task.where({
-        _courseid: courseid,
-        uploadstart: _.lte(date)
-      }).count().then(res => {
-        const total = res.total
-        resolve(total);
-      }).catch(err => {
-        console.log(err)
-        reject("查询失败")
-      })
-    })
-  },
-  getTasksIndexSkip: function(courseid, skip, date) {
-    return new Promise((resolve, reject) => {
-      const db = wx.cloud.database()
-      const _ = db.command
-      const task = db.collection('task')
-
-      let statusList = []
-      let selectPromise;
-
-      selectPromise = task.where({
-        _courseid: courseid,
-        uploadstart: _.lte(date)
-      }).skip(skip).get()
-
-      selectPromise.then(res => {
-        const data = res.data
-        resolve(data);
-      }).catch(err => {
-        console.error(err)
-        reject("查询失败!")
-      })
-    })
-  },
-  async getTasks(courseid, date) {
-    let count = await this.getTasksCount(courseid, date)
-    let list = []
-
-    for (let i = 0; i < count; i += 10) {
-      let res = await this.getTasksIndexSkip(courseid, i, date)
-      list = list.concat(res)
-
-      if (list.length == count) {
-        return list
-      }
-    }
-  },
   toHomework: function() {
     wx.navigateTo({
       url: '../homework/homework',
@@ -468,10 +439,29 @@ Page({
    * 页面打开一次就会显示
    */
   onShow: function() {
-    this.setData({
-      inUploadNum: app.globalData.inUploadNum,
-      inEvalNum: app.globalData.inEvalNum
-    })
+    const inUploadNum = app.globalData.inUploadNum
+    const inEvalNum = app.globalData.inEvalNum
+    const courseids = app.globalData.courseids
+    const type = app.globalData.type
+    const openid = app.globalData.openid
+
+    if(type == 1) {
+      // 学生
+      var hasCourse = true
+      if(courseids.length == 0) {
+        hasCourse = false
+      }
+
+      this.setData({
+        inUploadNum: inUploadNum,
+        inEvalNum: inEvalNum,
+        type: type,
+        openid: openid,
+        hasCourse: hasCourse
+      })
+    } else if(type == 2) {
+      // 老师
+    }
   },
 
   /**

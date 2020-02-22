@@ -9,6 +9,7 @@ Page({
    */
   data: {
     hasTask: true,
+    content: null,
     show: false,
     wwcTasks: null,
     whpTasks: null,
@@ -24,11 +25,25 @@ Page({
     const courseids = app.globalData.courseids
     const openid = app.globalData.openid
 
+    if (courseids.length == 0) { // 未添加课程
+      wx.hideLoading()
+
+      this.setData({
+        hasTask: false,
+        content: '尚未添加课程'
+      })
+
+      return
+    }
+
     wx.showLoading({
       title: '加载中',
     })
 
-    // 获取所有已过期任务
+    /**
+     * 1、获得未完成互评的任务
+     */
+    // 获取所有已过互评期任务
     let pastedEvalTasks = await this.getPastedEvalTasks(courseids)
 
     var pastedEvalTaskids = []
@@ -62,10 +77,12 @@ Page({
     }
 
     if (wwcTasks.length == 0 && ygqETasks.length == 0 && whpTasks.length == 0) {
+      // 无任务
       wx.hideLoading()
 
       this.setData({
-        hasTask: false
+        hasTask: false,
+        content: '暂无互评任务'
       })
 
       return
@@ -263,11 +280,24 @@ Page({
       const wwcTasks = app.globalData.wwcTasks
       const whpTasks = app.globalData.whpTasks
       const ygqETasks = app.globalData.ygqETasks
+      const courseids = app.globalData.courseids
+
+      if (courseids.length == 0) { // 未添加课程
+        wx.hideLoading()
+
+        this.setData({
+          hasTask: false,
+          content: '尚未添加课程'
+        })
+
+        return
+      }
 
       if (wwcTasks.length == 0 && ygqETasks.length == 0 && whpTasks.length == 0) {
 
         this.setData({
-          hasTask: false
+          hasTask: false,
+          content: '暂无互评任务'
         })
 
         return
@@ -309,12 +339,35 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function() {
-    const wwcTasks = app.globalData.wwcTasks
-    const whpTasks = app.globalData.whpTasks
-    const ygqETasks = app.globalData.ygqETasks
     const storedEvalTasks = app.globalData.storedEvalTasks
 
     if (storedEvalTasks) {
+      const wwcTasks = app.globalData.wwcTasks
+      const whpTasks = app.globalData.whpTasks
+      const ygqETasks = app.globalData.ygqETasks
+      const courseids = app.globalData.courseids
+
+      if (courseids.length == 0) { // 未添加课程
+        wx.hideLoading()
+
+        this.setData({
+          hasTask: false,
+          content: '尚未添加课程'
+        })
+
+        return
+      }
+
+      if (wwcTasks.length == 0 && ygqETasks.length == 0 && whpTasks.length == 0) {
+        // 无任务
+        this.setData({
+          hasTask: false,
+          content: '暂无互评任务'
+        })
+
+        return
+      }
+
       var wwcShow = true
       var whpShow = true
 
