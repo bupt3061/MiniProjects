@@ -14,6 +14,7 @@ Page({
         show: false
       }
     },
+    arg: null,
     taskid: null,
     workid: null,
     standard: null,
@@ -71,6 +72,7 @@ Page({
   },
   comment: function() {
     const now = new Date()
+    const arg = this.data.arg
     const workid = this.data.workid
     const taskid = this.data.taskid
     const postext = this.data.postext
@@ -80,6 +82,12 @@ Page({
     const standardKeys = this.data.standardKeys
     const contribution = app.globalData.userInfo.contribution
     const openid = app.globalData.openid
+    var wwcTasks = app.globalData.wwcTasks
+    var whpTasks = app.globalData.whpTasks
+
+    wx.showLoading({
+      title: '上传中',
+    })
 
     // 空值处理
     if (scores.length != standardKeys.length) {
@@ -213,6 +221,30 @@ Page({
       .catch(err => {
         console.log(err)
       })
+    
+    // 更新全局数据
+    if(arg == '2') {
+      for(var i = 0; i < wwcTasks.length; i++) {
+        if(wwcTasks[i]._id == taskid) {
+          wwcTasks[i].idx += 1
+          wwcTasks[i].evaledNum += 1
+        }
+      }
+
+      console.log('未完成', wwcTasks)
+      app.globalData.wwcTasks = wwcTasks
+    } else if(arg == '3') {
+      var list = []
+      var item = null
+      for(var i = 0; i < whpTasks.length; i++) {
+        if(whpTasks[i]._id == taskid) {
+          item = whpTasks[i]
+          continue
+        }
+      }
+    }
+
+    wx.hideLoading()
   },
   /**
    * 生命周期函数--监听页面加载
@@ -221,15 +253,18 @@ Page({
     const list = options.data.split('/')
     const workid = list[0]
     const taskid = list[1]
+    const arg = list[2]
     const standard = app.globalData.standard
     const standardKeys = app.globalData.standardKeys
 
     console.log('workid', workid)
     console.log('taskid', taskid)
+    console.log('arg', arg)
     console.log('standard', standard)
     console.log('standardKeys', standardKeys)
 
     this.setData({
+      arg: arg,
       workid: workid,
       taskid: taskid,
       standard: standard,

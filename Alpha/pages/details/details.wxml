@@ -3,6 +3,8 @@
 
 <zan-toptips backgroundColor="#14d1b5" content="{{content}}" duration="{{ duration }}" is-show="{{ $zanui.toptips.show }}" />
 
+<progress wx:if="{{status}}" style="width: 100%" percent="{{progress}}" stroke-width="{{strokeWidth}}" backgroundColor="{{backgroundColor}}" activeColor="{{activeColor}}"></progress>
+
 <view class="container" wx:if="{{!hasWork}}" style="padding: 320rpx 0;">
   <image src="../../img/quexing.png" style="width: 50%;" mode="widthFix"></image>
   <view class="zan-font-20 zan-c-gray-darker" style="font-weight: bold; margin: 24rpx">暂无作品</view>
