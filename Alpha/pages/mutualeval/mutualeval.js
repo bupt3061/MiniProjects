@@ -195,9 +195,17 @@ Page({
 
     return timeString
   },
-  clickwhp: function(e) {0
+  clickwhp: function(e) {
     const taskid = e.currentTarget.dataset.taskid
     console.log('taskid', taskid)
+
+    var inEvalTask = {
+      taskid: taskid,
+      status: false
+    }
+
+    app.globalData.inEvalTask = inEvalTask
+    console.log('inEvalTask', inEvalTask)
 
     wx.navigateTo({
       url: '../details/details?data=' + taskid + '/3',
@@ -206,6 +214,14 @@ Page({
   clickwwc: function (e) {
     const taskid = e.currentTarget.dataset.taskid
     console.log('taskid', taskid)
+
+    var inEvalTask = {
+      taskid: taskid,
+      status: false
+    }
+
+    app.globalData.inEvalTask = inEvalTask
+    console.log('inEvalTask', inEvalTask)
 
     wx.navigateTo({
       url: '../details/details?data=' + taskid + '/2',
@@ -338,10 +354,26 @@ Page({
     const storedEvalTasks = app.globalData.storedEvalTasks
 
     if (storedEvalTasks) {
-      const wwcTasks = app.globalData.wwcTasks
+      var wwcTasks = app.globalData.wwcTasks
       const whpTasks = app.globalData.whpTasks
       const ygqETasks = app.globalData.ygqETasks
       const courseids = app.globalData.courseids
+      var inEvalNum = app.globalData.inEvalNum
+
+      var list = []
+      for(var i = 0; i < wwcTasks.length; i++) {
+        if(wwcTasks[i].evaledNum >= 3) {
+          inEvalNum -= 1
+          continue 
+        }
+        list.push(wwcTasks[i])
+      }
+
+      wwcTasks = list
+      app.globalData.wwcTasks = wwcTasks
+      app.globalData.inEvalNum = inEvalNum
+      console.log('inEvalNum', inEvalNum)
+      console.log('wwcTasks', wwcTasks)
 
       if (courseids.length == 0) { // 未添加课程
         wx.hideLoading()

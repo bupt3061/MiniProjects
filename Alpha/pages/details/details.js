@@ -69,7 +69,7 @@ Page({
        */
       var progress = 0
       var evaledNum = 0
-      var needEvalNum = 0
+      var needEvalNum = 3
       var needEvalWorksList = []
       var randomList = []
       var idx = 0
@@ -100,10 +100,37 @@ Page({
               console.log('progress', progress)
 
               // 获取作品信息
+              needEvalWorksList = wwcTasks[i].needEvalWorksList
+              if (needEvalWorksList.length == 0) {
+                console.log('无作品')
+
+                this.setData({
+                  progress: progress,
+                  hasWork: false,
+                  status: true
+                })
+
+                wx.hideLoading()
+
+                return
+              }
+
               idx = wwcTasks[i].idx
               randomList = wwcTasks[i].randomList
+              if(idx > randomList.length - 1) {
+                console.log('无作品')
+
+                this.setData({
+                  progress: progress,
+                  hasWork: false,
+                  status: true
+                })
+
+                wx.hideLoading()
+
+                return
+              }
               var index = randomList[idx]
-              needEvalWorksList = wwcTasks[i].needEvalWorksList
               var _id = needEvalWorksList[index]._id
               work = await this.getNeedEvalWork(_id)
               console.log('work', work)
@@ -132,18 +159,6 @@ Page({
       }
 
       if(!flag) {
-        console.log('不存在互评信息')
-
-        // 获得所有作品总数，取其五分之一作为需要互评的作品数
-        let worksCount = await this.getWorksCount(taskid)
-        console.log('worksCount', worksCount)
-
-        needEvalNum = Math.ceil(worksCount / 20)
-
-        if (needEvalNum < 1) {
-          needEvalNum = 1
-        }
-
         progress = (evaledNum / needEvalNum) * 100
         console.log('progress', progress)
         console.log('needEvalNum', needEvalNum)
@@ -774,7 +789,13 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function() {
+    const inEvalTask = app.globalData.inEvalTask
+    const taskid = inEvalTask.taskid
+    const status = inEvalTask.status
 
+    if(status) {
+      this.init(taskid, '2')
+    }
   },
 
   /**

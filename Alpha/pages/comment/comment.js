@@ -92,6 +92,8 @@ Page({
     // 空值处理
     if (scores.length != standardKeys.length) {
       // 没打分
+      wx.hideLoading()
+
       this.setData({
         $zanui: {
           toptips: {
@@ -116,6 +118,7 @@ Page({
 
     if (postext == null || postext == '') {
       // 没输入正面评价
+      wx.hideLoading()
       console.log('postext', postext)
       this.setData({
         $zanui: {
@@ -143,6 +146,7 @@ Page({
 
     if (nagtext == null || nagtext == '') {
       // 没输入负面评价
+      wx.hideLoading()
       this.setData({
         $zanui: {
           toptips: {
@@ -223,6 +227,10 @@ Page({
       })
     
     // 更新全局数据
+    var inEvalTask = app.globalData.inEvalTask
+    inEvalTask.status = true
+    console.log('inEvalTask', inEvalTask)
+
     if(arg == '2') {
       for(var i = 0; i < wwcTasks.length; i++) {
         if(wwcTasks[i]._id == taskid) {
@@ -241,8 +249,23 @@ Page({
           item = whpTasks[i]
           continue
         }
+        list.push(whpTasks[i])
       }
+
+      item.idx += 1
+      item.evaledNum += 1
+      wwcTasks.push(item)
+      whpTasks = list
+
+      console.log('未完成', wwcTasks)
+      console.log('未互评', whpTasks)
+      app.globalData.whpTasks = whpTasks
+      app.globalData.wwcTasks = wwcTasks
     }
+
+    wx.navigateBack({
+      url: '../details/details'
+    })
 
     wx.hideLoading()
   },

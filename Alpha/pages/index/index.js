@@ -197,7 +197,7 @@ Page({
           }
 
           if (flag) {
-            inEvalTasks[i].evalNum = 0
+            inEvalTasks[i].evaledNum = 0
             whpTasks.push(inEvalTasks[i])
           }
         }
