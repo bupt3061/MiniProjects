@@ -8,6 +8,7 @@ Page({
    * 页面的初始数据
    */
   data: {
+    progress: null,
     hasWork: true,
     taskid: null,
     work: null,
@@ -36,6 +37,7 @@ Page({
    * 初始化函数
    */
   async init(taskid, arg) {
+    var wwcTasks = app.globalData.wwcTasks
     const openid = app.globalData.openid
     const now = new Date()
     let work
@@ -50,158 +52,206 @@ Page({
        * 1：查看
        */
       work = await this.getWork(taskid, openid)
-    } else if (arg == '2') {
+    } else {
       /**
        * 2：互评
+       * 1、若已存在互评信息则直接获取，包括：
+       * work：作品信息
+       * evaledNum：已互评任务数
+       * needEvalNum：未互评任务数
+       * 2、若不存在则获取并存储到全局
        */
+      var progress = 0
+      var evaledNum = 0
+      var needEvalNum = 0
+      var needEvalWorkList = []
+      var idx = 0
+      var flag = false // 全局是否已存在该互评作品的信息，默认不存在
+
       canEvaluate = true
 
-      // 获得所有作品总数，取其五分之一作为需要互评的作品数
-      let worksCount = await this.getWorksCount(taskid)
-      console.log('worksCount', worksCount)
+      if (arg == '2') { // 未完成
+        /**
+         * 1、判断未完成任务里是否有互评信息
+         * 2、evaledNum：已互评数
+         * 3、needEvalNum：需互评数
+         * 4、needEvalWorkList: 需要互评的作品列表
+         * 5、idx：当前索引位置
+         */
+        for (var i = 0; i < wwcTasks.length; i++) {
+          if (wwcTasks[i]._id == taskid) {
+            evaledNum = wwcTasks[i].evaledNum
+            console.log('evaledNum', evaledNum)
+            if (!wwcTasks[i].needEvalWorkList) {
+              flag = true  // 存在信息
+              console.log('存在互评信息')
 
-      var num = Math.ceil(worksCount / 20)
+              needEvalNum = wwcTasks[i].needEvalNum
+              console.log('needEvalNum', needEvalNum)
 
-      if(num < 1) {
-        num = 1
-      }
+              progress = (evaledNum / needEvalNum) * 100
+              console.log('progress', progress)
 
-      console.log('num', num)
+              // 获取作品信息
+              var idx = wwcTasks[i].idx
+              var randomList = wwcTasks[i].randomList
+              var index = randomList[idx]
+              var needEvalWorkList = wwcTasks[i].needEvalWorkList
+              var workid = needEvalWorkList[index]
+              work = await this.getNeedEvalWork(workid)
+              console.log('work', work)
 
-      // 获得评价过的所有作品
-      let evaledWorks = await this.getEvaledWorks(openid, taskid)
+              if (!work) {
+                console.log('无作品')
+                this.setData({
+                  progress: progress,
+                  hasWork: false
+                })
+                wx.hideLoading()
 
-      var evaledWorkids = []
-      for (var i = 0; i < evaledWorks.length; i++) {
-        evaledWorkids.push(evaledWorks[i]._workid)
-      }
-      var evaledNum = evaledWorkids.length
-      var needEvalNum = num - evaledNum
-      console.log('evaledWorkids', evaledWorkids)
-      console.log('evaledNum', evaledNum)
-
-      var progress = (evaledNum / num) * 100
-      console.log('progress', progress)
-
-      // 获取随机数
-      var randList = []
-      for (var i = 0; i < needEvalNum; i++) {
-        var temp = Math.floor(Math.random() * worksCount);
-        randList.push(temp)
-      }
-
-      console.log('randList', randList)
-
-      // 获得需要评价的作品
-      var needEvalTasks = []
-      for (var i = 0; i < needEvalNum; i++) {
-        let temp = await this.getNeedEvalTask(evaledWorkids, taskid, openid, randList[i])
-        needEvalTasks.push(temp)
-      }
-      console.log('needEvalTasks', needEvalTasks)
-
-      work = needEvalTasks[0]
-
-      if (!work) {
-        console.log('无作品')
-        this.setData({
-          hasWork: false
-        })
-        wx.hideLoading()
-
-        return
-      }
-
-    }
-
-    // 获得任务信息
-    let taskInfo = await this.getTaskInfo(taskid)
-    const standard = taskInfo.standard
-    const standardKeys = Object.keys(standard)
-
-    console.log('standard', standard)
-    console.log('standardKeys', standardKeys)
-    app.globalData.standard = standard
-    app.globalData.standardKeys = standardKeys
-
-    // 获取作品信息
-    const title = work.title
-    const describe = work.describe
-    const uploadtime = work.uploadtime
-    const workid = work._id
-    const cloudPaths = work.path
-
-    console.log('work', work)
-    console.log('title', title)
-    console.log('describe', describe)
-    console.log('uploadtime', uploadtime)
-    console.log('workid', workid)
-    console.log('cloudPaths', cloudPaths)
-
-    // 处理时间
-    const pasttime = this.getTimeBetween(uploadtime, now)
-    console.log('pasttime', pasttime)
-
-    // 获得tempUrls
-    let tempUrls = await this.getTempUrls(cloudPaths)
-    console.log('tempUrls', tempUrls)
-
-    // 判断是否收藏
-    let mdata = await this.judgeMarked(workid, openid)
-    const mid = mdata.mid
-    const marked = mdata.marked
-    const mexisted = mdata.mexisted
-
-    console.log('mid', mid)
-    console.log('marked', marked)
-    console.log('mexisted', mexisted)
-
-    /**
-     * 获取全部评论
-     */
-    let evals = await this.getEvals(workid)
-    const evalsNum = evals.length
-
-    if (evalsNum != 0) {
-      for (var i = 0; i < evals.length; i++) {
-        var res = this.getTimeBetween(evals[i].evaltime, now)
-        evals[i].pasttime = res
-      }
-
-      for (var i = 0; i < evals.length; i++) {
-        // 排序
-        for (var j = 0; j < evals.length - i - 1; j++) {
-          if (evals[j].evaltime < evals[j + 1].evaltime) {
-            var temp = evals[j]
-            evals[j] = evals[j + 1]
-            evals[j + 1] = temp
+                return
+              }
+            }
           }
         }
+      } else if (arg == '3') { // 未互评
+        evaledNum = 0
+        console.log('evaledNum', evaledNum)
+      }
+
+      if(!flag) {
+        console.log('不存在互评信息')
+
+        // 获得所有作品总数，取其五分之一作为需要互评的作品数
+        let worksCount = await this.getWorksCount(taskid)
+        console.log('worksCount', worksCount)
+
+        needEvalNum = Math.ceil(worksCount / 20)
+
+        if (needEvalNum < 1) {
+          needEvalNum = 1
+        }
+
+        progress = (evaledNum / needEvalNum) * 100
+        console.log('progress', progress)
+        console.log('needEvalNum', needEvalNum)
+
+        // 获取已评价作品
+        let evaledWorks = await this.getEvaledWorks(openid, taskid)
+        var evaledWorkids = []
+
+        for(var i = 0; i < evaledWorks.length; i++) {
+          evaledWorkids.push(evaledWorks[i]._id)
+        }
+
+        console.log('evaledWorks', evaledWorks)
+        console.log('evaledWorkids', evaledWorkids)
+
+        let needEvalWorks = await this.getNeedEvalWorks(evaledWorkids, taskid, openid)
+        console.log('needEvalWorks', needEvalWorks)
+
+        // 获得所有
+
+        if (!work) {
+          console.log('无作品')
+          this.setData({
+            hasWork: false
+          })
+          wx.hideLoading()
+
+          return
+        }
+
+        // 获得任务信息
+        let taskInfo = await this.getTaskInfo(taskid)
+        const standard = taskInfo.standard
+        const standardKeys = Object.keys(standard)
+
+        console.log('standard', standard)
+        console.log('standardKeys', standardKeys)
+        app.globalData.standard = standard
+        app.globalData.standardKeys = standardKeys
+
+        // 获取作品信息
+        const title = work.title
+        const describe = work.describe
+        const uploadtime = work.uploadtime
+        const workid = work._id
+        const cloudPaths = work.path
+
+        console.log('work', work)
+        console.log('title', title)
+        console.log('describe', describe)
+        console.log('uploadtime', uploadtime)
+        console.log('workid', workid)
+        console.log('cloudPaths', cloudPaths)
+
+        // 处理时间
+        const pasttime = this.getTimeBetween(uploadtime, now)
+        console.log('pasttime', pasttime)
+
+        // 获得tempUrls
+        let tempUrls = await this.getTempUrls(cloudPaths)
+        console.log('tempUrls', tempUrls)
+
+        // 判断是否收藏
+        let mdata = await this.judgeMarked(workid, openid)
+        const mid = mdata.mid
+        const marked = mdata.marked
+        const mexisted = mdata.mexisted
+
+        console.log('mid', mid)
+        console.log('marked', marked)
+        console.log('mexisted', mexisted)
+
+        /**
+         * 获取全部评论
+         */
+        let evals = await this.getEvals(workid)
+        const evalsNum = evals.length
+
+        if (evalsNum != 0) {
+          for (var i = 0; i < evals.length; i++) {
+            var res = this.getTimeBetween(evals[i].evaltime, now)
+            evals[i].pasttime = res
+          }
+
+          for (var i = 0; i < evals.length; i++) {
+            // 排序
+            for (var j = 0; j < evals.length - i - 1; j++) {
+              if (evals[j].evaltime < evals[j + 1].evaltime) {
+                var temp = evals[j]
+                evals[j] = evals[j + 1]
+                evals[j + 1] = temp
+              }
+            }
+          }
+        }
+
+        console.log('evals', evals)
+        console.log('evalsNum', evalsNum)
+
+        wx.hideLoading()
+
+        this.setData({
+          show: true,
+          taskid: taskid,
+          work: work,
+          title: title,
+          describe: describe,
+          tempUrls: tempUrls,
+          pasttime: pasttime,
+          mid: mid,
+          mexisted: mexisted,
+          marked: marked,
+          standard: standard,
+          standardKeys: standardKeys,
+          evals: evals,
+          evalsNum: evalsNum,
+          canEvaluate: canEvaluate
+        })
       }
     }
-
-    console.log('evals', evals)
-    console.log('evalsNum', evalsNum)
-
-    wx.hideLoading()
-
-    this.setData({
-      show: true,
-      taskid: taskid,
-      work: work,
-      title: title,
-      describe: describe,
-      tempUrls: tempUrls,
-      pasttime: pasttime,
-      mid: mid,
-      mexisted: mexisted,
-      marked: marked,
-      standard: standard,
-      standardKeys: standardKeys,
-      evals: evals,
-      evalsNum: evalsNum,
-      canEvaluate: canEvaluate
-    })
   },
   /**
    * 其他函数
@@ -301,6 +351,7 @@ Page({
 
   },
   getWork: function(taskid, openid) {
+    // 获取已提交作品信息
     return new Promise((resolve, reject) => {
       const work = wx.cloud.database().collection('work')
 
@@ -318,19 +369,39 @@ Page({
         })
     })
   },
+  getNeedEvalWork: function(workid) {
+    return new Promise((resolve, reject) => {
+      const work = wx.cloud.database().collection('work')
+
+      work.where({
+        _id: workid
+      }).get()
+        .then(res => {
+          const data = res.data[0]
+          resolve(data)
+        })
+        .catch(err => {
+          console.log(err)
+          reject('获取失败')
+        })
+    })
+  },
   getTimeBetween: function(startDate, endDate) {
     var days = (endDate - startDate) / (1 * 24 * 60 * 60 * 1000)
     var timeString = null
 
-    if (days > 30) {
+    if (days >= 365) {
+      var years = days / 365
+      timeString = Math.floor(years).toString() + "年前"
+    } else if (days > 30 && days < 365) {
       var months = days / 30
       timeString = Math.floor(months).toString() + "月前"
-
-      if (days >= 365) {
-        var years = days / 365
-        timeString = Math.floor(years).toString() + "年前"
-      }
-    } else if (days < 2) {
+    } else if (days >= 7 && days < 30) {
+      var weeks = days / 7
+      timeString = Math.floor(weeks).toString() + "周前"
+    } else if (days >= 1 && days < 7) {
+      timeString = Math.floor(days).toString() + "天前"
+    } else if (days < 1) {
       var hours = days * 24
       timeString = Math.floor(hours).toString() + "小时前"
 
@@ -342,8 +413,6 @@ Page({
           timeString = "刚刚"
         }
       }
-    } else {
-      timeString = Math.floor(days).toString() + "天"
     }
 
     return timeString
@@ -537,7 +606,29 @@ Page({
         })
     })
   },
-  getNeedEvalTask: function(evaledWorkids, taskid, openid, skip) {
+  getNeedEvalWorksCount: function (evaledWorkids, taskid, openid) {
+    return new Promise((resolve, reject) => {
+      const db = wx.cloud.database()
+      const _ = db.command
+
+      db.collection("work")
+        .where({
+          _id: _.nin(evaledWorkids),
+          _taskid: taskid,
+          _openid: _.nin([openid,])
+        })
+        .count()
+        .then(res => {
+          const total = res.total
+          resolve(total)
+        })
+        .catch(err => {
+          console.log(err)
+          reject('获取失败')
+        })
+    })
+  },
+  getNeedEvalWorksSkip: function(evaledWorkids, taskid, openid, skip) {
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database()
       const _ = db.command
@@ -560,27 +651,23 @@ Page({
         })
     })
   },
-  getNeedEvalTasksCount: function(evaledWorkids, taskid, openid) {
-    return new Promise((resolve, reject) => {
-      const db = wx.cloud.database()
-      const _ = db.command
+  async getNeedEvalWorks (evaledWorkids, taskid, openid) {
+    let count = await this.getNeedEvalWorksCount(evaledWorkids, taskid, openid)
+    let list = []
 
-      db.collection("work")
-        .where({
-          _id: _.nin(evaledWorkids),
-          _taskid: taskid,
-          _openid: _.nin([openid, ])
-        })
-        .count()
-        .then(res => {
-          const total = res.total
-          resolve(total)
-        })
-        .catch(err => {
-          console.log(err)
-          reject('获取失败')
-        })
-    })
+    if (count == 0) {
+      return list
+    }
+
+    for (let i = 0; i < count; i += 20) {
+      let res = await this.getEvalsIndexSkip(evaledWorkids, taskid, openid, i)
+      console.log('res', res)
+      list = list.concat(res)
+
+      if (list.length == count) {
+        return list
+      }
+    }
   },
   getWorksCount: function(taskid) {
     return new Promise((resolve, reject) => {

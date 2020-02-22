@@ -4,26 +4,26 @@
     <view class="title">
       <input class="zan-font-18 title-field" placeholder="{{placeholder}}" maxlength="50" auto-focus bindinput="titleinput" />
       <view class="title-tip">
-        <view class="zan-c-gray-dark">{{title_len}}/50</view>
+        <view class="zan-c-gray-dark">{{titlelen}}/50</view>
       </view>
     </view>
 
     <view class="describe" style="width: 90%; background-color: white;">
       <textarea class="zan-font-18 desc-area" placeholder="请输入说明(可选)" maxlength="200" bindinput="descinput"></textarea>
-      <view class="desc-tip zan-c-gray-dark">{{desc_len}}/200</view>
+      <view class="desc-tip zan-c-gray-dark">{{desclen}}/200</view>
     </view>
   </block>
   <block wx:else>
     <view class="title">
       <input class="zan-font-18 title-field" placeholder="{{placeholder}}" value="{{title}}" maxlength="50" bindinput="titleinput2" />
       <view class="title-tip">
-        <view class="zan-c-gray-dark">{{title_len}}/50</view>
+        <view class="zan-c-gray-dark">{{titlelen}}/50</view>
       </view>
     </view>
 
     <view class="describe" style="width: 90%; background-color: white;">
       <textarea class="zan-font-18 desc-area" value="{{describe}}" placeholder="请输入说明(可选)" maxlength="200" bindinput="descinput2"></textarea>
-      <view class="desc-tip zan-c-gray-dark">{{desc_len}}/200</view>
+      <view class="desc-tip zan-c-gray-dark">{{desclen}}/200</view>
     </view>
   </block>
 

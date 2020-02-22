@@ -322,33 +322,29 @@ Page({
       url: '../details/details?data=' + taskid + '/1',
     })
   },
-  getTimeBetween: function(startDate, endDate) {
+  getTimeBetween: function (startDate, endDate) {
     var days = (endDate - startDate) / (1 * 24 * 60 * 60 * 1000)
     var timeString = null
 
-    if (days > 30) {
+    if (days >= 365) {
+      var years = days / 365
+      timeString = Math.floor(years).toString() + "年"
+    } else if (days > 30 && days < 365) {
       var months = days / 30
       timeString = Math.floor(months).toString() + "月"
-
-      if (days >= 365) {
-        var years = days / 365
-        timeString = Math.floor(years).toString() + "年"
-      }
-    } else if (days < 2) {
+    } else if (days >= 7 && days < 30) {
+      var weeks = days / 7
+      timeString = Math.floor(weeks).toString() + "周"
+    } else if (days >= 1 && days < 7) {
+      timeString = Math.floor(days).toString() + "天"
+    } else if (days < 1) {
       var hours = days * 24
       timeString = Math.floor(hours).toString() + "小时"
 
       if (hours < 1) {
         var mins = hours * 60
         timeString = Math.floor(mins).toString() + "分钟"
-
-        if (mins < 1) {
-          var secs = mins * 60
-          timeString = Math.floor(secs).toString() + "秒"
-        }
       }
-    } else {
-      timeString = Math.floor(days).toString() + "天"
     }
 
     return timeString

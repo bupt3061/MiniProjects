@@ -14,8 +14,8 @@ Page({
     placeholder: null,
     describe: null,
     files: [],
-    title_len: 0,
-    desc_len: 0,
+    titlelen: 0,
+    desclen: 0,
     screenWidth: 0,
     width: 0,
     margin: 0,
@@ -26,8 +26,8 @@ Page({
    * 初始化函数
    */
   async init(arg, taskid) {
-    if (arg == '1') {
-      // 提交
+    if (arg == '1') {  // 提交
+      // 获得placeholder
       var placeholder = null
       var wtjTasks = app.globalData.wtjTasks
 
@@ -44,8 +44,7 @@ Page({
         placeholder: placeholder,
         status: true
       })
-    } else if (arg == '2') {
-      // 修改
+    } else if (arg == '2') {  // 修改
       var desclen = 0
       var titlelen = 0
       var placeholder = null
@@ -173,7 +172,6 @@ Page({
       }
     }
 
-    item.uploaded = true
     item.work = {
       _id: workid,
       _taskid: taskid,
@@ -366,26 +364,26 @@ Page({
   titleinput: function(e) {
     this.setData({
       title: e.detail.value,
-      title_len: e.detail.value.length
+      titlelen: e.detail.value.length
     })
   },
   descinput: function(e) {
     this.setData({
       describe: e.detail.value,
-      desc_len: e.detail.value.length
+      desclen: e.detail.value.length
     })
   },
   titleinput2: function (e) {
     this.setData({
       title: e.detail.value,
-      title_len: e.detail.value.length,
+      titlelen: e.detail.value.length,
       disabled: false
     })
   },
   descinput2: function (e) {
     this.setData({
       describe: e.detail.value,
-      desc_len: e.detail.value.length,
+      desclen: e.detail.value.length,
       disabled: false
     })
   },
@@ -465,9 +463,9 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function(options) {
-    var list = options.data.split('/')
-    var taskid = list[0]
-    var arg = list[1]  // '1'：提交；'2'：修改
+    const list = options.data.split('/')
+    const taskid = list[0]
+    const arg = list[1]  // '1'：提交；'2'：修改
 
     // 页面布局
     const width = app.globalData.screenWidth * 0.8 / 3

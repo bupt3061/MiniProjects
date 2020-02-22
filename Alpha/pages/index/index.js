@@ -188,7 +188,7 @@ Page({
               flag = false
 
               if (evaledTasks[j].num < 3) {
-                inEvalTasks[i].evalNum = evaledTasks[j].num
+                inEvalTasks[i].evaledNum = evaledTasks[j].num
                 wwcTasks.push(inEvalTasks[i])
               }
 
