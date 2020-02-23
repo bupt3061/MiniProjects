@@ -1,5 +1,6 @@
 // pages/msg/msg.js
 const app = getApp()
+const dt = require('../../utils/date.js')
 
 Page({
 
@@ -7,7 +8,9 @@ Page({
    * 页面的初始数据
    */
   data: {
-
+    newMsg: null,
+    existedMsg: null,
+    show: false
   },
   /**
    * 初始化函数
@@ -16,6 +19,10 @@ Page({
     const openid = app.globalData.openid
     const courseids = app.globalData.courseids
     const now = new Date()
+
+    wx.showLoading({
+      title: '加载中',
+    })
 
     // 获得所有已过期任务
     let pastEvalCount = await this.getPastEvalCount(courseids, now)
@@ -115,13 +122,165 @@ Page({
     for (var i = 0; i < needProcessTasks.length; i++) {
       for (var j = 0; j < evaledTasks.length; j++) {
         if (needProcessTasks[i]._id == evaledTasks[j]._id) {
-          needProcessTasks[i].evaledNum = works[j].num
+          needProcessTasks[i].evaledNum = evaledTasks[j].num
           continue
         }
       }
     }
 
     console.log('needProcessTasks', needProcessTasks)
+
+    // 计算成绩
+    for(var i = 0; i < needProcessTasks.length; i++) {
+      // 互评成绩
+      if(!needProcessTasks[i].evaledNum) {
+        needProcessTasks[i].evalScore = 0
+        continue
+      }
+      var temp = needProcessTasks[i].evaledNum / 3
+      if(temp >= 1) {
+        temp = 1
+      }
+      var evalScore = temp * 10
+      evalScore = Math.round(evalScore * 10) / 10
+      needProcessTasks[i].evalScore = evalScore
+    }
+
+    console.log('needProcessTasks', needProcessTasks)
+
+    for(var i = 0; i < needProcessTasks.length; i++) {
+      // 作业成绩
+      if(!needProcessTasks[i].work) {
+        needProcessTasks[i].workScore = 0
+        continue
+      }
+
+      var ctb = []
+      var totals = []
+      var evalList = needProcessTasks[i].work.evals
+      for (var j = 0; j < evalList.length; j++) {
+        ctb.push(evalList[j].contribution)
+        totals.push(evalList[j].totalscore)
+      }
+
+      var muls = []
+      var ctb_sum = 0
+      for(var m = 0; m < ctb.length; m++) {
+        var temp = ctb[m] * totals[m]
+        muls.push(temp)
+        ctb_sum += ctb[m]
+      }
+
+      var muls_sum = 0
+      for(var n = 0; n < muls.length; n++) {
+        muls_sum += muls[n]
+      }
+
+      var workScore = muls_sum / ctb_sum
+      workScore = Math.round(workScore * 10) / 10
+
+      needProcessTasks[i].workScore = workScore
+    }
+
+    console.log('needProcessTasks', needProcessTasks)
+
+    for(var i = 0; i < needProcessTasks.length; i++) {
+      // 总成绩
+      var workScore = needProcessTasks[i].workScore
+      var evalScore = needProcessTasks[i].evalScore
+
+      var totalScore = workScore * 0.7 + evalScore * 0.3
+      totalScore = Math.round(totalScore * 10) / 10
+
+      needProcessTasks[i].totalScore = totalScore
+    }
+
+    console.log('needProcessTasks', needProcessTasks)
+
+    // 获取新消息列表
+    var newMsgList = []
+    for(var i = 0; i < needProcessTasks.length; i++) {
+      var data = {}
+      data._taskid = needProcessTasks[i]._id
+      data.taskname = needProcessTasks[i].taskname
+      data.totalscore = needProcessTasks[i].totalScore
+      data.endtime = needProcessTasks[i].evaluateend
+
+      if(needProcessTasks[i].work) {
+        data.uploadtime = needProcessTasks[i].work.uploadtime
+      } else {
+        data.uploadtime = '未提交'
+      }
+
+      newMsgList = newMsgList.concat(data)
+    }
+
+    for (var i = 0; i < newMsgList.length; i++) {
+      // 排序
+      for (var j = 0; j < newMsgList.length - i - 1; j++) {
+        if (newMsgList[j].endtime < newMsgList[j + 1].endtime) {
+          var temp = newMsgList[j]
+          newMsgList[j] = newMsgList[j + 1]
+          newMsgList[j + 1] = temp
+        }
+      }
+    }
+
+    console.log('newMsgList', newMsgList)
+
+    // 上传数据
+    for(var i = 0; i < newMsgList.length; i++) {
+      var data = newMsgList[i]
+
+      const db = wx.cloud.database()
+
+      db.collection('msg')
+        .add({
+          data
+        })
+        .then(res => {
+          console.log(res)
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    }
+
+    // 处理时间
+    for (var j = 0; j < existedMsg.length - i - 1; j++) {
+      // 排序
+      if (existedMsg[j].endtime < existedMsg[j + 1].endtime) {
+        var temp = existedMsg[j]
+        existedMsg[j] = existedMsg[j + 1]
+        existedMsg[j + 1] = temp
+      }
+    }
+
+    for(var i = 0; i < newMsgList.length; i++) {
+      if(newMsgList[i].uploadtime != '未提交') {
+        newMsgList[i].uploadtime = dt.formatTime(newMsgList[i].uploadtime)
+      }
+    }
+    
+    for(var i = 0; i < existedMsg.length; i++) {
+      if(existedMsg[i].uploadtime != '未提交') {
+        existedMsg[i].uploadtime = dt.formatTime(existedMsg[i].uploadtime)
+      }
+    }
+
+    // 更新数据
+    app.globalData.existedMsg = existedMsg
+    app.globalData.newMsg = newMsgList
+    console.log('existedMsg', existedMsg)
+    console.log('newMsg', newMsgList)
+
+    this.setData({
+      newMsg: newMsgList,
+      existedMsg: existedMsg,
+      show: true
+    })
+
+    wx.hideLoading()
     
   },
   /**
@@ -289,6 +448,9 @@ Page({
         })
     })
   },
+  clickmsg: function(e) {
+    console.log(e)
+  },
   /**
    * 生命周期函数--监听页面加载
    */
@@ -307,7 +469,14 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function() {
+    const existedMsg = app.globalData.existedMsg
+    const newMsg = app.globalData.newMsg
 
+    this.setData({
+      newMsg: newMsg,
+      existedMsg: existedMsg,
+      show: true
+    })
   },
 
   /**

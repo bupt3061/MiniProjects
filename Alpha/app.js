@@ -72,6 +72,8 @@ App({
     standard: null,
     standardKeys: null,
     storedUploadTasks: false,
-    storedEvalTasks: false
+    storedEvalTasks: false,
+    existedMsg: null,
+    newMsg: null
   }
 })

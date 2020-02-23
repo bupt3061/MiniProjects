@@ -134,7 +134,27 @@
       <view class="zan-font-12 zan-c-gray-darker">{{zhouqi}}</view>
     </view>
     <view class="card-right">
-      <view class="zan-font-12 forbidden-bg card-btn" >互评</view>
+      <view class="zan-font-12 forbidden-bg card-btn">互评</view>
     </view>
+  </view>
+</template>
+
+<template name="nmsg-card">
+  <view class="card" style="padding: 48rpx 64rpx; box-sizing: border-box" data-id="{{_taskid}}" bindtap="clickmsg">
+    <view class="msg-left">
+      <view>{{taskname}}</view>
+      <view class="zan-font-12 zan-c-gray-darker">时间：{{uploadtime}}</view>
+    </view>
+    <view class="msg-right primary">{{totalscore}}</view>
+  </view>
+</template>
+
+<template name="emsg-card">
+  <view class="card  zan-c-gray" style="padding: 48rpx 64rpx; box-sizing: border-box" data-id="{{_taskid}}" bindtap="clickmsg">
+    <view class="msg-left">
+      <view>{{taskname}}</view>
+      <view class="zan-font-12">时间：{{uploadtime}}</view>
+    </view>
+    <view class="msg-right">{{totalscore}}</view>
   </view>
 </template>

@@ -52,3 +52,20 @@
   text-align: center;
   width: 85%;
 }
+
+.msg-left {
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.msg-right {
+  width: 30%;
+  font-size: 2em;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
