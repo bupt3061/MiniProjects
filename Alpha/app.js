@@ -74,6 +74,7 @@ App({
     storedUploadTasks: false,
     storedEvalTasks: false,
     existedMsg: null,
-    newMsg: null
+    newMsg: null,
+    arg: null
   }
 })

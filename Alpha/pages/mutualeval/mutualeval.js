@@ -228,6 +228,8 @@ Page({
     app.globalData.inEvalTask = inEvalTask
     console.log('inEvalTask', inEvalTask)
 
+    app.globalData.arg = '3'
+
     wx.navigateTo({
       url: '../details/details?data=' + taskid + '/3',
     })
@@ -243,6 +245,8 @@ Page({
 
     app.globalData.inEvalTask = inEvalTask
     console.log('inEvalTask', inEvalTask)
+
+    app.globalData.arg = '2'
 
     wx.navigateTo({
       url: '../details/details?data=' + taskid + '/2',

@@ -140,7 +140,7 @@
 </template>
 
 <template name="nmsg-card">
-  <view class="card" style="padding: 48rpx 64rpx; box-sizing: border-box" data-id="{{_taskid}}" bindtap="clickmsg">
+  <view class="card" style="padding: 48rpx 64rpx; box-sizing: border-box" data-taskid="{{_taskid}}" bindtap="clickmsg">
     <view class="msg-left">
       <view>{{taskname}}</view>
       <view class="zan-font-12 zan-c-gray-darker">时间：{{uploadtime}}</view>
@@ -150,7 +150,7 @@
 </template>
 
 <template name="emsg-card">
-  <view class="card  zan-c-gray" style="padding: 48rpx 64rpx; box-sizing: border-box" data-id="{{_taskid}}" bindtap="clickmsg">
+  <view class="card  zan-c-gray" style="padding: 48rpx 64rpx; box-sizing: border-box" data-taskid="{{_taskid}}" bindtap="clickmsg">
     <view class="msg-left">
       <view>{{taskname}}</view>
       <view class="zan-font-12">时间：{{uploadtime}}</view>

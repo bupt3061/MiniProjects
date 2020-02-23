@@ -449,7 +449,14 @@ Page({
     })
   },
   clickmsg: function(e) {
-    console.log(e)
+    const taskid = e.currentTarget.dataset.taskid
+    console.log(taskid)
+
+    app.globalData.arg = '1'
+
+    wx.navigateTo({
+      url: '../details/details?data=' + taskid + '/1',
+    })
   },
   /**
    * 生命周期函数--监听页面加载

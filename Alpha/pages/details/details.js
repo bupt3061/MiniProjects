@@ -48,6 +48,7 @@ Page({
     const now = new Date()
     let work
     var canEvaluate = false // 默认不能评论
+    var status = false
 
     wx.showLoading({
       title: '加载中',
@@ -58,6 +59,18 @@ Page({
        * 1：查看
        */
       work = await this.getWork(taskid, openid)
+
+      if (!work) {
+        console.log('无作品')
+        this.setData({
+          progress: progress,
+          hasWork: false,
+          status: true
+        })
+        wx.hideLoading()
+
+        return
+      }
     } else {
       /**
        * 2：互评
@@ -76,6 +89,7 @@ Page({
       var flag = false // 全局是否已存在该互评作品的信息，默认不存在
 
       canEvaluate = true
+      status = true
 
       if (arg == '2') { // 未完成
         /**
@@ -242,101 +256,101 @@ Page({
         var _id = needEvalWorksList[randomList[idx]]._id
         work = await this.getNeedEvalWork(_id)
       }
+    }
 
-      /**
+    /**
        * 处理work信息
        */
-      // 获得任务信息
-      let taskInfo = await this.getTaskInfo(taskid)
-      const standard = taskInfo.standard
-      const standardKeys = Object.keys(standard)
+    // 获得任务信息
+    let taskInfo = await this.getTaskInfo(taskid)
+    const standard = taskInfo.standard
+    const standardKeys = Object.keys(standard)
 
-      console.log('standard', standard)
-      console.log('standardKeys', standardKeys)
-      app.globalData.standard = standard
-      app.globalData.standardKeys = standardKeys
+    console.log('standard', standard)
+    console.log('standardKeys', standardKeys)
+    app.globalData.standard = standard
+    app.globalData.standardKeys = standardKeys
 
-      // 获取作品信息
-      const title = work.title
-      const describe = work.describe
-      const uploadtime = work.uploadtime
-      const workid = work._id
-      const cloudPaths = work.path
+    // 获取作品信息
+    const title = work.title
+    const describe = work.describe
+    const uploadtime = work.uploadtime
+    const workid = work._id
+    const cloudPaths = work.path
 
-      console.log('work', work)
-      console.log('title', title)
-      console.log('describe', describe)
-      console.log('uploadtime', uploadtime)
-      console.log('workid', workid)
-      console.log('cloudPaths', cloudPaths)
+    console.log('work', work)
+    console.log('title', title)
+    console.log('describe', describe)
+    console.log('uploadtime', uploadtime)
+    console.log('workid', workid)
+    console.log('cloudPaths', cloudPaths)
 
-      // 处理时间
-      const pasttime = this.getTimeBetween(uploadtime, now)
-      console.log('pasttime', pasttime)
+    // 处理时间
+    const pasttime = this.getTimeBetween(uploadtime, now)
+    console.log('pasttime', pasttime)
 
-      // 获得tempUrls
-      let tempUrls = await this.getTempUrls(cloudPaths)
-      console.log('tempUrls', tempUrls)
+    // 获得tempUrls
+    let tempUrls = await this.getTempUrls(cloudPaths)
+    console.log('tempUrls', tempUrls)
 
-      // 判断是否收藏
-      let mdata = await this.judgeMarked(workid, openid)
-      const mid = mdata.mid
-      const marked = mdata.marked
-      const mexisted = mdata.mexisted
+    // 判断是否收藏
+    let mdata = await this.judgeMarked(workid, openid)
+    const mid = mdata.mid
+    const marked = mdata.marked
+    const mexisted = mdata.mexisted
 
-      console.log('mid', mid)
-      console.log('marked', marked)
-      console.log('mexisted', mexisted)
+    console.log('mid', mid)
+    console.log('marked', marked)
+    console.log('mexisted', mexisted)
 
-      /**
-       * 获取全部评论
-       */
-      let evals = await this.getEvals(workid)
-      const evalsNum = evals.length
+    /**
+     * 获取全部评论
+     */
+    let evals = await this.getEvals(workid)
+    const evalsNum = evals.length
 
-      if (evalsNum != 0) {
-        for (var i = 0; i < evals.length; i++) {
-          var res = this.getTimeBetween(evals[i].evaltime, now)
-          evals[i].pasttime = res
-        }
+    if (evalsNum != 0) {
+      for (var i = 0; i < evals.length; i++) {
+        var res = this.getTimeBetween(evals[i].evaltime, now)
+        evals[i].pasttime = res
+      }
 
-        for (var i = 0; i < evals.length; i++) {
-          // 排序
-          for (var j = 0; j < evals.length - i - 1; j++) {
-            if (evals[j].evaltime < evals[j + 1].evaltime) {
-              var temp = evals[j]
-              evals[j] = evals[j + 1]
-              evals[j + 1] = temp
-            }
+      for (var i = 0; i < evals.length; i++) {
+        // 排序
+        for (var j = 0; j < evals.length - i - 1; j++) {
+          if (evals[j].evaltime < evals[j + 1].evaltime) {
+            var temp = evals[j]
+            evals[j] = evals[j + 1]
+            evals[j + 1] = temp
           }
         }
       }
-
-      console.log('evals', evals)
-      console.log('evalsNum', evalsNum)
-
-      wx.hideLoading()
-
-      this.setData({
-        progress: progress,
-        status: true,
-        show: true,
-        taskid: taskid,
-        work: work,
-        title: title,
-        describe: describe,
-        tempUrls: tempUrls,
-        pasttime: pasttime,
-        mid: mid,
-        mexisted: mexisted,
-        marked: marked,
-        standard: standard,
-        standardKeys: standardKeys,
-        evals: evals,
-        evalsNum: evalsNum,
-        canEvaluate: canEvaluate
-      })
     }
+
+    console.log('evals', evals)
+    console.log('evalsNum', evalsNum)
+
+    wx.hideLoading()
+
+    this.setData({
+      progress: progress,
+      status: status,
+      show: true,
+      taskid: taskid,
+      work: work,
+      title: title,
+      describe: describe,
+      tempUrls: tempUrls,
+      pasttime: pasttime,
+      mid: mid,
+      mexisted: mexisted,
+      marked: marked,
+      standard: standard,
+      standardKeys: standardKeys,
+      evals: evals,
+      evalsNum: evalsNum,
+      canEvaluate: canEvaluate
+    })
   },
   /**
    * 其他函数
@@ -789,13 +803,16 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function() {
-    const inEvalTask = app.globalData.inEvalTask
-    const taskid = inEvalTask.taskid
-    const status = inEvalTask.status
+    const arg = app.globalData.arg
 
-    if(status) {
-      // this.init(taskid, '2')
-      this.setData(inEvalTask.data)
+    if(arg == '2') {
+      const inEvalTask = app.globalData.inEvalTask
+      const taskid = inEvalTask.taskid
+      const status = inEvalTask.status
+      if (status) {
+        // this.init(taskid, '2')
+        this.setData(inEvalTask.data)
+      }
     }
   },
 

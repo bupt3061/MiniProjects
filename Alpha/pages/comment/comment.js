@@ -259,6 +259,7 @@ Page({
       app.globalData.whpTasks = whpTasks
       app.globalData.wwcTasks = wwcTasks
     }
+    app.globalData.arg = '2'
 
     let inEvalTaskData = await this.inEvalTaskData(taskid)
     console.log('inEvalTaskData', inEvalTaskData)

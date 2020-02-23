@@ -378,7 +378,7 @@ Page({
     const taskid = e.currentTarget.dataset.taskid
     console.log(taskid)
 
-    console.log('已提交')
+    app.globalData.arg = '1'
 
     wx.navigateTo({
       url: '../details/details?data=' + taskid + '/1',
