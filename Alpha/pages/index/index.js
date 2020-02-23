@@ -18,6 +18,7 @@ Page({
    * 初始化函数
    */
   async init() {
+    const now = new Date()  // 当前日期
 
     // 显示加载
     wx.showLoading({
@@ -113,9 +114,9 @@ Page({
       const newMsgNum = pastedEvalTasksNum - msgNum
       console.log('pastedEvalTasksNum', pastedEvalTasksNum)
       console.log('msgNum', msgNum)
-      console.log('newMsgNum', newMsgNum)
+      console.log('新消息', newMsgNum)
 
-      if(newMsgNum > 0) {
+      if (newMsgNum > 0) {
         wx.showTabBarRedDot({
           index: 1,
           success: res => {
@@ -136,20 +137,57 @@ Page({
       var wtjTasks = []
       var kxgTasks = []
 
-      let inUploadTasks = await this.getInUploadTasks(courseids) // 所有处在提交期的任务：未提交+可修改
+      // 获取所有提交期任务并排序
+      let inUploadTasksCount = await this.getInUploadTasksCount(courseids, now)
+      console.log('inUploadTasksCount', inUploadTasksCount)
+     
+      var inUploadTasks = []
+
+      for(var i = 0; i < inUploadTasksCount; i += 20) {
+        let res = await this.getInUploadTasksSkip(courseids, now, i)
+        inUploadTasks = inUploadTasks.concat(res)
+
+        if (inUploadTasks.length == inUploadTasksCount) {
+          break
+        }
+      }
+
+      for (var i = 0; i < inUploadTasks.length; i++) {
+        // 排序
+        for (var j = 0; j < inUploadTasks.length - i - 1; j++) {
+          if (inUploadTasks[j].uploadend > inUploadTasks[j + 1].uploadend) {
+            var temp = inUploadTasks[j]
+            inUploadTasks[j] = inUploadTasks[j + 1]
+            inUploadTasks[j + 1] = temp
+          }
+        }
+      }
       console.log('inUploadTasks', inUploadTasks)
 
       if (inUploadTasks.length != 0) { // 存在处在提交期的任务
+        // 获取所有已提交任务数
         var inUploadTaskids = []
         for (var i = 0; i < inUploadTasks.length; i++) {
           inUploadTaskids.push(inUploadTasks[i]._id)
         }
 
         // 获得未提交数
-        let uploadedTasks = await this.getUploadedTasks(openid, inUploadTaskids)
+        let uploadedTasksCount = await this.getUploadedTasksCount(openid, inUploadTaskids)
+        console.log('uploadedTasksCount', uploadedTasksCount)
+
+        var uploadedTasks = []
+        for (var i = 0; i < uploadedTasksCount; i += 20) {
+          let res = await this.getUploadedTasksSkip(openid, inUploadTaskids, i)
+          uploadedTasks = uploadedTasks.concat(res)
+
+          if (uploadedTasks.length == uploadedTasksCount) {
+            break
+          }
+        }
         console.log('uploadedTasks', uploadedTasks)
 
         inUploadNum = inUploadTasks.length - uploadedTasks.length
+        console.log('inUploadNum', inUploadNum)
 
         for (var i = 0; i < inUploadTasks.length; i++) {
           // 可修改任务
@@ -190,7 +228,29 @@ Page({
       var whpTasks = []
       var wwcTasks = []
 
-      let inEvalTasks = await this.getInEvalTasks(courseids)
+      let inEvalTasksCount = await this.getInEvalTasksCount(courseids, now)
+      console.log('inEvalTasksCount', inEvalTasksCount)
+
+      var inEvalTasks = []
+      for (var i = 0; i < inEvalTasksCount; i += 20) {
+        let res = await this.getInEvalTasksSkip(courseids, now, i)
+        inEvalTasks = inEvalTasks.concat(res)
+
+        if (inEvalTasks == inEvalTasksCount) {
+          break
+        }
+      }
+
+      for (var i = 0; i < inEvalTasksCount; i++) {
+        // 排序
+        for (var j = 0; j < inEvalTasksCount - i - 1; j++) {
+          if (inEvalTasks[j].evaluateend > inEvalTasks[j + 1].evaluateend) {
+            var temp = inEvalTasks[j]
+            inEvalTasks[j] = inEvalTasks[j + 1]
+            inEvalTasks[j + 1] = temp
+          }
+        }
+      }
       console.log('inEvalTasks', inEvalTasks)
 
       if (inEvalTasks.length != 0) { // 存在处在提交期的任务：未完成+未互评
@@ -251,14 +311,13 @@ Page({
   /**
    * 页面其他函数
    */
-  getInUploadTasks: function(courseids) {
+  getInUploadTasksCount: function (courseids, now) {
     /**
-     * 获取当前处在提交期的任务
+     * 获取当前处在提交期的任务的总数
      */
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database()
       const _ = db.command
-      const now = new Date()
 
       db.collection("task")
         .where({
@@ -266,7 +325,32 @@ Page({
           uploadstart: _.lte(now),
           uploadend: _.gte(now)
         })
-        .orderBy('uploadend', 'asc')
+        .count()
+        .then(res => {
+          const total = res.total
+          resolve(total)
+        })
+        .catch(err => {
+          console.log(err)
+          reject('获取失败')
+        })
+    })
+  },
+  getInUploadTasksSkip: function (courseids, now, skip) {
+    /**
+     * 获取当前处在提交期的任务
+     */
+    return new Promise((resolve, reject) => {
+      const db = wx.cloud.database()
+      const _ = db.command
+
+      db.collection("task")
+        .where({
+          _courseid: _.in(courseids),
+          uploadstart: _.lte(now),
+          uploadend: _.gte(now)
+        })
+        .skip(skip)
         .get()
         .then(res => {
           const data = res.data
@@ -278,10 +362,10 @@ Page({
         })
     })
   },
-  getUploadedTasks: function(openid, inUploadTaskids) {
+  getUploadedTasksCount: function (openid, inUploadTaskids) {
     /**
      * 获取已提交的任务数
-     * 待提交任务数 = 所有提交任务数 - 已提交任务数（作品数）
+     * 待提交任务数 = 所有提交期任务数 - 已提交任务数（作品数）
      */
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database()
@@ -292,6 +376,32 @@ Page({
           _taskid: _.in(inUploadTaskids),
           _openid: openid
         })
+        .count()
+        .then(res => {
+          const total = res.total
+          resolve(total)
+        })
+        .catch(err => {
+          console.log(err)
+          reject('获取失败')
+        })
+    })
+  },
+  getUploadedTasksSkip: function (openid, inUploadTaskids, skip) {
+    /**
+     * 获取已提交的任务数
+     * 待提交任务数 = 所有提交期任务数 - 已提交任务数（作品数）
+     */
+    return new Promise((resolve, reject) => {
+      const db = wx.cloud.database()
+      const _ = db.command
+
+      db.collection('work')
+        .where({
+          _taskid: _.in(inUploadTaskids),
+          _openid: openid
+        })
+        .skip(skip)
         .get()
         .then(res => {
           const data = res.data
@@ -303,14 +413,13 @@ Page({
         })
     })
   },
-  getInEvalTasks: function(courseids) {
+  getInEvalTasksCount: function (courseids, now) {
     /**
      * 获取当前处在互评期的任务
      */
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database()
       const _ = db.command
-      const now = new Date()
 
       db.collection("task")
         .where({
@@ -318,7 +427,32 @@ Page({
           evaluatestart: _.lte(now),
           evaluateend: _.gte(now)
         })
-        .orderBy('evaluateend', 'asc')
+        .count()
+        .then(res => {
+          const total = res.total
+          resolve(total)
+        })
+        .catch(err => {
+          console.log(err)
+          reject('获取失败')
+        })
+    })
+  },
+  getInEvalTasksSkip: function (courseids, now, skip) {
+    /**
+     * 获取当前处在互评期的任务
+     */
+    return new Promise((resolve, reject) => {
+      const db = wx.cloud.database()
+      const _ = db.command
+
+      db.collection("task")
+        .where({
+          _courseid: _.in(courseids),
+          evaluatestart: _.lte(now),
+          evaluateend: _.gte(now)
+        })
+        .skip(skip)
         .get()
         .then(res => {
           const data = res.data
@@ -455,7 +589,7 @@ Page({
         })
     })
   },
-  getMsgNum: function (openid) {
+  getMsgNum: function(openid) {
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database()
       const _ = db.command
@@ -511,10 +645,10 @@ Page({
     const type = app.globalData.type
     const openid = app.globalData.openid
 
-    if(type == 1) {
+    if (type == 1) {
       // 学生
       var hasCourse = true
-      if(courseids.length == 0) {
+      if (courseids.length == 0) {
         hasCourse = false
       }
 
@@ -525,7 +659,7 @@ Page({
         openid: openid,
         hasCourse: hasCourse
       })
-    } else if(type == 2) {
+    } else if (type == 2) {
       // 老师
     }
   },

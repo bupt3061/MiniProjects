@@ -168,7 +168,7 @@ Page({
         var evaledWorkids = []
 
         for(var i = 0; i < evaledWorks.length; i++) {
-          evaledWorkids.push(evaledWorks[i]._id)
+          evaledWorkids.push(evaledWorks[i]._workid)
         }
 
         console.log('evaledWorks', evaledWorks)

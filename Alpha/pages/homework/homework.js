@@ -28,6 +28,7 @@ Page({
     const courseids = app.globalData.courseids
     const openid = app.globalData.openid
     const inUploadNum = app.globalData.inUploadNum
+    const now = new Date()
 
     if (courseids.length == 0) { // 未添加课程
       wx.hideLoading()
@@ -52,17 +53,16 @@ Page({
     var ytjTasks = []
 
     // 获得所有已过提交期的任务：已过期+已提交
-    const now = new Date()
-    let count = await this.getTasksCount(courseids, now)
-    console.log('count', count)
+    let pastedUploadCount = await this.getPastedUploadCount(courseids, now)
+    console.log('pastedUploadCount', pastedUploadCount)
 
     let pastedUploadTasks = []
 
-    for (let i = 0; i < count; i += 20) {
-      let res = await this.getTasksIndexSkip(courseids, i, now)
+    for (let i = 0; i < pastedUploadCount; i += 20) {
+      let res = await this.getPastedUploadSkip(courseids, now, i)
       pastedUploadTasks = pastedUploadTasks.concat(res)
 
-      if (pastedUploadTasks.length == count) {
+      if (pastedUploadTasks.length == pastedUploadCount) {
         break
       }
     }
@@ -76,7 +76,30 @@ Page({
       }
 
       // 获得已提交的作品
-      let works = await this.getWorks(pastedUploadTaskids, openid)
+      let worksCount = await this.getWorksCount(pastedUploadTaskids, openid)
+      console.log('worksCount', worksCount)
+
+      var works = []
+
+      for(var i = 0; i < worksCount; i += 20) {
+        let res = await this.getWorksSkip(pastedUploadTaskids, openid, i)
+        works = works.concat(res)
+
+        if(works.length == worksCount) {
+          break
+        }
+      }
+
+      for (var i = 0; i < worksCount; i++) {
+        // 排序
+        for (var j = 0; j < worksCount - i - 1; j++) {
+          if (works[j].uploadtime < works[j + 1].uploadtime) {
+            var temp = works[j]
+            works[j] = works[j + 1]
+            works[j + 1] = temp
+          }
+        }
+      }
       console.log('works', works)
       
       // 获得已提交和已过期的任务
@@ -140,7 +163,25 @@ Page({
       kxgTaskids.push(kxgTasks[i]._id)
     }
 
-    let kxgWorks = await this.getWorks(kxgTaskids, openid)
+    let kxgWorksCount = await this.getWorksCount(kxgTaskids, openid)
+    console.log('kxgWorksCount', kxgWorksCount)
+
+    var kxgWorks = []
+    for(var i = 0; i < kxgWorksCount; i += 20) {
+      let res = await this.getWorksSkip(kxgTaskids, openid, i)
+      kxgWorks = kxgWorks.concat(res)
+    }
+
+    for (var i = 0; i < kxgWorksCount; i++) {
+      // 排序
+      for (var j = 0; j < kxgWorksCount - i - 1; j++) {
+        if (kxgWorks[j].uploadtime < kxgWorks[j + 1].uploadtime) {
+          var temp = kxgWorks[j]
+          kxgWorks[j] = kxgWorks[j + 1]
+          kxgWorks[j + 1] = temp
+        }
+      }
+    }
     console.log('kxgWorks', kxgWorks)
 
     for (var i = 0; i < kxgTasks.length; i++) {
@@ -228,7 +269,7 @@ Page({
   /**
    * 页面其他函数
    */
-  getTasksCount: function(courseids, now) {
+  getPastedUploadCount: function(courseids, now) {
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database()
       const _ = db.command
@@ -249,7 +290,7 @@ Page({
         })
     })
   },
-  getTasksIndexSkip: function(courseids, skip, now) {
+  getPastedUploadSkip: function(courseids, now, skip) {
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database()
       const _ = db.command
@@ -274,7 +315,7 @@ Page({
         })
     })
   },
-  getWorks: function(pastedUploadTaskids, openid) {
+  getWorksCount: function (pastedUploadTaskids, openid) {
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database()
       const _ = db.command
@@ -284,7 +325,28 @@ Page({
           _taskid: _.in(pastedUploadTaskids),
           _openid: openid
         })
-        .orderBy('uploadtime', 'desc')
+        .count()
+        .then(res => {
+          const total = res.total
+          resolve(total)
+        })
+        .catch(err => {
+          console.log(err)
+          reject('获取失败')
+        })
+    })
+  },
+  getWorksSkip: function(pastedUploadTaskids, openid, skip) {
+    return new Promise((resolve, reject) => {
+      const db = wx.cloud.database()
+      const _ = db.command
+
+      db.collection('work')
+        .where({
+          _taskid: _.in(pastedUploadTaskids),
+          _openid: openid
+        })
+        .skip(skip)
         .get()
         .then(res => {
           const data = res.data

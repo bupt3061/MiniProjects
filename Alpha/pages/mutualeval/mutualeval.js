@@ -24,6 +24,7 @@ Page({
     const inEvalNum = app.globalData.inEvalNum
     const courseids = app.globalData.courseids
     const openid = app.globalData.openid
+    const now = new Date()
 
     if (courseids.length == 0) { // 未添加课程
       wx.hideLoading()
@@ -41,38 +42,60 @@ Page({
     })
 
     /**
-     * 1、获得未完成互评的任务
+     * 1、获得已过期互评的任务
      */
-    // 获取所有已过互评期任务
-    let pastedEvalTasks = await this.getPastedEvalTasks(courseids)
+    let pastEvalCount = await this.getPastEvalCount(courseids, now)
+    console.log('pastEvalCount', pastEvalCount)
 
-    var pastedEvalTaskids = []
-    for (var i = 0; i < pastedEvalTasks.length; i++) {
-      pastedEvalTaskids.push(pastedEvalTasks[i]._id)
+    var pastEvalTasks = []
+    for(var i = 0; i < pastEvalCount; i += 20) {
+      let res = await this.getPastEvalSkip(courseids, now, i)
+      pastEvalTasks = pastEvalTasks.concat(res)
+
+      if (pastEvalTasks.length == pastEvalCount) {
+        break
+      }
     }
 
-    console.log('pastedEvalTasks', pastedEvalTasks)
-    console.log('pasteEvalTaskids', pastedEvalTaskids)
+    var pastEvalTaskids = []
+    for (var i = 0; i < pastEvalTasks.length; i++) {
+      pastEvalTaskids.push(pastEvalTasks[i]._id)
+    }
+
+    console.log('pastEvalTasks', pastEvalTasks)
+    console.log('pastEvalTaskids', pastEvalTaskids)
 
     // 获取对各个任务的评论数
-    let [evaledNum, evaledTasks] = await this.getEvaledTasks(openid, pastedEvalTaskids)
+    var evaledNum = 0
+    var evaledTasks = []
+    for (var i = 0; i < pastEvalTaskids.length; i += 20) {
+      var res = this.getSkipList(pastEvalTaskids, i)
+      let [num, data] = await this.getEvaledTasks(openid, res)
+      evaledNum += num
+      evaledTasks = evaledTasks.concat(data)
+
+      if (i * 20 + res.length == pastEvalTaskids.length) {
+        break
+      }
+    }
+
     console.log('evaledTasks', evaledTasks)
     console.log('evaledNum', evaledNum)
 
     // 获得已过期任务
     var ygqETasks = []
-    for (var i = 0; i < pastedEvalTasks.length; i++) {
+    for (var i = 0; i < pastEvalTasks.length; i++) {
       var flag = true
       for(var j = 0; j < evaledTasks.length; j++) {
-        if(pastedEvalTasks[i]._id == evaledTasks[j]._id) {
+        if(pastEvalTasks[i]._id == evaledTasks[j]._id) {
           flag = false
           if(evaledTasks[j].num < 3) {
-            ygqETasks.push(pastedEvalTasks[i])
+            ygqETasks.push(pastEvalTasks[i])
           }
         }
       }
       if(flag) {
-        ygqETasks.push(pastedEvalTasks[i])
+        ygqETasks.push(pastEvalTasks[i])
       }
     }
 
@@ -100,8 +123,6 @@ Page({
     }
 
     // 处理时间
-    const now = new Date()
-
     for (var i = 0; i < wwcTasks.length; i++) {
       wwcTasks[i].shengyu = this.getTimeBetween(now, wwcTasks[i].evaluateend)
     }
@@ -227,17 +248,38 @@ Page({
       url: '../details/details?data=' + taskid + '/2',
     })
   },
-  getPastedEvalTasks: function(courseids) {
+  getPastEvalCount: function (courseids, now) {
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database()
       const _ = db.command
-      const now = new Date()
 
       db.collection('task')
         .where({
           _courseid: _.in(courseids),
           evaluateend: _.lt(now)
         })
+        .count()
+        .then(res => {
+          const total = res.total
+          resolve(total)
+        })
+        .catch(err => {
+          console.log(err)
+          reject('获取失败')
+        })
+    })
+  },
+  getPastEvalSkip: function(courseids, now, skip) {
+    return new Promise((resolve, reject) => {
+      const db = wx.cloud.database()
+      const _ = db.command
+
+      db.collection('task')
+        .where({
+          _courseid: _.in(courseids),
+          evaluateend: _.lt(now)
+        })
+        .skip(skip)
         .get()
         .then(res => {
           const data = res.data
@@ -248,6 +290,22 @@ Page({
           reject('获取失败')
         })
     })
+  },
+  getSkipList: function(list, skip) {
+    const length = list.length
+    const limit = 20
+    var res = []
+    var status = true
+
+    for(var i = skip; i < skip + limit; i++) {
+      if(!list[i]) {
+        status = false
+        break
+      }
+      res.push(list[i])
+    }
+
+    return res
   },
   getEvaledTasks: function (openid, pastedEvalTaskids) {
     return new Promise((resolve, reject) => {
