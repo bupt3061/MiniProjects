@@ -1,6 +1,7 @@
 // pages/msg/msg.js
 const app = getApp()
 const dt = require('../../utils/date.js')
+const st = require('../../utils/string.js')
 
 Page({
 
@@ -266,6 +267,15 @@ Page({
       if(existedMsg[i].uploadtime != '未提交') {
         existedMsg[i].uploadtime = dt.formatTime(existedMsg[i].uploadtime)
       }
+    }
+    
+    // 处理长字符串
+    for(var i = 0; i < newMsgList.length; i++) {
+      newMsgList[i].tasknameh = st.handleTaskName(newMsgList[i].taskname)
+    }
+
+    for (var i = 0; i < existedMsg.length; i++) {
+      existedMsg[i].tasknameh = st.handleTaskName(existedMsg[i].taskname)
     }
 
     // 更新数据

@@ -1,6 +1,7 @@
 // pages/mutualeval/mutualeval.js
 const app = getApp()
 const dt = require('../../utils/date.js')
+const st = require('../../utils/string.js')
 
 Page({
 
@@ -139,6 +140,22 @@ Page({
     wwcTasks = this.addCourseInfo(wwcTasks)
     whpTasks = this.addCourseInfo(whpTasks)
     ygqETasks = this.addCourseInfo(ygqETasks)
+
+    // 处理长字符串
+    for(var i = 0; i < wwcTasks.length; i++) {
+      wwcTasks[i].tasknameh = st.handleTaskName(wwcTasks[i].taskname)
+      wwcTasks[i].coursenameh = st.handleCourseName(wwcTasks[i].coursename)
+    }
+
+    for (var i = 0; i < whpTasks.length; i++) {
+      whpTasks[i].tasknameh = st.handleTaskName(whpTasks[i].taskname)
+      whpTasks[i].coursenameh = st.handleCourseName(whpTasks[i].coursename)
+    }
+
+    for (var i = 0; i < ygqETasks.length; i++) {
+      ygqETasks[i].tasknameh = st.handleTaskName(ygqETasks[i].taskname)
+      ygqETasks[i].coursenameh = st.handleCourseName(ygqETasks[i].coursename)
+    }
 
     // 更新数据
     app.globalData.wwcTasks = wwcTasks

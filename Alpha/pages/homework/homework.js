@@ -1,6 +1,7 @@
 // pages/homework/homework.js
 const app = getApp()
 const dt = require('../../utils/date.js')
+const st = require('../../utils/string.js')
 
 Page({
 
@@ -231,6 +232,27 @@ Page({
     ytjTasks = this.addCourseInfo(ytjTasks)
     ygqTasks = this.addCourseInfo(ygqTasks)
     kxgTasks = this.addCourseInfo(kxgTasks)
+
+    // 处理长字符串
+    for(var i = 0; i < wtjTasks.length; i++) {
+      wtjTasks[i].tasknameh = st.handleTaskName(wtjTasks[i].taskname)
+      wtjTasks[i].coursenameh = st.handleCourseName(wtjTasks[i].coursename)
+    }
+
+    for (var i = 0; i < ytjTasks.length; i++) {
+      ytjTasks[i].tasknameh = st.handleTaskName(ytjTasks[i].taskname)
+      ytjTasks[i].coursenameh = st.handleCourseName(ytjTasks[i].coursename)
+    }
+
+    for (var i = 0; i < ygqTasks.length; i++) {
+      ygqTasks[i].tasknameh = st.handleTaskName(ygqTasks[i].taskname)
+      ygqTasks[i].coursenameh = st.handleCourseName(ygqTasks[i].coursename)
+    }
+
+    for (var i = 0; i < kxgTasks.length; i++) {
+      kxgTasks[i].tasknameh = st.handleTaskName(kxgTasks[i].taskname)
+      kxgTasks[i].coursenameh = st.handleCourseName(kxgTasks[i].coursename)
+    }
 
     // 更新数据
     console.log('已过期', ygqTasks)

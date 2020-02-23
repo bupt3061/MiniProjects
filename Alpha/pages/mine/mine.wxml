@@ -1,6 +1,18 @@
 <!--pages/mine/mine.wxml-->
 
-<canvas hidden="{{canvasHidden}}" style="position: absolute; left: -300px; top: -200px; width: 60px; height: 60px; background-color:#ddd" canvas-id="qrCanvas"></canvas>
+<!-- <canvas hidden="{{canvasHidden}}" style="position: absolute; left: -300px; top: -200px; width: 60px; height: 60px; background-color:#ddd" canvas-id="qrCanvas"></canvas>
 
 <canvas style="width: 100%; height: {{windowHeight}}px; background-color:#ddd" canvas-id="myCanvas">
-</canvas>
+</canvas> -->
+
+<view class="container zan-font-14 zan-c-black">
+  <view class="user-info" style="width: 100%; background-color: white; display: flex; flex-direction: row; justify-content: center;">
+    <view style="width: 90%; display: flex; flex-direction: row; justify-content: flex-start;">
+      <view class="user-avatar" style="width: 120rpx; height: 120rpx; position: relative; padding: 64rpx;">
+        <image src="../../img/tongxue.png" style="width: 100%; height: 100%; border-radius: 60rpx; border: 1px solid #f1f1f1; position: absolute; top: 0; left: 0;"></image>
+        <image src="../../img/v1.png" style="position: absolute; width: 40rpx; height: 40rpx; top: -40rpx; left: 50rpx;"></image>
+      </view>
+      <view class='user-name'>浅草的风</view>
+    </view>
+  </view>
+</view>
