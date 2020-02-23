@@ -160,16 +160,25 @@
 </template>
 
 <template name="course-card">
-  <view class="card" data-courseid="{{_id}}" bindtap="clickCourse">
-    <view class="card-left">
-      <image class="card-img" mode="scaleToFill" src="{{coverPath}}" />
+  <view style="dislay: flex; flex-direction:column; justify-content: center; align-items: center; width: 90%; margin-bottom: 32rpx; ">
+    <view class="card" style="width: 100%; margin-bottom: 2rpx;">
+      <view class="card-left" data-courseid="{{_id}}" bindtap="clickCourse">
+        <image class="card-img" mode="scaleToFill" src="{{coverPath}}" />
+      </view>
+      <view class="card-middle" data-courseid="{{_id}}" bindtap="clickCourse">
+        <view style="margin-bottom: 14rpx; font-weight: bold">{{coursenameh}}</view>
+        <view class="zan-font-12 zan-c-gray-darker">{{shengyu}}</view>
+      </view>
+      <view class="card-right" style="justify-content: flex-end; margin-right: 32rpx;" data-courseid="{{_id}}" bindtap="clickBtn">
+        <image src="../../img/up.png" style="width: 48rpx; height: 48rpx;"></image>
+      </view>
+      <view style="position: absolute; left: 0; top: 142rpx; height: 180rpx; background-color: red;"></view>
     </view>
-    <view class="card-middle">
-      <view style="margin-bottom: 14rpx; font-weight: bold">{{coursenameh}}</view>
-      <view class="zan-font-12 zan-c-gray-darker">{{shengyu}}</view>
-    </view>
-    <view class="card-right" style="justify-content: flex-end; margin-right: 32rpx;">
-      <zan-icon class="zan-font-12 primary-bg" type="arrow"></zan-icon>
+    <view class="drop-box">
+      <view style="width: 90%; display: flex; flex-direction: row; justify-content: space-between; align-items: center; padding: 32rpx 32rpx 32rpx 0; border-bottom: 1px solid #f1f1f1; ">
+        <view>任务名</view>
+        <zan-icon class="primary zan-font-14" type="arrow"></zan-icon>
+      </view>
     </view>
   </view>
 </template>

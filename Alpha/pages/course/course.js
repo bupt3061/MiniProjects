@@ -84,6 +84,10 @@ Page({
     const courseid = e.currentTarget.dataset.courseid
     console.log(courseid)
   },
+  clickBtn: function (e) {
+    const courseid = e.currentTarget.dataset.cu
+    console.log(index)
+  },
   addCourse: function() {
 
   },
