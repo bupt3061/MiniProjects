@@ -18,16 +18,7 @@ function handleCourseName(str) {
   return str.slice(0, 4)
 }
 
-function handleLongCourseName(str) {
-  if (str.length <= 12) {
-    return str
-  }
-
-  return str.slice(0, 11) + '...'
-}
-
 module.exports = {
   handleTaskName: handleTaskName,
-  handleCourseName: handleCourseName,
-  handleLongCourseName: handleLongCourseName
+  handleCourseName: handleCourseName
 }

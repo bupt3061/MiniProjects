@@ -6,7 +6,7 @@
   <view class="zan-font-20 zan-c-gray-darker" style="font-weight: bold; margin: 24rpx">{{content}}</view>
 </view>
 
-<view wx:if="{{hasTask && show}}" class="container zan-font-14 zan-c-black" style="padding: 32rpx 0 64rpx 0;">
+<view wx:if="{{hasTask && show}}" class="container zan-font-16 zan-c-black" style="padding: 32rpx 0 64rpx 0;">
   <block wx:if="{{wwcShow}}">
     <template is="title" data="{{title: '未完成'}}" />
     <block wx:for="{{wwcTasks}}" wx:key="{{index}}">

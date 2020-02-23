@@ -94,7 +94,7 @@ Page({
 
       // 处理长字符串
       for(var i = 0; i < courses.length; i++) {
-        courses[i].coursenameh = st.handleLongCourseName(courses[i].coursename)
+        courses[i].coursenameh = st.handleTaskName(courses[i].coursename)
       }
 
       // 设置数据

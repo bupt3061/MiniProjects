@@ -5,7 +5,7 @@
     <view style="margin-right: 8rpx">添加课程</view>
     <zan-icon class="zan-font-12" type="arrow"></zan-icon>
   </view>
-  <view class="container zan-font-14 zan-c-black" style="padding-top: 160rpx">
+  <view class="container zan-font-16 zan-c-black" style="padding-top: 160rpx">
     <view class="card" bindtap="toHomework">
       <text class="zan-font-18">作业<text wx:if="{{inUploadNum != 0}}"class="zan-font-18 primary"> ({{inUploadNum}}) </text></text>
       <zan-icon class="primary" type="pending-orders" style="font-size: 80rpx"></zan-icon>
@@ -18,7 +18,7 @@
 </block>
 
 <block wx:if="{{type == 2}}">
-  <view class="container zan-font-14 zan-c-gray-darker">
+  <view class="container zan-font-16 zan-c-gray-darker">
     <text>教师</text>
   </view>
 </block>

@@ -9,14 +9,14 @@
   <view class="card" data-taskid="{{_id}}" bindtap="clickwtj">
     <view class="card-left">
       <image class="card-img" mode="scaleToFill" src="{{courseCover}}" />
-      <view class="img-cover">{{coursenameh}}</view>
+      <view class="img-cover zan-font-14">{{coursenameh}}</view>
     </view>
     <view class="card-middle">
       <view style="margin-bottom: 14rpx; font-weight: bold">{{tasknameh}}</view>
-      <view class="zan-font-12 zan-c-gray-darker">剩余时间：{{shengyu}}</view>
+      <view class="zan-font-12 zan-c-gray-darker">剩余：{{shengyu}}</view>
     </view>
     <view class="card-right">
-      <view class="primary-bg zan-font-12 card-btn">提交</view>
+      <view class="primary-bg zan-font-14 card-btn">提交</view>
     </view>
   </view>
 </template>
@@ -25,30 +25,30 @@
   <view class="card" data-taskid="{{_id}}">
     <view class="card-left">
       <image class="card-img" mode="scaleToFill" src="{{courseCover}}" />
-      <view class="img-cover">{{coursenameh}}</view>
+      <view class="img-cover zan-font-14">{{coursenameh}}</view>
     </view>
     <view class="card-middle">
       <view style="margin-bottom: 14rpx; font-weight: bold">{{tasknameh}}</view>
       <view class="zan-font-12 zan-c-gray-darker">{{zhouqi}}</view>
     </view>
     <view class="card-right">
-      <view class="zan-font-12 forbidden-bg card-btn">提交</view>
+      <view class="zan-font-14 forbidden-bg card-btn">提交</view>
     </view>
   </view>
 </template>
 
 <template name="kxg-card">
-  <view style="background-color: white; border-radius: 18rpx; width: 90%; margin-bottom: 32rpx; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2); display: flex; flex-direction: row;" data-taskid="{{_id}}" bindtap="clickkxg">
-    <view style="position: relative; height: 160rpx; width: 30%;">
-      <image style="position: absolute; width: 100%; height: 100%; left: 0; top: 0; border-radius: 18rpx;" mode="scaleToFill" src="{{courseCover}}" />
-      <view style="position: absolute; width: 100%; text-align: center; line-height: 160rpx; color: white; font-weight: bold; background-color: rgba(0, 0, 0, 0.2); border-radius: 18rpx">{{coursenameh}}</view>
+  <view class="card" data-taskid="{{_id}}" bindtap="clickkxg">
+    <view class="card-left">
+      <image class="card-img" mode="scaleToFill" src="{{courseCover}}" />
+      <view class="img-cover zan-font-14">{{coursenameh}}</view>
     </view>
-    <view style="padding: 32rpx; width: 45%;">
+    <view class="card-middle">
       <view style="margin-bottom: 14rpx; font-weight: bold">{{tasknameh}}</view>
-      <view class="zan-font-12 zan-c-gray-darker">剩余时间：{{shengyu}}</view>
+      <view class="zan-font-12 zan-c-gray-darker">剩余：{{shengyu}}</view>
     </view>
-    <view style="width: 25%; display: flex; justify-content: flex-start; align-items: center;">
-      <view class="zan-font-12 primary-bg" style="padding: 12rpx 0; border-radius: 50rpx; text-align: center; width: 85%;">修改</view>
+    <view class="card-right">
+      <view class="zan-font-14 primary-bg card-btn">修改</view>
     </view>
   </view>
 </template>
@@ -57,14 +57,14 @@
   <view class="card" data-taskid="{{_id}}" bindtap="clickytj">
     <view class="card-left">
       <image class="card-img" mode="scaleToFill" src="{{courseCover}}" />
-      <view class="img-cover">{{coursenameh}}</view>
+      <view class="img-cover zan-font-14">{{coursenameh}}</view>
     </view>
     <view class="card-middle">
       <view style="margin-bottom: 14rpx; font-weight: bold">{{tasknameh}}</view>
-      <view class="zan-font-12 zan-c-gray-darker">提交时间：{{tijiao}}</view>
+      <view class="zan-font-12 zan-c-gray-darker">提交：{{tijiao}}</view>
     </view>
     <view class="card-right">
-      <view class="zan-font-12 primary-bg card-btn">查看</view>
+      <view class="zan-font-14 primary-bg card-btn">查看</view>
     </view>
   </view>
 </template>
@@ -95,14 +95,14 @@
   <view class="card" data-taskid="{{_id}}" bindtap="clickwhp">
     <view class="card-left">
       <image class="card-img" mode="scaleToFill" src="{{courseCover}}" />
-      <view class="img-cover">{{coursenameh}}</view>
+      <view class="img-cover zan-font-14">{{coursenameh}}</view>
     </view>
     <view class="card-middle">
       <view style="margin-bottom: 14rpx; font-weight: bold">{{tasknameh}}</view>
-      <view class="zan-font-12 zan-c-gray-darker">剩余时间：{{shengyu}}</view>
+      <view class="zan-font-12 zan-c-gray-darker">剩余：{{shengyu}}</view>
     </view>
     <view class="card-right">
-      <view class="zan-font-12 primary-bg card-btn">互评</view>
+      <view class="zan-font-14 primary-bg card-btn">互评</view>
     </view>
   </view>
 </template>
@@ -111,14 +111,14 @@
   <view class="card" data-taskid="{{_id}}" bindtap="clickwwc">
     <view class="card-left">
       <image class="card-img" mode="scaleToFill" src="{{courseCover}}" />
-      <view class="img-cover">{{coursenameh}}</view>
+      <view class="img-cover zan-font-14">{{coursenameh}}</view>
     </view>
     <view class="card-middle">
       <view style="margin-bottom: 14rpx; font-weight: bold">{{tasknameh}}</view>
-      <view class="zan-font-12 zan-c-gray-darker">剩余时间：{{shengyu}}</view>
+      <view class="zan-font-12 zan-c-gray-darker">剩余：{{shengyu}}</view>
     </view>
     <view class="card-right">
-      <view class="zan-font-12 primary-bg card-btn">互评</view>
+      <view class="zan-font-14 primary-bg card-btn">互评</view>
     </view>
   </view>
 </template>
@@ -127,14 +127,14 @@
   <view class="card" data-taskid="{{_id}}">
     <view class="card-left">
       <image class="card-img" mode="scaleToFill" src="{{courseCover}}" />
-      <view class="img-cover">{{coursenameh}}</view>
+      <view class="img-cover zan-font-14">{{coursenameh}}</view>
     </view>
     <view class="card-middle">
       <view style="margin-bottom: 14rpx; font-weight: bold">{{tasknameh}}</view>
       <view class="zan-font-12 zan-c-gray-darker">{{zhouqi}}</view>
     </view>
     <view class="card-right">
-      <view class="zan-font-12 forbidden-bg card-btn">互评</view>
+      <view class="zan-font-14 forbidden-bg card-btn">互评</view>
     </view>
   </view>
 </template>
@@ -150,7 +150,7 @@
 </template>
 
 <template name="emsg-card">
-  <view class="card  zan-c-gray" style="padding: 48rpx 64rpx; box-sizing: border-box" data-taskid="{{_taskid}}" bindtap="clickmsg">
+  <view class="card  zan-c-gray-dark" style="padding: 48rpx 64rpx; box-sizing: border-box" data-taskid="{{_taskid}}" bindtap="clickmsg">
     <view class="msg-left">
       <view>{{tasknameh}}</view>
       <view class="zan-font-12">时间：{{uploadtime}}</view>
@@ -163,14 +163,13 @@
   <view class="card" data-courseid="{{_id}}" bindtap="clickCourse">
     <view class="card-left">
       <image class="card-img" mode="scaleToFill" src="{{coverPath}}" />
-      <view class="img-cover"></view>
     </view>
     <view class="card-middle">
       <view style="margin-bottom: 14rpx; font-weight: bold">{{coursenameh}}</view>
-      <view class="zan-font-12 zan-c-gray-darker">周期：{{zhouqi}}</view>
+      <view class="zan-font-12 zan-c-gray-darker">{{shengyu}}</view>
     </view>
-    <view class="card-right">
-      <view class="zan-font-12 primary-bg card-btn">查看</view>
+    <view class="card-right" style="justify-content: flex-end; margin-right: 32rpx;">
+      <zan-icon class="zan-font-12 primary-bg" type="arrow"></zan-icon>
     </view>
   </view>
 </template>
