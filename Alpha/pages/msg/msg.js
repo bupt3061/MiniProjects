@@ -67,10 +67,6 @@ Page({
     }
     console.log('needProcessTasks', needProcessTasks)
 
-    // 获取全部互评信息
-    let evalInfo = await this.getEvalInfo(openid, needProcessTaskids)
-    console.log('evalInfo', evalInfo)
-
     // 获取需处理任务的全部作品
     var needProcessTaskids = []
     for(var i = 0; i < needProcessTasks.length; i++) {
@@ -85,6 +81,10 @@ Page({
     }
     console.log('works', works)
     console.log('workids', workids)
+
+    // 获取全部互评信息
+    let [num, evaledTasks] = await this.getEvaledTasks(openid, needProcessTaskids)
+    console.log('evaledTasks', evaledTasks)
 
     // 获取作品的全部评价
     let evals = await this.getEvals(workids)
@@ -113,8 +113,8 @@ Page({
     }
 
     for (var i = 0; i < needProcessTasks.length; i++) {
-      for (var j = 0; j < evalInfo.length; j++) {
-        if (needProcessTasks[i]._id == evalInfo[j]._id) {
+      for (var j = 0; j < evaledTasks.length; j++) {
+        if (needProcessTasks[i]._id == evaledTasks[j]._id) {
           needProcessTasks[i].evaledNum = works[j].num
           continue
         }
@@ -256,7 +256,7 @@ Page({
         })
     })
   },
-  getEvalInfo: function (openid, needProcessTaskids) {
+  getEvaledTasks: function (openid, needProcessTaskids) {
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database()
       const _ = db.command
@@ -275,7 +275,13 @@ Page({
         .end()
         .then(res => {
           const list = res.list
-          resolve(list)
+          var num = 0
+          for (var i = 0; i < list.length; i++) {
+            if (list[i].num >= 3) {
+              num += 1
+            }
+          }
+          resolve([num, list])
         })
         .catch(err => {
           console.log(err)
