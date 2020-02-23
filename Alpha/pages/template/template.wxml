@@ -175,7 +175,7 @@
       <view style="position: absolute; left: 0; top: 142rpx; height: 180rpx; background-color: red;"></view>
     </view>
     <view class="drop-box">
-      <view style="width: 90%; display: flex; flex-direction: row; justify-content: space-between; align-items: center; padding: 32rpx 32rpx 32rpx 0; border-bottom: 1px solid #f1f1f1; ">
+      <view style="width: 80%; display: flex; flex-direction: row; justify-content: space-between; align-items: center; padding: 32rpx 32rpx 32rpx 0; border-bottom: 1px solid #f1f1f1; ">
         <view>任务名</view>
         <zan-icon class="primary zan-font-14" type="arrow"></zan-icon>
       </view>
