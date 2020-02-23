@@ -158,3 +158,19 @@
     <view class="msg-right">{{totalscore}}</view>
   </view>
 </template>
+
+<template name="course-card">
+  <view class="card" data-courseid="{{_id}}" bindtap="clickCourse">
+    <view class="card-left">
+      <image class="card-img" mode="scaleToFill" src="{{coverPath}}" />
+      <view class="img-cover"></view>
+    </view>
+    <view class="card-middle">
+      <view style="margin-bottom: 14rpx; font-weight: bold">{{coursenameh}}</view>
+      <view class="zan-font-12 zan-c-gray-darker">周期：{{zhouqi}}</view>
+    </view>
+    <view class="card-right">
+      <view class="zan-font-12 primary-bg card-btn">查看</view>
+    </view>
+  </view>
+</template>

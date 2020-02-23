@@ -2,6 +2,7 @@
 
 // 获取全局变量
 const app = getApp()
+const st = require('../../utils/string.js')
 
 Page({
   /**
@@ -89,6 +90,11 @@ Page({
 
       for (let i = 0; i < courses.length; i++) {
         courses[i].coverPath = coverPaths[i].tempFileURL
+      }
+
+      // 处理长字符串
+      for(var i = 0; i < courses.length; i++) {
+        courses[i].coursenameh = st.handleLongCourseName(courses[i].coursename)
       }
 
       // 设置数据

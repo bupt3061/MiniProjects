@@ -1,0 +1,8 @@
+<!--pages/course/course.wxml-->
+<import src="../template/template.wxml" />
+
+<view class="container zan-font-14 zan-c-black" style="padding: 32rpx 0;">
+  <block wx:for="{{courses}}" wx:key="{{index}}">
+    <template is="course-card" data="{{...item}}"></template>
+  </block>
+</view>

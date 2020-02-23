@@ -42,6 +42,19 @@ Page({
       rank: rank
     })
   },
+  /**
+   * 其他函数
+   */
+  toCollect: function() {
+    wx.navigateTo({
+      url: '../collect/collect',
+    })
+  },
+  toCourse: function() {
+    wx.navigateTo({
+      url: '../course/course',
+    })
+  },
   // async init() {
   //   var initUrl = this.data.initUrl
   //   let state = await this.createQrCode(initUrl, "qrCanvas", 60, 60)

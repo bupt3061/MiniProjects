@@ -43,3 +43,11 @@
   left: 77rpx;
   transform: rotate(25deg);
 }
+
+.item-list {
+  width: 100%; border-top: 1px solid #f1f1f1; border-bottom: 1px solid #f1f1f1; display: flex; flex-direction: column; align-items: flex-end; background-color: white;
+}
+
+.item {
+  width: 90%; display: flex; flex-direction: row; justify-content: space-between; padding: 32rpx 32rpx 32rpx 0; 
+}

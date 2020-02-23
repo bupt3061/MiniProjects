@@ -10,7 +10,9 @@
     "pages/success/success",
     "pages/details/details",
     "pages/comment/comment",
-    "pages/mutualeval/mutualeval"
+    "pages/mutualeval/mutualeval",
+    "pages/collect/collect",
+    "pages/course/course"
   ],
   "enablePullDownRefresh": true,
   "window": {
