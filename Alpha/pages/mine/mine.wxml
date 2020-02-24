@@ -12,7 +12,7 @@
         <image class="avatar" src="{{avatarUrl}}"></image>
         <image class="rank" src="{{rank}}"></image>
       </view>
-      <view class='user-name zan-font-18' style="font-weight: bold">{{nickName}}</view>
+      <view class='user-name zan-font-18' style="font-weight: bold">{{nickname}}</view>
     </view>
   </view>
 

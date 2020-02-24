@@ -8,9 +8,9 @@ Page({
    * 页面的初始数据
    */
   data: {
-    nickName: null,
+    nickname: null,
     avtarUrl: null,
-    rank: '../../img/',
+    rank: null,
     canvasHidden: false, //默认不让canvas二维码隐藏，否则不能生成二维码
     imagePath: "", //弹出框二维码显示图片地址
     inputValue: '',
@@ -23,21 +23,15 @@ Page({
    */
   init: function() {
     const userInfo = app.globalData.userInfo
-    const nickName = userInfo.nickName
+    const nickname = userInfo.nickname
     const avatarUrl = userInfo.avatarUrl
     const ctb = userInfo.contribution
     var rank = null
 
-    if(ctb <= 20) {
-      rank = this.data.rank + 'v1.png'
-    } else if(ctb <= 100) {
-      rank = this.data.rank + 'v2.png'
-    } else {
-      rank = this.data.rank + 'v3.png'
-    }
+    rank = this.getRank(ctb)
 
     this.setData({
-      nickName: nickName,
+      nickname: nickname,
       avatarUrl: avatarUrl,
       rank: rank
     })
@@ -54,6 +48,19 @@ Page({
     wx.navigateTo({
       url: '../course/course',
     })
+  },
+  getRank(ctb) {
+    var rank = '../../img/'
+
+    if (ctb <= 20) {
+      rank += 'v1.png'
+    } else if (ctb <= 100) {
+      rank += 'v2.png'
+    } else {
+      rank += 'v3.png'
+    }
+
+    return rank
   },
   // async init() {
   //   var initUrl = this.data.initUrl

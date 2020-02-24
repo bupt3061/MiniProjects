@@ -1,5 +1,7 @@
 <!--index.wxml-->
 
+<button bindtap="test">test</button>
+
 <block wx:if="{{type == 1}}">
   <view wx:if="{{!hasCourse}}" class="top-tip zan-font-14 primary-bg">
     <view style="margin-right: 8rpx">添加课程</view>

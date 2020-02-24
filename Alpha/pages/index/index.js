@@ -317,6 +317,65 @@ Page({
   /**
    * 页面其他函数
    */
+  test: function() {
+    var CryptoJS = require("../../utils/cryptojs-master/cryptojs.js");
+    var querystring = require('../../utils/querystring-master/dist/querystring.js');
+
+    // 云市场分配的密钥Id
+    var secretId = "AKIDowbqyovlf3yo23xoxccmvjf3gkfamrzjpfh6";
+    // 云市场分配的密钥Key
+    var secretKey = "kHDzlyd45ZdfuDFx622kKDFrWa57px4qeVneirbQ";
+    var source = "market";
+
+    // 签名
+    var datetime = (new Date()).toGMTString();
+    var signStr = "x-date: " + datetime + "\n" + "x-source: " + source;
+    var sign = CryptoJS.enc.Base64.stringify(CryptoJS.HmacSHA1(signStr, secretKey))
+    var auth = 'hmac id="' + secretId + '", algorithm="hmac-sha1", headers="x-date x-source", signature="' + sign + '"';
+
+    // 请求方法
+    var method = 'GET';
+    // 请求头
+    var headers = {
+      "X-Source": source,
+      "X-Date": datetime,
+      "Authorization": auth,
+    }
+    // 查询参数
+    var queryParams = {
+      'content': '【洋葱作业】你的验证码是：5873，3分钟内有效！',
+      'mobile': '18810688942'
+    }
+    // body参数（POST方法下）
+    var bodyParams = {
+    }
+    // url参数拼接
+    var url = 'https://service-qorotwax-1256237604.ap-shanghai.apigateway.myqcloud.com/release/chuangxinsms/yzm';
+    
+    if (Object.keys(queryParams).length > 0) {
+      url += '?' + querystring.stringify(queryParams);
+    }
+
+    var options = {
+      url: url,
+      timeout: 5000,
+      method: method,
+      headers: headers,
+      success: res => {
+        console.log(res)
+      },
+      fail: err => {
+        consol.log(err)
+      }
+    }
+    
+    if (['POST', 'PUT', 'PATCH'].indexOf(method) != -1) {
+      options['body'] = querystring.stringify(bodyParams);
+      options['headers']['Content-Type'] = "application/x-www-form-urlencoded";
+    }
+
+    wx.request(options)
+  },
   getInUploadTasksCount: function (courseids, now) {
     /**
      * 获取当前处在提交期的任务的总数

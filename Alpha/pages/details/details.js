@@ -1,6 +1,7 @@
 // pages/detail/details.js
 
 const app = getApp()
+const hs = require('../../utils/hash.js')
 
 Page({
 
@@ -10,6 +11,7 @@ Page({
   data: {
     authorNickname: null,
     authorAvatarUrl: null,
+    authorId: null,
     pastEval: false,
     arg: null,
     backgroundColor: "#f3f4f5",
@@ -53,6 +55,10 @@ Page({
     var canEvaluate = false // 默认不能评论
     var status = false
     var pastEval = false // 是否已过互评期
+    var authorNickname = null
+    var authorAvatarUrl = null
+    var authorId = null
+    var authorRank = null
 
     wx.showLoading({
       title: '加载中',
@@ -272,21 +278,21 @@ Page({
     const evaluateend = taskInfo.evaluateend
 
     if(now > evaluateend) {
-      pastEval: true
+      pastEval = true
 
-      const authorId = work._openid
-      let authorInfo = await this.getAuthorInfo(authorId)
+      const authorOpenid = work._openid
+      let authorInfo = await this.getAuthorInfo(authorOpenid)
 
-      const authorNickname = authorInfo[0].nickname
-      const authorAvatarUrl = authorInfo[0].avatarUrl
+      authorNickname = authorInfo[0].nickname
+      authorAvatarUrl = authorInfo[0].avatarUrl
+      authorId = hs.hash(authorOpenid)
+      const ctb = authorInfo[0].contribution
+      authorRank = this.getRank(ctb)
+      console.log(hs.hash('12324'))
       console.log("authorNickname", authorNickname)
-      console.log("authorAvatarUrl", authorAvatarUrl )
-
-      this.setData({
-        pastEval: true,
-        authorNickname: authorNickname,
-        authorAvatarUrl: authorAvatarUrl
-      })
+      console.log("authorAvatarUrl", authorAvatarUrl)
+      console.log("authorId", authorId)
+      console.log("authorRank", authorRank)
     }
 
     console.log('standard', standard)
@@ -372,12 +378,30 @@ Page({
       standardKeys: standardKeys,
       evals: evals,
       evalsNum: evalsNum,
-      canEvaluate: canEvaluate
+      canEvaluate: canEvaluate,
+      pastEval: pastEval,
+      authorNickname: authorNickname,
+      authorAvatarUrl: authorAvatarUrl,
+      authorId: authorId,
+      authorRank: authorRank
     })
   },
   /**
    * 其他函数
    */
+  getRank(ctb) {
+    var rank = '../../img/'
+
+    if (ctb <= 20) {
+      rank += 'v1.png'
+    } else if (ctb <= 100) {
+      rank += 'v2.png'
+    } else {
+      rank += 'v3.png'
+    }
+
+    return rank
+  },
   getAuthorInfo: function (authorId) {
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database()

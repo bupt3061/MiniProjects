@@ -11,6 +11,17 @@
 </view>
 
 <view wx:if="{{hasWork}}" class="container zan-font-16 zan-c-black" style="padding: 64rpx 0 180rpx 0;">
+  <view wx:if="{{pastEval}}" class="user-info">
+    <view class="avatar">
+      <image class="avatar-img" src="{{authorAvatarUrl}}"></image>
+      <image class="rank" src="{{authorRank}}"></image>
+    </view>
+    <view class="zan-font-14 user-name">
+      <view>{{authorNickname}}</view>
+      <view class="zan-c-gray-dark">id: {{authorId}}</view>
+    </view>
+  </view>
+
   <view class="top" style="margin-bottom: 32rpx;">
     <view class="top-left">
       <view class="zan-font-20" style="font-weight: bold; margin-bottom: 12rpx;">{{title}}</view>
