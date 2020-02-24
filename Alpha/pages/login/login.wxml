@@ -8,7 +8,8 @@
     <view class="item" style="position: relative;">
       <zan-icon class="zan-font-20" type="{{icon}}"></zan-icon>
       <input type="number" placeholder="请输入验证码" style="padding: 24rpx;" maxlength="4" bindblur="checkCode"></input>
-      <view class="zan-font-14 primary" style="position: absolute; right: 0;" bindtap="sendCode">发送验证码</view>
+      <view wx:if="{{status}}" class="zan-font-14 primary btn" bindtap="sendCode">{{content}}</view>
+      <view wx:else class="zan-font-14 primary btn" bindtap="sendCode">{{time}}</view>
     </view>
     <button class="primary-bg" style="margin-top: 48rpx;">下一步</button>
   </view>
