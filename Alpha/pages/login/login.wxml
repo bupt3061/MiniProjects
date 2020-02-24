@@ -1,20 +1,15 @@
 <!--pages/login/login.wxml-->
-
-<view class="container" style="padding-top: 64rpx">
-  <block>
-    <image class='avatar' src="{{avatarStu}}" mode="cover" bindtap="clickStu"></image>
-    <view class="zan-font-18 {{stuStyle}} type" bindtap="clickStu">
-      <zan-icon type="checked" style="margin-right: 16rpx"></zan-icon>
-      <text>我是学生</text>
+<view class="container zan-font-16 zan-c-black" style="padding: 120px 0;" >
+  <view style="width: 80%;">
+    <view class="item">
+      <zan-icon class="zan-font-20" type="contact"></zan-icon>
+      <input placeholder="请输入手机号" maxlength="13" value="{{phone}}" style="padding: 24rpx;" bindinput="inputPhone"></input>
     </view>
-  </block>
-  <zan-loadmore type="text" text="或者" class="zan-c-gray" style="width: 91%;"></zan-loadmore>
-  <block>
-    <image class='avatar' src="{{avatarTeach}}" mode="cover" bindtap="clickTeach"></image>
-    <view class="zan-font-18 {{teachStyle}} type" bindtap="clickTeach">
-      <zan-icon type="checked" style="margin-right: 16rpx"></zan-icon>
-      <text>我是老师</text>
+    <view class="item" style="position: relative;">
+      <zan-icon class="zan-font-20" type="{{icon}}"></zan-icon>
+      <input type="number" placeholder="请输入验证码" style="padding: 24rpx;" maxlength="4" bindblur="checkCode"></input>
+      <view class="zan-font-14 primary" style="position: absolute; right: 0;" bindtap="sendCode">发送验证码</view>
     </view>
-  </block>
-  <button loading="{{loading}}" class="primary-bg" style="width: 91%; margin-top: 96rpx;" bindtap="toNext">下一步</button>
+    <button class="primary-bg" style="margin-top: 48rpx;">下一步</button>
+  </view>
 </view>

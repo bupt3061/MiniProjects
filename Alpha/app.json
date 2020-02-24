@@ -2,8 +2,6 @@
   "pages": [
     "pages/index/index",
     "pages/msg/msg",
-    "pages/login/login",
-    "pages/loginNext/loginNext",
     "pages/mine/mine",
     "pages/homework/homework",
     "pages/submit/submit",
@@ -12,7 +10,8 @@
     "pages/comment/comment",
     "pages/mutualeval/mutualeval",
     "pages/collect/collect",
-    "pages/course/course"
+    "pages/course/course",
+    "pages/login/login"
   ],
   "enablePullDownRefresh": true,
   "window": {

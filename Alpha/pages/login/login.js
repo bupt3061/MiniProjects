@@ -1,89 +1,55 @@
 // pages/login/login.js
-
-// app 实例
-const app = getApp()
-
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
-    type: 1,
-    stuStyle: "primary",
-    teachStyle: "zan-c-gray-dark",
-    avatarStu: null,
-    avatarTeach: null,
-    canIUse: wx.canIUse('button.open-type.getUserInfo'),
+    phone: null,
+    code: null,
+    icon: 'password-view'
   },
   /**
-   * 初始化函数
+   * 其他函数
    */
-  async init() {
-    let res = await this.getAvatars()
-    console.log(res)
-  },
-  getAvatars: function() {
-    return new Promise((resolve, reject) => {
-      // 从云端下载头像
-      wx.cloud.getTempFileURL({
-        fileList: app.globalData.avatarIDs,
-        success: res => {
-          var avatarStu = res.fileList[0].tempFileURL
-          var avatarTeach = res.fileList[1].tempFileURL
+  inputPhone: function(e) {
+    var res = e.detail.value
+    var phone = ''
+    var list = res.split(' ')
 
-          this.setData({
-            avatarStu,
-            avatarTeach
-          })
+    for (var i = 0; i < list.length; i++) {
+      phone += list[i]
+    }
 
-          resolve('success')
-        },
-        fail: err => {
-          console.log(err)
-          reject('faile')
-        }
-      })
-    })
-  },
-  /**
-   * 页面其他函数
-   */
-  toNext: function(e) {
-    // 跳转到loginNext
-    wx.navigateTo({
-      url: '../loginNext/loginNext?type=' + this.data.type,
-      success: res => {
-        console.log('跳转到loginNext')
-      },
-      fial: err => {
-        console.log(err)
-      }
-    })
-  },
-  clickStu: function() {
-    // 选择学生身份
+    if (phone.length > 3 && phone.length <= 7) {
+      phone = phone.slice(0, 3) + ' ' + phone.slice(3, phone.length)
+    } else if (phone.length > 7) {
+      phone = phone.slice(0, 3) + ' ' + phone.slice(3, 7) + ' ' + phone.slice(7, phone.length)
+    }
+
+    console.log(phone)
+
     this.setData({
-      type: 1,
-      stuStyle: "primary",
-      teachStyle: "zan-c-gray-dark"
+      phone: phone
     })
-    console.log(this.data.type)
   },
-  clickTeach: function() {
-    // 选择教师身份
+  getFocused: function() {
     this.setData({
-      type: 2,
-      stuStyle: "zan-c-gray-dark",
-      teachStyle: "primary"
+      icon: "password-not-view"
     })
-    console.log(this.data.type)
+  },
+  sendCode: function() {
+    const code = this.rand(1000, 9999)
+    console.log(code)
+  },
+  rand: function(min, max) {
+    return Math.floor(Math.random() * (max - min)) + min;
   },
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function(options) {
-    this.init()
+
   },
 
   /**

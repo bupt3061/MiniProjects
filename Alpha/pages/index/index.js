@@ -318,63 +318,27 @@ Page({
    * 页面其他函数
    */
   test: function() {
-    var CryptoJS = require("../../utils/cryptojs-master/cryptojs.js");
-    var querystring = require('../../utils/querystring-master/dist/querystring.js');
+    var zhenzisms = require('../../utils/zhenzisms.js');
 
-    // 云市场分配的密钥Id
-    var secretId = "AKIDowbqyovlf3yo23xoxccmvjf3gkfamrzjpfh6";
-    // 云市场分配的密钥Key
-    var secretKey = "kHDzlyd45ZdfuDFx622kKDFrWa57px4qeVneirbQ";
-    var source = "market";
+    const apiUrl = "https://sms_developer.zhenzikj.com"
+    const appId = "104606"
+    const appSecret = "1b219489-86f2-4119-8032-a0c8d2ef6105"
 
-    // 签名
-    var datetime = (new Date()).toGMTString();
-    var signStr = "x-date: " + datetime + "\n" + "x-source: " + source;
-    var sign = CryptoJS.enc.Base64.stringify(CryptoJS.HmacSHA1(signStr, secretKey))
-    var auth = 'hmac id="' + secretId + '", algorithm="hmac-sha1", headers="x-date x-source", signature="' + sign + '"';
+    zhenzisms.client.init(apiUrl, appId, appSecret);
 
-    // 请求方法
-    var method = 'GET';
-    // 请求头
-    var headers = {
-      "X-Source": source,
-      "X-Date": datetime,
-      "Authorization": auth,
-    }
-    // 查询参数
-    var queryParams = {
-      'content': '【洋葱作业】你的验证码是：5873，3分钟内有效！',
-      'mobile': '18810688942'
-    }
-    // body参数（POST方法下）
-    var bodyParams = {
-    }
-    // url参数拼接
-    var url = 'https://service-qorotwax-1256237604.ap-shanghai.apigateway.myqcloud.com/release/chuangxinsms/yzm';
-    
-    if (Object.keys(queryParams).length > 0) {
-      url += '?' + querystring.stringify(queryParams);
-    }
+    var params = {};
+    params.number = '18810688942';
+    params.message = '您的验证码为:{' + '3687' + '}，如非本人操作请忽略此短信';
+    params.seconds = 60 * 5;
+    params.length = 4;
 
-    var options = {
-      url: url,
-      timeout: 5000,
-      method: method,
-      headers: headers,
-      success: res => {
-        console.log(res)
-      },
-      fail: err => {
-        consol.log(err)
-      }
-    }
-    
-    if (['POST', 'PUT', 'PATCH'].indexOf(method) != -1) {
-      options['body'] = querystring.stringify(bodyParams);
-      options['headers']['Content-Type'] = "application/x-www-form-urlencoded";
-    }
+    zhenzisms.client.sendCode(res => {
+      console.log(res)
+    }, params);
 
-    wx.request(options)
+    zhenzisms.client.balance(res => {
+      console.log(res.data)
+    });
   },
   getInUploadTasksCount: function (courseids, now) {
     /**

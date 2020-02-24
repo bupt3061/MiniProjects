@@ -12,6 +12,7 @@
 		"minified": true,
 		"newFeature": true,
 		"coverView": true,
+		"nodeModules": true,
 		"autoAudits": false,
 		"checkInvalidKey": true,
 		"checkSiteMap": true,
@@ -23,7 +24,7 @@
 		}
 	},
 	"compileType": "miniprogram",
-	"libVersion": "2.9.5",
+	"libVersion": "2.10.2",
 	"appid": "wx8bd01aeb60593f14",
 	"projectname": "Alpha",
 	"debugOptions": {
