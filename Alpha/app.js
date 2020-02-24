@@ -75,6 +75,7 @@ App({
     storedEvalTasks: false,
     existedMsg: null,
     newMsg: null,
-    arg: null
+    arg: null,
+    processedCourses: false
   }
 })

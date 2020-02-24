@@ -15,10 +15,19 @@ function handleCourseName(str) {
     return str
   }
 
-  return str.slice(0, 4)
+  return str.slice(0, 5)
+}
+
+function handleListTaskName(str) {
+  if (str.length <= 12) {
+    return str
+  }
+
+  return str.slice(0, 11) + '...'
 }
 
 module.exports = {
   handleTaskName: handleTaskName,
-  handleCourseName: handleCourseName
+  handleCourseName: handleCourseName,
+  handleListTaskName: handleListTaskName
 }

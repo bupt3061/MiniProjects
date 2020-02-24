@@ -2,7 +2,7 @@
 
 <zan-toptips content="{{content}}" duration="{{ duration }}" is-show="{{ $zanui.toptips.show }}" backgroundColor="#FAAD14" />
 
-<view class="container zan-font-16 zan-c-black" style="padding: 64rpx 0">
+<view class="container zan-font-16 zan-c-black" style="padding: 32rpx 0">
   <block wx:for="{{standardKeys}}" wx:key="{{index}}">
     <view class="standards" style="width: 90%; margin-bottom: 32rpx">
       <view style="font-weight: bold; margin-bottom: 12rpx;">{{item}}</view>
