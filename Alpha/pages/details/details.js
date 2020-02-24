@@ -8,6 +8,9 @@ Page({
    * 页面的初始数据
    */
   data: {
+    authorNickname: null,
+    authorAvatarUrl: null,
+    pastEval: false,
     arg: null,
     backgroundColor: "#f3f4f5",
     activeColor: "#14d1b5",
@@ -49,6 +52,7 @@ Page({
     let work
     var canEvaluate = false // 默认不能评论
     var status = false
+    var pastEval = false // 是否已过互评期
 
     wx.showLoading({
       title: '加载中',
@@ -265,6 +269,25 @@ Page({
     let taskInfo = await this.getTaskInfo(taskid)
     const standard = taskInfo.standard
     const standardKeys = Object.keys(standard)
+    const evaluateend = taskInfo.evaluateend
+
+    if(now > evaluateend) {
+      pastEval: true
+
+      const authorId = work._openid
+      let authorInfo = await this.getAuthorInfo(authorId)
+
+      const authorNickname = authorInfo[0].nickname
+      const authorAvatarUrl = authorInfo[0].avatarUrl
+      console.log("authorNickname", authorNickname)
+      console.log("authorAvatarUrl", authorAvatarUrl )
+
+      this.setData({
+        pastEval: true,
+        authorNickname: authorNickname,
+        authorAvatarUrl: authorAvatarUrl
+      })
+    }
 
     console.log('standard', standard)
     console.log('standardKeys', standardKeys)
@@ -355,6 +378,26 @@ Page({
   /**
    * 其他函数
    */
+  getAuthorInfo: function (authorId) {
+    return new Promise((resolve, reject) => {
+      const db = wx.cloud.database()
+      const _ = db.command
+
+      db.collection('user')
+        .where({
+          _openid: authorId
+        })
+        .get()
+        .then(res => {
+          const data = res.data
+          resolve(data)
+        })
+        .catch(err => {
+          console.log(err)
+          reject('获取失败')
+        })
+    })
+  },
   marked: function() {
     const marked = wx.cloud.database().collection('marked')
 
