@@ -5,6 +5,7 @@ Page({
    * 页面的初始数据
    */
   data: {
+    canIUse: wx.canIUse('button.open-type.getUserInfo'),
     show: false,
     cancelWithMask: true,
     actions: [{
@@ -21,31 +22,16 @@ Page({
     type: null,
     nBorderColor: "#f1f1f1",
     tBorderColor: "#f1f1f1",
-    oBorderColor: "#f1f1f1",
-    sBorderColor: "#f1f1f1",
-    content: "请选择",
-    windowHeight: null,
-    windowWidth: null,
-    showPicker: false,
-    color: "#808080"
-  },
-  /**
-   * 初始化函数
-   */
-  init: function() {
-    const res = wx.getSystemInfoSync()
-    
-    this.setData({
-      windowWidth: res.windowWidth,
-      windowHeight: res.windowHeight
-    })
+    color: "#808080",
+    content: "请选择"
   },
   /**
    * 其他函数
    */
   openActionSheet() {
     this.setData({
-      'show': true
+      show: true,
+      tBorderColor: "#f1f1f1"
     });
   },
   closeActionSheet() {
@@ -77,11 +63,113 @@ Page({
 
     console.log(index)
   },
+  inputName: function(e) {
+    var name = e.detail.value
+    console.log('name', name)
+
+    this.setData({
+      nBorderColor: "#f1f1f1",
+      name: name
+    })
+  },
+  checkName: function() {
+    const name = this.data.name
+    var flag = true
+
+    if(!name || name == '') {
+      flag = false
+      this.setData({
+        nBorderColor: "#e64240"
+      })
+    }
+
+    return flag
+  },
+  checkType: function() {
+    const type = this.data.type
+    var flag = true
+
+    if(!type || type == '') {
+      flag = false
+      this.setData({
+        tBorderColor: "#e64240"
+      })
+    }
+
+    return flag
+  },
+  comfirm: function (e) {
+    // 验证姓名和身份
+    var flag = null
+
+    flag = this.checkName()
+    if(!flag) {
+      console.log('姓名为空')
+
+      return
+    }
+
+    flag = this.checkType()
+    if (!flag) {
+      console.log('身份为空')
+
+      return
+    }
+
+    // 获取用户信息并上传
+    const userInfo = e.detail.userInfo
+    console.log(userInfo)
+
+    const nickname = userInfo.nickName
+    const addr = userInfo.city + '/' + userInfo.province + '/' + userInfo.country
+    const gender = userInfo.gender
+    const avatarUrl = userInfo.avatarUrl
+    const phone = this.data.phone
+    const contribution = 0
+    const courses = []
+    const regtime = new Date()
+    const org = this.data.org
+    const type = this.data.type
+
+    const data = {
+      nickname: nickname,
+      avatarUrl: avatarUrl,
+      gender: gender,
+      addr: addr,
+      phone: phone,
+      type: type,
+      courses: courses,
+      contribution: contribution,
+      orgnization: org,
+      regtime: regtime
+    }
+
+    const db = wx.cloud.database()
+
+    db.collection('user')
+    .add({
+      data
+    })
+    .then(res => {
+      console.log(res)
+    })
+    .catch(err => {
+      console.log(err)
+    })
+
+    wx.switchTab({
+      url: '../index/index',
+    })
+  },
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    this.init()
+    const phone = "18810688942"
+
+    this.setData({
+      phone: phone
+    })
   },
 
   /**

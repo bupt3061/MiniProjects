@@ -42,7 +42,7 @@ Page({
       wx.hideLoading()
 
       wx.redirectTo({
-        url: '../loginNext/loginNext',
+        url: '../login/login',
       })
 
       return
