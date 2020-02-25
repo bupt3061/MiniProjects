@@ -11,7 +11,7 @@ Page({
   data: {
     newMsg: null,
     existedMsg: null,
-    show: false,
+    show: null,
     hasCourse: null,
     hasMsg: null
   },
@@ -22,7 +22,7 @@ Page({
     const openid = app.globalData.openid
     const now = new Date()
     let hasCourse
-    let hasMsg = true
+    let hasMsg
     let courseids
     let newMsg
     let existedMsg
@@ -34,15 +34,15 @@ Page({
       courseids = app.globalData.courseids
       if (courseids.length == 0) {
         hasCourse = false
+
         this.setData({
           hasCourse: hasCourse
         })
 
         return
-      } else {
-        hasCourse = true
-      }
+      } 
 
+      hasCourse = true
       console.log("courseids", courseids)
     } else if(arg == 2) {
       // 刷新
@@ -244,7 +244,7 @@ Page({
     console.log('needProcessTasks', needProcessTasks)
 
     // 获取新消息列表
-    var newMsgList = []
+    var tempNewMsgList = []
     for (var i = 0; i < needProcessTasks.length; i++) {
       var data = {}
       data._taskid = needProcessTasks[i]._id
@@ -258,12 +258,14 @@ Page({
         data.uploadtime = '未提交'
       }
 
-      newMsgList = newMsgList.concat(data)
+      tempNewMsgList = tempNewMsgList.concat(data)
     }
 
+    newMsg = tempNewMsgList
+
     // 上传数据
-    for (var i = 0; i < newMsgList.length; i++) {
-      var data = newMsgList[i]
+    for (var i = 0; i < newMsg.length; i++) {
+      var data = newMsg[i]
 
       const db = wx.cloud.database()
 
@@ -280,9 +282,9 @@ Page({
     }
 
     // 处理时间
-    for (var i = 0; i < newMsgList.length; i++) {
-      if (newMsgList[i].uploadtime != '未提交') {
-        newMsgList[i].uploadtime = dt.formatTime(newMsgList[i].uploadtime)
+    for (var i = 0; i < newMsg.length; i++) {
+      if (newMsg[i].uploadtime != '未提交') {
+        newMsg[i].uploadtime = dt.formatTime(newMsg[i].uploadtime)
       }
     }
 
@@ -293,8 +295,8 @@ Page({
     }
 
     // 处理长字符串
-    for (var i = 0; i < newMsgList.length; i++) {
-      newMsgList[i].tasknameh = st.handleTaskName(newMsgList[i].taskname)
+    for (var i = 0; i < newMsg.length; i++) {
+      newMsg[i].tasknameh = st.handleTaskName(newMsg[i].taskname)
     }
 
     for (var i = 0; i < existedMsg.length; i++) {
@@ -303,10 +305,10 @@ Page({
 
     // 更新数据
     if(arg == 2) {
-      if(newMsgList.length != 0) {
-        newMsgList = newMsgList.concat(app.globalData.newMsg)
+      if(newMsg.length != 0) {
+        newMsg = newMsg.concat(app.globalData.newMsg)
       } else {
-        newMsgList = app.globalData.newMsg
+        newMsg = app.globalData.newMsg
       }
       if (existedMsg.length != 0) {
         existedMsg = existedMsg.concat(app.globalData.existedMsg)
@@ -315,13 +317,13 @@ Page({
       }
     }
 
-    for (var i = 0; i < newMsgList.length; i++) {
+    for (var i = 0; i < newMsg.length; i++) {
       // 排序
-      for (var j = 0; j < newMsgList.length - i - 1; j++) {
-        if (newMsgList[j].endtime < newMsgList[j + 1].endtime) {
-          var temp = newMsgList[j]
-          newMsgList[j] = newMsgList[j + 1]
-          newMsgList[j + 1] = temp
+      for (var j = 0; j < newMsg.length - i - 1; j++) {
+        if (newMsg[j].endtime < newMsg[j + 1].endtime) {
+          var temp = newMsg[j]
+          newMsg[j] = newMsg[j + 1]
+          newMsg[j + 1] = temp
         }
       }
     }
@@ -336,19 +338,26 @@ Page({
     }
     
     // 更新数据
-    if (newMsgList.length == 0 && existedMsg.length == 0) {
+    if (newMsg.length == 0 && existedMsg.length == 0) {
       hasMsg = false
+      console.log('hahaha')
+    } else {
+      hasMsg = true
     }
 
+    courseids = courseids.concat(app.globalData.msgProcessedIds)
+    app.globalData.msgProcessedIds = courseids
     app.globalData.existedMsg = existedMsg
-    app.globalData.newMsg = newMsgList
+    app.globalData.newMsg = newMsg
     console.log('existedMsg', existedMsg)
-    console.log('newMsg', newMsgList)
+    console.log('newMsg', newMsg)
+    console.log('courseids', courseids)
 
     this.setData({
-      newMsg: newMsgList,
+      newMsg: newMsg,
       existedMsg: existedMsg,
       hasMsg: hasMsg,
+      hasCourse: hasCourse,
       show: true
     })
 
