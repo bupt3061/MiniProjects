@@ -18,106 +18,143 @@ Page({
   /**
    * 初始化函数
    */
-  async init() {
-    const now = new Date()  // 当前日期
-
+  async init(arg) {
+    const now = new Date() // 当前日期
+    let courseids
+    let courses
+    let openid
+    let userInfo
+    let type
+    
     // 显示加载
     wx.showLoading({
       title: '加载中',
     })
 
-    /**
-     * 1、获取用户信息并存储到全局
-     * 2、若数据库中和不存在该用户则跳转到登陆界面
-     */
-    let openid = await this.getOpenid()
-    let userInfo = await this.getUserInfo(openid)
-    var type = null
+    if(app.globalData.openid != null) {
+      openid = app.globalData.openid
+      userInfo = app.globalData.userInfo
+      type = app.globalData.type
 
-    console.log('openid', openid)
-    app.globalData.openid = openid
-
-    if (!userInfo) {
-      // 数据库中不存在该条记录
-      wx.hideLoading()
-
-      wx.redirectTo({
-        url: '../login/login',
-      })
-
-      return
-    } else {
-      type = userInfo.type
-
-      console.log('userInfo', userInfo)
+      console.log('openid', openid)
+      console.log('userInfo',userInfo)
       console.log('type', type)
-      app.globalData.userInfo = userInfo
-      app.globalData.type = type
     }
 
-    /**
-     * 1、获取课程信息
-     * 2、若未添加课程则显示顶部提示
-     */
-    const courseids = userInfo.courses
-    if (courseids.length == 0) {
-      wx.hideLoading()
-      console.log('尚未添加课程')
+    if (arg == 1) { // 登录加载
+      /**
+       * 1、获取用户信息并存储到全局
+       * 2、若数据库中和不存在该用户则跳转到登陆界面
+       */
+      console.log('加载')
+      openid = await this.getOpenid()
+      userInfo = await this.getUserInfo(openid)
 
-      this.setData({
-        inUploadNum: 0,
-        inEvalNum: 0,
-        type: type,
-        openid: openid,
-        hasCourse: false
-      })
+      console.log('openid', openid)
+      app.globalData.openid = openid
 
-      return
-    } else {
-      let courses = await this.getCourses(courseids)
+      if (!userInfo) {
+        console.log('当前用户不存在')
+        wx.hideLoading()
 
-      // 添加课程封面
-      var coverCloudPaths = []
-      for (var i = 0; i < courses.length; i++) {
-        var temp = {
-          fileID: courses[i].cover,
-          maxAge: 60 * 60, // 一小时
+        wx.redirectTo({
+          url: '../login/login',
+        })
+
+        return
+      } else {
+        type = userInfo.type
+
+        console.log('userInfo', userInfo)
+        console.log('type', type)
+        app.globalData.userInfo = userInfo
+        app.globalData.type = type
+      }
+
+      /**
+       * 1、获取课程信息
+       * 2、若未添加课程则显示顶部提示
+       */
+      courseids = userInfo.courses
+
+      if (courseids.length == 0) {
+        wx.hideLoading()
+        console.log('尚未添加课程')
+
+        this.setData({
+          inUploadNum: 0,
+          inEvalNum: 0,
+          type: type,
+          openid: openid,
+          hasCourse: false
+        })
+
+        return
+      } else {
+        courses = await this.getCourses(courseids)
+
+        // 添加课程封面
+        var coverCloudPaths = []
+        for (var i = 0; i < courses.length; i++) {
+          var temp = {
+            fileID: courses[i].cover,
+            maxAge: 60 * 60, // 一小时
+          }
+          coverCloudPaths.push(temp)
         }
-        coverCloudPaths.push(temp)
+
+        let coverPaths = await this.getCoverPaths(coverCloudPaths)
+
+        for (let i = 0; i < courses.length; i++) {
+          courses[i].coverPath = coverPaths[i].tempFileURL
+        }
+
+        // 处理长字符串
+        for (var i = 0; i < courses.length; i++) {
+          courses[i].coursenameh = st.handleTaskName(courses[i].coursename)
+        }
+
+        // 设置数据
+        console.log('courses', courses)
+        console.log('courseids', courseids)
+        app.globalData.courseids = courseids
+        app.globalData.courses = courses
+      }
+    } else if (arg == 2) {
+      console.log('刷新')
+
+      const processedCourseids = app.globalData.processedCourseids
+      const indexProcessedIds = app.globalData.indexProcessedIds
+
+      var temp = []
+      for(var i = 0; i < processedCourseids.length; i++) {
+        // 获取未处理过的courseid
+        for(var j = 0; j < indexProcessedIds.length; j++) {
+          if (processedCourseids[i] == indexProcessedIds[j]) {
+            continue
+          }
+        }
+        temp.push(processedCourseids[i])
       }
 
-      let coverPaths = await this.getCoverPaths(coverCloudPaths)
-
-      for (let i = 0; i < courses.length; i++) {
-        courses[i].coverPath = coverPaths[i].tempFileURL
-      }
-
-      // 处理长字符串
-      for(var i = 0; i < courses.length; i++) {
-        courses[i].coursenameh = st.handleTaskName(courses[i].coursename)
-      }
-
-      // 设置数据
-      console.log('courses', courses)
+      courseids = temp
       console.log('courseids', courseids)
-      app.globalData.courseids = courseids
-      app.globalData.courses = courses
     }
 
     /**
      * 分别处理学生和教师的信息
      */
-    if (type == 1) {
-      // 学生端
 
+    if (type == 1) {  // 学生端
       /**
        * 1、获得消息数目并设置提示红点
        * 2、消息数目 = 已过期任务数 - 已存在消息数
+       * 3、如果是数据刷新需要将当前数据更新到全局
        */
       let pastedEvalTasksNum = await this.pastedEvalTasksNum(courseids)
       let msgNum = await this.getMsgNum(openid)
 
-      const newMsgNum = pastedEvalTasksNum - msgNum
+      var newMsgNum = pastedEvalTasksNum - msgNum
       console.log('pastedEvalTasksNum', pastedEvalTasksNum)
       console.log('msgNum', msgNum)
       console.log('新消息', newMsgNum)
@@ -143,13 +180,12 @@ Page({
       var wtjTasks = []
       var kxgTasks = []
 
-      // 获取所有提交期任务并排序
+      // 获取所有提交期任务
       let inUploadTasksCount = await this.getInUploadTasksCount(courseids, now)
       console.log('inUploadTasksCount', inUploadTasksCount)
-     
-      var inUploadTasks = []
 
-      for(var i = 0; i < inUploadTasksCount; i += 20) {
+      var inUploadTasks = []
+      for (var i = 0; i < inUploadTasksCount; i += 20) {
         let res = await this.getInUploadTasksSkip(courseids, now, i)
         inUploadTasks = inUploadTasks.concat(res)
 
@@ -168,16 +204,16 @@ Page({
           }
         }
       }
+
       console.log('inUploadTasks', inUploadTasks)
 
       if (inUploadTasks.length != 0) { // 存在处在提交期的任务
-        // 获取所有已提交任务数
         var inUploadTaskids = []
         for (var i = 0; i < inUploadTasks.length; i++) {
           inUploadTaskids.push(inUploadTasks[i]._id)
         }
 
-        // 获得未提交数
+        // 获得已提交任务
         let uploadedTasksCount = await this.getUploadedTasksCount(openid, inUploadTaskids)
         console.log('uploadedTasksCount', uploadedTasksCount)
 
@@ -217,6 +253,41 @@ Page({
             wtjTasks.push(inUploadTasks[i])
           }
         }
+      }
+
+      if(arg == 2) {
+        // 处理inUploadNum
+        inUploadNum = app.globalData.inUploadNum + inUploadNum
+        console.log('inUploadNum', inUploadNum)
+
+        // 处理kxgTasks
+        kxgTasks = kxgTasks.concat(app.globalData.kxgTasks)
+
+        for (var i = 0; i < kxgTasks.length; i++) {
+          // 排序
+          for (var j = 0; j < kxgTasks.length - i - 1; j++) {
+            if (kxgTasks[j].uploadend > kxgTasks[j + 1].uploadend) {
+              var temp = kxgTasks[j]
+              kxgTasks[j] = kxgTasks[j + 1]
+              ikxgTasks[j + 1] = temp
+            }
+          }
+        }
+
+        // 处理wtjTasks
+        wtjTasks = wtjTasks.concat(app.globalData.wtjTasks)
+
+        for (var i = 0; i < wtjTasks.length; i++) {
+          // 排序
+          for (var j = 0; j < wtjTasks.length - i - 1; j++) {
+            if (wtjTasks[j].uploadend > wtjTasks[j + 1].uploadend) {
+              var temp = wtjTasks[j]
+              wtjTasks[j] = wtjTasks[j + 1]
+              wtjTasks[j + 1] = temp
+            }
+          }
+        }
+
       }
 
       console.log('待提交', inUploadNum)
@@ -293,6 +364,39 @@ Page({
         }
       }
 
+      if(arg = 2) {
+        // 处理inEvalNum
+        inEvalNum += app.globalData.inEvalNum
+
+        // 处理wwcTasks
+        wwcTasks = wwcTasks.concat(app.globalData.wwcTasks)
+
+        for (var i = 0; i < wwcTasks.length; i++) {
+          // 排序
+          for (var j = 0; j < wwcTasks.length - i - 1; j++) {
+            if (inEvalTasks[j].evaluateend > inEvalTasks[j + 1].evaluateend) {
+              var temp = wwcTasks[j]
+              wwcTasks[j] = wwcTasks[j + 1]
+              wwcTasks[j + 1] = temp
+            }
+          }
+        }
+
+        // 处理whpTasks
+        whpTasks = whpTasks.concat(app.globalData.whpTasks)
+
+        for (var i = 0; i < whpTasks.length; i++) {
+          // 排序
+          for (var j = 0; j < whpTasks.length - i - 1; j++) {
+            if (inEvalTasks[j].evaluateend > inEvalTasks[j + 1].evaluateend) {
+              var temp = whpTasks[j]
+              whpTasks[j] = whpTasks[j + 1]
+              whpTasks[j + 1] = temp
+            }
+          }
+        }
+
+      }
       console.log('待互评', inEvalNum)
       console.log('未完成', wwcTasks)
       console.log('未互评', whpTasks)
@@ -301,6 +405,13 @@ Page({
       app.globalData.wwcTasks = wwcTasks
 
       // 更新数据
+      if(arg = 2) {
+        var temp = app.globalData.indexProcessedIds
+        temp = temp.concat(courseids)
+        app.globalData.indexProcessedIds = temp
+        console.log('indexProcessedIds', temp)
+      }
+
       this.setData({
         inUploadNum: inUploadNum,
         inEvalNum: inEvalNum,
@@ -317,7 +428,7 @@ Page({
   /**
    * 页面其他函数
    */
-  getInUploadTasksCount: function (courseids, now) {
+  getInUploadTasksCount: function(courseids, now) {
     /**
      * 获取当前处在提交期的任务的总数
      */
@@ -342,7 +453,7 @@ Page({
         })
     })
   },
-  getInUploadTasksSkip: function (courseids, now, skip) {
+  getInUploadTasksSkip: function(courseids, now, skip) {
     /**
      * 获取当前处在提交期的任务
      */
@@ -368,7 +479,7 @@ Page({
         })
     })
   },
-  getUploadedTasksCount: function (openid, inUploadTaskids) {
+  getUploadedTasksCount: function(openid, inUploadTaskids) {
     /**
      * 获取已提交的任务数
      * 待提交任务数 = 所有提交期任务数 - 已提交任务数（作品数）
@@ -393,7 +504,7 @@ Page({
         })
     })
   },
-  getUploadedTasksSkip: function (openid, inUploadTaskids, skip) {
+  getUploadedTasksSkip: function(openid, inUploadTaskids, skip) {
     /**
      * 获取已提交的任务数
      * 待提交任务数 = 所有提交期任务数 - 已提交任务数（作品数）
@@ -419,7 +530,7 @@ Page({
         })
     })
   },
-  getInEvalTasksCount: function (courseids, now) {
+  getInEvalTasksCount: function(courseids, now) {
     /**
      * 获取当前处在互评期的任务
      */
@@ -444,7 +555,7 @@ Page({
         })
     })
   },
-  getInEvalTasksSkip: function (courseids, now, skip) {
+  getInEvalTasksSkip: function(courseids, now, skip) {
     /**
      * 获取当前处在互评期的任务
      */
@@ -625,6 +736,11 @@ Page({
       url: '../mutualeval/mutualeval',
     })
   },
+  addCourse: function() {
+    wx.navigateTo({
+      url: '../course/course?arg=' + '3',
+    })
+  },
   /**
    * 生命周期函数--监听页面加载（1）
    * 页面加载完成，一个页面只会调用一次
@@ -648,24 +764,30 @@ Page({
    */
   onShow: function() {
     const processedCourses = app.globalData.processedCourses
-    const uploadIndex = app.globalData.uploadIndex
+    const processedCourseids = app.globalData.processedCourseids
+    const indexProcessedIds = app.globalData.indexProcessedIds
 
-    if (processedCourses && !uploadIndex) {
+    console.log(processedCourses)
+    console.log(processedCourseids)
+    console.log(indexProcessedIds)
+
+    if (processedCourses && indexProcessedIds.length < processedCourseids.length) {
       const arg = 2
       this.init(arg)
     } else {
-      const inUploadNum = app.globalData.inUploadNum
-      const inEvalNum = app.globalData.inEvalNum
       const courseids = app.globalData.courseids
       const type = app.globalData.type
       const openid = app.globalData.openid
 
+      var hasCourse = true
+      if (courseids.length == 0) {
+        hasCourse = false
+      }
+
       if (type == 1) {
         // 学生
-        var hasCourse = true
-        if (courseids.length == 0) {
-          hasCourse = false
-        }
+        const inUploadNum = app.globalData.inUploadNum
+        const inEvalNum = app.globalData.inEvalNum
 
         this.setData({
           inUploadNum: inUploadNum,

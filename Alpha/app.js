@@ -64,7 +64,6 @@ App({
     ygqETasks: [],
     courses: [],
     courseids: [],
-    users: null,
     inUploadNum: 0,
     inEvalNum: 0,
     inEvalTask: null,
@@ -78,7 +77,7 @@ App({
     arg: null,
     processedCourses: false,
     processedCourseids: [],
-    uploadIndex: false,
-    uploadMsg: false
+    indexProcessedIds: [],
+    msgProcessedIds: []
   }
 })

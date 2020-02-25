@@ -29,12 +29,22 @@ Page({
     var courses = null
     const now = new Date()
 
+    wx.showLoading({
+      title: '加载中',
+    })
+
     if (arg == 1) {
+      // 初始加载
       courses = gCourses
     } else if (arg == 2) {
-      // 添加新课程
+      /**
+       * 1、判断是否添加过课程
+       * 2、判断课程是否存在
+       * 3、添加课程
+       */
       for (var i = 0; i < gCourseids.length; i++) {
         if (courseids[0] == gCourseids[i]) { // 已存在
+          console.log('课程已添加')
           this.setData({
             $zanui: {
               toptips: {
@@ -61,7 +71,8 @@ Page({
       let exit = await this.judgeCourseExist(courseids[0])
       console.log('exit', exit)
 
-      if(!exit) {  // 课程不存在
+      if (!exit) { // 课程不存在
+        console.log('课程不存在')
         this.setData({
           $zanui: {
             toptips: {
@@ -84,10 +95,7 @@ Page({
         return
       }
 
-      wx.showLoading({
-        title: '加载中',
-      })
-
+      // 添加课程
       const db = wx.cloud.database()
       const _ = db.command
 
@@ -244,8 +252,6 @@ Page({
       app.globalData.courseids = courseids
       app.globalData.processedCourses = true
       app.globalData.processedCourseids.push(courseids[0])
-      app.globalData.uploadIndex = false
-      app.globalData.uploadMsg = false
 
       this.setData({
         courses: courses,
@@ -258,7 +264,7 @@ Page({
   /**
    * 其他函数
    */
-  judgeCourseExist: function (courseid) {
+  judgeCourseExist: function(courseid) {
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database()
       const _ = db.command
@@ -271,7 +277,7 @@ Page({
         .then(res => {
           var exit = true
           const total = res.total
-          if(total == 0) {
+          if (total == 0) {
             exit = false
           }
           resolve(exit)
@@ -441,7 +447,13 @@ Page({
     const courseids = app.globalData.courseids
     const arg = 1
 
-    if(courseids.length == 0) {
+    if(options.arg == '3') {
+      this.addCourse()
+
+      return
+    }
+
+    if (courseids.length == 0) {
       this.setData({
         hasCourse: false
       })
