@@ -10,7 +10,7 @@ Page({
    */
   data: {
     hasTask: true,
-    content: null,
+    hasCourse: true,
     show: false,
     wwcTasks: null,
     whpTasks: null,
@@ -19,23 +19,57 @@ Page({
   /**
    * 初始化函数
    */
-  async init() {
+  async init(arg) {
     var wwcTasks = app.globalData.wwcTasks
     var whpTasks = app.globalData.whpTasks
     const inEvalNum = app.globalData.inEvalNum
-    const courseids = app.globalData.courseids
     const openid = app.globalData.openid
     const now = new Date()
+    let courseids
+    let hasCourse
+    let hasTask
+    let ygqETasks
 
-    if (courseids.length == 0) { // 未添加课程
-      wx.hideLoading()
+    if (arg == 1) {
+      console.log('加载')
 
-      this.setData({
-        hasTask: false,
-        content: '尚未添加课程'
-      })
+      courseids = app.globalData.courseids
+      if (courseids.length == 0) { // 未添加课程
+        hasCourse = false
 
-      return
+        this.setData({
+          hasCourse: hasCourse
+        })
+
+        return
+      }
+
+      console.log('courseids', courseids)
+    } else if (arg == 2) {
+      console.log('刷新')
+
+      hasCourse = true
+      const evalProcessedIds = app.globalData.evalProcessedIds
+      const processedCourseids = app.globalData.processedCourseids
+
+      console.log("evalProcessedIds", evalProcessedIds)
+      console.log("processedCourseids", processedCourseids)
+
+      courseids = []
+      for (var i = 0; i < processedCourseids.length; i++) {
+        var flag = true
+        for (var j = 0; j < evalProcessedIds.length; j++) {
+          if (processedCourseids[i] == evalProcessedIds[j]) {
+            flag = false
+            continue
+          }
+        }
+        if (flag) {
+          courseids.push(processedCourseids[i])
+        }
+      }
+
+      console.log('courseids', courseids)
     }
 
     wx.showLoading({
@@ -49,7 +83,7 @@ Page({
     console.log('pastEvalCount', pastEvalCount)
 
     var pastEvalTasks = []
-    for(var i = 0; i < pastEvalCount; i += 20) {
+    for (var i = 0; i < pastEvalCount; i += 20) {
       let res = await this.getPastEvalSkip(courseids, now, i)
       pastEvalTasks = pastEvalTasks.concat(res)
 
@@ -84,32 +118,39 @@ Page({
     console.log('evaledNum', evaledNum)
 
     // 获得已过期任务
-    var ygqETasks = []
+    ygqETasks = []
     for (var i = 0; i < pastEvalTasks.length; i++) {
       var flag = true
-      for(var j = 0; j < evaledTasks.length; j++) {
-        if(pastEvalTasks[i]._id == evaledTasks[j]._id) {
+      for (var j = 0; j < evaledTasks.length; j++) {
+        if (pastEvalTasks[i]._id == evaledTasks[j]._id) {
           flag = false
-          if(evaledTasks[j].num < 3) {
+          if (evaledTasks[j].num < 3) {
             ygqETasks.push(pastEvalTasks[i])
           }
         }
       }
-      if(flag) {
+      if (flag) {
         ygqETasks.push(pastEvalTasks[i])
       }
+    }
+
+    if (arg == 2) {
+      ygqETasks = ygqETasks.concat(app.globalData.ygqETasks)
+      console.log('ygqETasks', ygqETasks)
     }
 
     if (wwcTasks.length == 0 && ygqETasks.length == 0 && whpTasks.length == 0) {
       // 无任务
       wx.hideLoading()
+      hasTask = false
 
       this.setData({
-        hasTask: false,
-        content: '暂无互评任务'
+        hasTask: hasTask
       })
 
       return
+    } else {
+      hasTask = true
     }
 
     for (var i = 0; i < ygqETasks.length; i++) {
@@ -132,7 +173,7 @@ Page({
       whpTasks[i].shengyu = this.getTimeBetween(now, whpTasks[i].evaluateend)
     }
 
-    for(var i = 0; i < ygqETasks.length; i++) {
+    for (var i = 0; i < ygqETasks.length; i++) {
       ygqETasks[i].zhouqi = dt.formatTime(ygqETasks[i].uploadstart) + " - " + dt.formatTime(ygqETasks[i].uploadend)
     }
 
@@ -142,7 +183,7 @@ Page({
     ygqETasks = this.addCourseInfo(ygqETasks)
 
     // 处理长字符串
-    for(var i = 0; i < wwcTasks.length; i++) {
+    for (var i = 0; i < wwcTasks.length; i++) {
       wwcTasks[i].tasknameh = st.handleTaskName(wwcTasks[i].taskname)
       wwcTasks[i].coursenameh = st.handleCourseName(wwcTasks[i].coursename)
     }
@@ -158,6 +199,17 @@ Page({
     }
 
     // 更新数据
+    if (arg == 1) {
+      app.globalData.evalProcessedIds = app.globalData.indexProcessedIds
+      console.log('test')
+      console.log(app.globalData.evalProcessedIds)
+      console.log(app.globalData.indexProcessedIds)
+    } else if (arg == 2) {
+      courseids = courseids.concat(app.globalData.evalProcessedIds)
+      app.globalData.evalProcessedIds = courseids
+      console.log('courseids', courseids)
+    }
+
     app.globalData.wwcTasks = wwcTasks
     app.globalData.whpTasks = whpTasks
     app.globalData.ygqETasks = ygqETasks
@@ -183,6 +235,8 @@ Page({
       ygqETasks: ygqETasks,
       wwcShow: wwcShow,
       whpShow: whpShow,
+      hasTask: hasTask,
+      hasCourse: hasCourse,
       show: true
     })
 
@@ -206,7 +260,7 @@ Page({
 
     return tasks
   },
-  getTimeBetween: function (startDate, endDate) {
+  getTimeBetween: function(startDate, endDate) {
     var days = (endDate - startDate) / (1 * 24 * 60 * 60 * 1000)
     var timeString = null
 
@@ -251,7 +305,7 @@ Page({
       url: '../details/details?data=' + taskid + '/3',
     })
   },
-  clickwwc: function (e) {
+  clickwwc: function(e) {
     const taskid = e.currentTarget.dataset.taskid
     console.log('taskid', taskid)
 
@@ -269,7 +323,7 @@ Page({
       url: '../details/details?data=' + taskid + '/2',
     })
   },
-  getPastEvalCount: function (courseids, now) {
+  getPastEvalCount: function(courseids, now) {
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database()
       const _ = db.command
@@ -318,8 +372,8 @@ Page({
     var res = []
     var status = true
 
-    for(var i = skip; i < skip + limit; i++) {
-      if(!list[i]) {
+    for (var i = skip; i < skip + limit; i++) {
+      if (!list[i]) {
         status = false
         break
       }
@@ -328,7 +382,7 @@ Page({
 
     return res
   },
-  getEvaledTasks: function (openid, pastedEvalTaskids) {
+  getEvaledTasks: function(openid, pastedEvalTaskids) {
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database()
       const _ = db.command
@@ -368,17 +422,25 @@ Page({
     const storedEvalTasks = app.globalData.storedEvalTasks
 
     if (storedEvalTasks) {
+      const evalProcessedIds = app.globalData.evalProcessedIds
+      const processedCourseids = app.globalData.processedCourseids
+
+      if (evalProcessedIds.length < processedCourseids.length) { // 添加了新课程
+        const arg = 2
+        this.init(arg)
+
+        return
+      }
+
       const wwcTasks = app.globalData.wwcTasks
       const whpTasks = app.globalData.whpTasks
       const ygqETasks = app.globalData.ygqETasks
       const courseids = app.globalData.courseids
 
       if (courseids.length == 0) { // 未添加课程
-        wx.hideLoading()
 
         this.setData({
-          hasTask: false,
-          content: '尚未添加课程'
+          hasCourse: false
         })
 
         return
@@ -387,8 +449,7 @@ Page({
       if (wwcTasks.length == 0 && ygqETasks.length == 0 && whpTasks.length == 0) {
 
         this.setData({
-          hasTask: false,
-          content: '暂无互评任务'
+          hasTask: false
         })
 
         return
@@ -411,12 +472,15 @@ Page({
         ygqETasks: ygqETasks,
         wwcShow: wwcShow,
         whpShow: whpShow,
+        hasTask: true,
+        hasCourse: true,
         show: true
       })
 
-      return 
+      return
     }
-    this.init()
+    const arg = 1
+    this.init(arg)
   },
 
   /**
@@ -433,6 +497,16 @@ Page({
     const storedEvalTasks = app.globalData.storedEvalTasks
 
     if (storedEvalTasks) {
+      const evalProcessedIds = app.globalData.evalProcessedIds
+      const processedCourseids = app.globalData.processedCourseids
+
+      if (evalProcessedIds.length < processedCourseids.length) { // 添加了新课程
+        const arg = 2
+        this.init(arg)
+
+        return
+      }
+
       var wwcTasks = app.globalData.wwcTasks
       const whpTasks = app.globalData.whpTasks
       const ygqETasks = app.globalData.ygqETasks
@@ -440,10 +514,10 @@ Page({
       var inEvalNum = app.globalData.inEvalNum
 
       var list = []
-      for(var i = 0; i < wwcTasks.length; i++) {
-        if(wwcTasks[i].evaledNum >= 3) {
+      for (var i = 0; i < wwcTasks.length; i++) {
+        if (wwcTasks[i].evaledNum >= 3) {
           inEvalNum -= 1
-          continue 
+          continue
         }
         list.push(wwcTasks[i])
       }
@@ -458,8 +532,7 @@ Page({
         wx.hideLoading()
 
         this.setData({
-          hasTask: false,
-          content: '尚未添加课程'
+          hasTask: false
         })
 
         return
@@ -468,8 +541,7 @@ Page({
       if (wwcTasks.length == 0 && ygqETasks.length == 0 && whpTasks.length == 0) {
         // 无任务
         this.setData({
-          hasTask: false,
-          content: '暂无互评任务'
+          hasTask: false
         })
 
         return
@@ -492,6 +564,8 @@ Page({
         ygqETasks: ygqETasks,
         wwcShow: wwcShow,
         whpShow: whpShow,
+        hasTask: true,
+        hasCourse: true,
         show: true
       })
     }

@@ -58,30 +58,23 @@ Page({
       const workProcessedIds = app.globalData.workProcessedIds
       const processedCourseids = app.globalData.processedCourseids
 
-      var temp = []
+      console.log("workProcessedIds", workProcessedIds)
+      console.log("processedCourseids", processedCourseids)
+
+      courseids = []
       for (var i = 0; i < processedCourseids.length; i++) {
+        var flag = true
         for (var j = 0; j < workProcessedIds.length; j++) {
           if (processedCourseids[i] == workProcessedIds[j]) {
+            flag = false
             continue
           }
         }
-        temp.push(processedCourseids[i])
-      }
-
-      // 去重
-      courseids = []
-      var list = app.globalData.ygqTasks.concat(app.globalData.ytjTasks)
-
-      for (var i = 0; i < temp.length; i++) {
-        // 去重
-        for(var j = 0; j < list.length; j++) {
-          if(temp[i] == list[j]) {
-            continue
-          }
+        if(flag) {
+          courseids.push(processedCourseids[i])
         }
-        courseids.push(temp[i])
       }
-     
+
       console.log('courseids', courseids)
     }
 
@@ -305,7 +298,9 @@ Page({
     }
 
     // 更新数据
-    if (arg == 2) {
+    if(arg == 1) {
+      app.globalData.workProcessedIds = app.globalData.indexProcessedIds
+    } else if (arg == 2) {
       courseids = courseids.concat(app.globalData.workProcessedIds)
       console.log('courseids', courseids)
       app.globalData.workProcessedIds = courseids
@@ -513,7 +508,7 @@ Page({
   onLoad: function(options) {
     // 判断是否已存储数据
     const storedUploadTasks = app.globalData.storedUploadTasks
-
+    
     if (storedUploadTasks) {
       const workProcessedIds = app.globalData.workProcessedIds
       const processedCourseids = app.globalData.processedCourseids
@@ -523,58 +518,59 @@ Page({
         this.init(arg)
 
         return
-      } else {
-        const ytjTasks = app.globalData.ytjTasks
-        const ygqTasks = app.globalData.ygqTasks
-        const wtjTasks = app.globalData.wtjTasks
-        const kxgTasks = app.globalData.kxgTasks
-        const courseids = app.globalData.courseids
+      } 
 
-        if (courseids.length == 0) { // 未添加课程
-          this.setData({
-            hasCourse: false
-          })
+      const ytjTasks = app.globalData.ytjTasks
+      const ygqTasks = app.globalData.ygqTasks
+      const wtjTasks = app.globalData.wtjTasks
+      const kxgTasks = app.globalData.kxgTasks
+      const courseids = app.globalData.courseids
 
-          return
-        }
-
-        if (ytjTasks.length == 0 && wtjTasks.length == 0 && kxgTasks.length == 0 && ygqTasks.length == 0) {
-          // 无任务
-          this.setData({
-            hasTask: false
-          })
-
-          return
-        }
-
-        var wtjShow = true
-        var ytjShow = true
-
-        if (wtjTasks.length == 0 && ygqTasks.length == 0) {
-          wtjShow = false
-        }
-
-        if (kxgTasks.length == 0 && ytjTasks.length == 0) {
-          ytjShow = false
-        }
-
+      if (courseids.length == 0) { // 未添加课程
         this.setData({
-          wtjTasks: wtjTasks,
-          ytjTasks: ytjTasks,
-          ygqTasks: ygqTasks,
-          kxgTasks: kxgTasks,
-          wtjShow: wtjShow,
-          ytjShow: ytjShow,
-          show: true
+          hasCourse: false
         })
+
+        return
       }
-    } else {
-      const arg = 1
-      this.init(arg)
+
+      if (ytjTasks.length == 0 && wtjTasks.length == 0 && kxgTasks.length == 0 && ygqTasks.length == 0) {
+        // 无任务
+        this.setData({
+          hasTask: false
+        })
+
+        return
+      }
+
+      var wtjShow = true
+      var ytjShow = true
+
+      if (wtjTasks.length == 0 && ygqTasks.length == 0) {
+        wtjShow = false
+      }
+
+      if (kxgTasks.length == 0 && ytjTasks.length == 0) {
+        ytjShow = false
+      }
+
+      this.setData({
+        wtjTasks: wtjTasks,
+        ytjTasks: ytjTasks,
+        ygqTasks: ygqTasks,
+        kxgTasks: kxgTasks,
+        wtjShow: wtjShow,
+        ytjShow: ytjShow,
+        hasCourse: true,
+        hasTask: true,
+        show: true
+      })
+
+      return
     }
 
     const arg = 1
-    this.init(1)
+    this.init(arg)
   },
 
   /**

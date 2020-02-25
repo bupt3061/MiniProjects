@@ -1,0 +1,67 @@
+/**app.wxss**/
+@import "/dist/index.wxss";
+@import "/iconfont/iconfont.wxss";
+@import "/pages/template/template.wxss";
+
+page {
+  background-color: #f3f4f6;
+}
+
+.container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+.primary {
+  color: #14d1b5;
+}
+
+.primary-bg {
+  color: white;
+  background-color: #14d1b5;
+}
+
+.forbidden-bg {
+  color: #666666;
+  background-color: #e1e1e1;
+}
+
+.err {
+  color: #e64240
+}
+
+.err-bg {
+  color: white;
+  background-color: #e64240
+}
+
+.alert {
+  color: #FAAD14;
+}
+
+.input {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  background-color: white;
+  width: 91%;
+  padding: 32rpx 32rpx;
+  border: 1rpx solid #eee;
+  box-sizing: border-box;
+}
+
+.input .title {
+  line-height: 42rpx;
+  /* background-color: yellow; */
+  text-align: left;
+  width: 14%;
+}
+
+.input .field {
+  width: 86%;
+  /* background-color: blue; */
+}

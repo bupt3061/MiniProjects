@@ -1,0 +1,73 @@
+/* pages/detail/details.wxss */
+
+page {
+  background-color: white;
+}
+
+.top {
+  width: 90%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 32rpx;
+}
+
+.user-info {
+  width: 90%;
+  display: flex;
+  margin-bottom: 32rpx;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.avatar {
+  width: 88rpx;
+  height: 88rpx;
+  position: relative;
+  margin-right: 24rpx;
+}
+
+.avatar-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 1px solid #f1f1f1;
+}
+
+.rank {
+  position: absolute;
+  top: -14rpx;
+  right: -0;
+  width: 30%;
+  height: 30%;
+  transform: rotate(27deg);
+}
+
+.user-name {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.top-right {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mark-icon {
+  width: 56rpx;
+  height: 56rpx;
+}
+
+.bottom {
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  background-color: white;
+  border-top: 1px solid #f3f3f3;
+  padding: 32rpx 0;
+}

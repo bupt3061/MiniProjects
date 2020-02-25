@@ -1,0 +1,30 @@
+<!--pages/comment/comment.wxml-->
+
+<zan-toptips content="{{content}}" duration="{{ duration }}" is-show="{{ $zanui.toptips.show }}" backgroundColor="#FAAD14" />
+
+<view class="container zan-font-16 zan-c-black" style="padding: 32rpx 0">
+  <block wx:for="{{standardKeys}}" wx:key="{{index}}">
+    <view class="standards" style="width: 90%; margin-bottom: 32rpx">
+      <view style="font-weight: bold; margin-bottom: 12rpx;">{{item}}</view>
+      <slider data-index="{{index}}" block-size="{{blockSize}}" min="{{min}}" max="{{max}}" step="{{step}}" show-value selected-color="{{selectedColor}}" bindchange="changeValue"></slider>
+    </view>
+  </block>
+
+  <view style="width: 90%; margin-bottom: 32rpx">
+    <view style="font-weight: bold; margin-bottom: 12rpx;">优点</view>
+    <view style="background-color: #f2f3f5; border-radius: 18rpx; padding: 32rpx;">
+      <textarea style="width: 100%;" maxlength="{{maxlength}}" bindinput="posInput" focus="{{posFocus}}"></textarea>
+      <view class="zan-c-gray-dark zan-font-14" style="text-align: right; padding-yop: 32rpx;">{{poslen}}/{{maxlength}}</view>
+    </view>
+  </view>
+
+  <view style="width: 90%; margin-bottom: 64rpx">
+    <view style="font-weight: bold; margin-bottom: 12rpx;">缺点</view>
+    <view style="background-color: #f2f3f5; border-radius: 18rpx; padding: 32rpx;">
+      <textarea style="width: 100%;" maxlength="{{maxlength}}" bindinput="nagInput" focus="{{nagFocus}}"></textarea>
+      <view class="zan-c-gray-dark zan-font-14" style="text-align: right; padding-top: 32rpx;">{{naglen}}/{{maxlength}}</view>
+    </view>
+  </view>
+
+  <button class="primary-bg" style="width: 90%; " bindtap="comment">发布</button>
+</view>

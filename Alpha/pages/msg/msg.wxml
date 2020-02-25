@@ -3,15 +3,14 @@
 
 <view class="container" wx:if="{{!hasCourse}}" style="padding: 320rpx 0;">
   <image src="../../img/quexing.png" style="width: 50%;" mode="widthFix"></image>
-  <view class="zan-font-20 zan-c-gray-darker" style="font-weight: bold; margin: 24rpx" bindtap="addCourse">
+  <view class="zan-font-20 zan-c-gray-darker" style="font-weight: bold; margin: 24rpx">
     暂无课程
-    <text class="primary"> 添加</text>
   </view>
 </view>
 
 <view class="container" wx:if="{{!hasMsg}}" style="padding: 320rpx 0;">
   <image src="../../img/quexing.png" style="width: 50%;" mode="widthFix"></image>
-  <view class="zan-font-20 zan-c-gray-darker" style="font-weight: bold; margin: 24rpx" bindtap="addCourse">
+  <view class="zan-font-20 zan-c-gray-darker" style="font-weight: bold; margin: 24rpx">
     暂无消息
   </view>
 </view>

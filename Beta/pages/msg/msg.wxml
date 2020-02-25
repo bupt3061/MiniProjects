@@ -1,0 +1,11 @@
+<!--pages/msg/msg.wxml-->
+<import src="../template/template.wxml" />
+
+<view wx:if="{{show}}" class="container zan-font-18 zan-c-black" style="padding: 64rpx 0;;">
+  <block wx:for="{{newMsg}}" wx:key="{{index}}">
+    <template is="nmsg-card" data="{{...item}}"></template>
+  </block>
+  <block wx:for="{{existedMsg}}" wx:key="{{index}}">
+    <template is="emsg-card" data="{{...item}}"></template>
+  </block>
+</view>

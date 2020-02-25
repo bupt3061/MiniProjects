@@ -1,12 +1,17 @@
 <!--pages/mutualeval/mutualeval.wxml-->
 <import src="../template/template.wxml" />
 
-<view class="container" wx:if="{{!hasTask}}" style="padding: 320rpx 0;">
+<view class="container" wx:if="{{!hasCourse}}" style="padding: 320rpx 0;">
   <image src="../../img/quexing.png" style="width: 50%;" mode="widthFix"></image>
-  <view class="zan-font-20 zan-c-gray-darker" style="font-weight: bold; margin: 24rpx">{{content}}</view>
+  <view class="zan-font-20 zan-c-gray-darker" style="font-weight: bold; margin: 24rpx">暂无课程</view>
 </view>
 
-<view wx:if="{{hasTask && show}}" class="container zan-font-16 zan-c-black" style="padding: 32rpx 0 64rpx 0;">
+<view class="container" wx:if="{{!hasTask}}" style="padding: 320rpx 0;">
+  <image src="../../img/quexing.png" style="width: 50%;" mode="widthFix"></image>
+  <view class="zan-font-20 zan-c-gray-darker" style="font-weight: bold; margin: 24rpx">暂无任务</view>
+</view>
+
+<view wx:if="{{hasCourse && hasTask && show}}" class="container zan-font-16 zan-c-black" style="padding: 32rpx 0 64rpx 0;">
   <block wx:if="{{wwcShow}}">
     <template is="title" data="{{title: '未完成'}}" />
     <block wx:for="{{wwcTasks}}" wx:key="{{index}}">

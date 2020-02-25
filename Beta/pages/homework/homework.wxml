@@ -1,0 +1,28 @@
+<!--pages/homework/homework.wxml-->
+<import src="../template/template.wxml" />
+
+<view class="container" wx:if="{{!hasTask}}" style="padding: 320rpx 0;">
+  <image src="../../img/quexing.png" style="width: 50%;" mode="widthFix"></image>
+  <view class="zan-font-20 zan-c-gray-darker" style="font-weight: bold; margin: 24rpx">{{content}}</view>
+</view>
+
+<view wx:if="{{hasTask && show}}" class="container zan-font-16 zan-c-black" style="padding: 32rpx 0 64rpx 0;">
+  <block wx:if="{{wtjShow}}">
+    <template is="title" data="{{title: '未提交'}}" />
+    <block wx:for="{{wtjTasks}}" wx:key="{{index}}">
+        <template is="wtj-card" data="{{...item}}"></template>
+    </block>
+    <block wx:for="{{ygqTasks}}" wx:key="{{index}}">
+      <template is="ygq-card" data="{{...item}}"></template>
+    </block>
+  </block>
+  <block wx:if="{{ytjShow}}">
+    <template is="title" data="{{title: '已提交'}}" />
+    <block wx:for="{{kxgTasks}}" wx:key="{{index}}">
+      <template is="kxg-card" data="{{...item}}"></template>
+    </block>
+    <block wx:for="{{ytjTasks}}" wx:key="{{index}}">
+      <template is="ytj-card" data="{{...item}}"></template>
+    </block>
+  </block>
+</view>

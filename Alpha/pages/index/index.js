@@ -9,6 +9,13 @@ Page({
    * 页面的初始数据
    */
   data: {
+    duration: 5000,
+    content: '前往我的添加课程',
+    $zanui: {
+      toptips: {
+        show: false
+      }
+    },
     openid: null,
     type: null,
     inUploadNum: 0,
@@ -26,19 +33,19 @@ Page({
     let userInfo
     let type
     let hasCourse
-    
+
     // 显示加载
     wx.showLoading({
       title: '加载中',
     })
 
-    if(app.globalData.openid != null) {
+    if (app.globalData.openid != null) {
       openid = app.globalData.openid
       userInfo = app.globalData.userInfo
       type = app.globalData.type
 
       console.log('openid', openid)
-      console.log('userInfo',userInfo)
+      console.log('userInfo', userInfo)
       console.log('type', type)
     }
 
@@ -88,8 +95,23 @@ Page({
           inEvalNum: 0,
           type: type,
           openid: openid,
-          hasCourse: hasCourse
+          hasCourse: hasCourse,
+          $zanui: {
+            toptips: {
+              show: true
+            }
+          }
         })
+
+        setTimeout(() => {
+          this.setData({
+            $zanui: {
+              toptips: {
+                show: false
+              }
+            }
+          })
+        }, this.data.duration);
 
         return
       } else {
@@ -130,15 +152,23 @@ Page({
       const processedCourseids = app.globalData.processedCourseids
       const indexProcessedIds = app.globalData.indexProcessedIds
 
+      console.log('test')
+      console.log(processedCourseids)
+      console.log(indexProcessedIds)
+
       var temp = []
-      for(var i = 0; i < processedCourseids.length; i++) {
+      for (var i = 0; i < processedCourseids.length; i++) {
         // 获取未处理过的courseid
-        for(var j = 0; j < indexProcessedIds.length; j++) {
+        var flag = true
+        for (var j = 0; j < indexProcessedIds.length; j++) {
           if (processedCourseids[i] == indexProcessedIds[j]) {
+            flag = false
             continue
           }
         }
-        temp.push(processedCourseids[i])
+        if (flag) {
+          temp.push(processedCourseids[i])
+        }
       }
 
       courseids = temp
@@ -149,7 +179,7 @@ Page({
      * 分别处理学生和教师的信息
      */
 
-    if (type == 1) {  // 学生端
+    if (type == 1) { // 学生端
       /**
        * 1、获得消息数目并设置提示红点
        * 2、消息数目 = 已过期任务数 - 已存在消息数
@@ -259,7 +289,7 @@ Page({
         }
       }
 
-      if(arg == 2) {
+      if (arg == 2) {
         // 处理inUploadNum
         inUploadNum += app.globalData.inUploadNum
         console.log('inUploadNum', inUploadNum)
@@ -368,7 +398,7 @@ Page({
         }
       }
 
-      if(arg == 2) {
+      if (arg == 2) {
         // 处理inEvalNum
         inEvalNum += app.globalData.inEvalNum
 
@@ -378,7 +408,7 @@ Page({
         for (var i = 0; i < wwcTasks.length; i++) {
           // 排序
           for (var j = 0; j < wwcTasks.length - i - 1; j++) {
-            if (inEvalTasks[j].evaluateend > inEvalTasks[j + 1].evaluateend) {
+            if (wwcTasks[j].evaluateend > wwcTasks[j + 1].evaluateend) {
               var temp = wwcTasks[j]
               wwcTasks[j] = wwcTasks[j + 1]
               wwcTasks[j + 1] = temp
@@ -389,17 +419,18 @@ Page({
         // 处理whpTasks
         whpTasks = whpTasks.concat(app.globalData.whpTasks)
 
-        for (var i = 0; i < whpTasks.length; i++) {
-          // 排序
-          for (var j = 0; j < whpTasks.length - i - 1; j++) {
-            if (inEvalTasks[j].evaluateend > inEvalTasks[j + 1].evaluateend) {
-              var temp = whpTasks[j]
-              whpTasks[j] = whpTasks[j + 1]
-              whpTasks[j + 1] = temp
+        if (whpTasks.length != 0) {
+          for (var i = 0; i < whpTasks.length; i++) {
+            // 排序
+            for (var j = 0; j < whpTasks.length - i - 1; j++) {
+              if (whpTasks[j].evaluateend > whpTasks[j + 1].evaluateend) {
+                var temp = whpTasks[j]
+                whpTasks[j] = whpTasks[j + 1]
+                whpTasks[j + 1] = temp
+              }
             }
           }
         }
-
       }
 
       // 更新数据
@@ -741,11 +772,6 @@ Page({
       url: '../mutualeval/mutualeval',
     })
   },
-  addCourse: function() {
-    wx.navigateTo({
-      url: '../course/course?arg=' + '3',
-    })
-  },
   /**
    * 生命周期函数--监听页面加载（1）
    * 页面加载完成，一个页面只会调用一次
@@ -772,6 +798,9 @@ Page({
     const indexProcessedIds = app.globalData.indexProcessedIds
 
     if (indexProcessedIds.length < processedCourseids.length) {
+      console.log(processedCourseids)
+      console.log(indexProcessedIds)
+
       const arg = 2
       this.init(arg)
     } else {

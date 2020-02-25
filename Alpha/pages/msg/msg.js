@@ -50,16 +50,20 @@ Page({
       hasCourse = true
 
       const processedCourseids = app.globalData.courseids
-      const msgProcessIds = app.globalData.msgProcessedIds
+      const msgProcessedIds = app.globalData.msgProcessedIds
 
       var temp = []
       for(var i = 0; i < processedCourseids.length; i++) {
-        for(var j = 0; j < msgProcessIds.length; j++) {
+        var flag = true
+        for(var j = 0; j < msgProcessedIds.length; j++) {
           if(processedCourseids[i] == msgProcessedIds[j]) {
+            flag = false
             continue
           }
         }
-        temp.push(processedCourseids[i])
+        if(flag) {
+          temp.push(processedCourseids[i])
+        }
       }
 
       courseids = temp

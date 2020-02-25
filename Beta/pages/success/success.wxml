@@ -1,0 +1,13 @@
+<!--pages/success/success.wxml-->
+<import src="../template/template.wxml" />
+
+<view class="container zan-font-14 zan-c-black" style="padding: 64rpx 0px;">
+  <zan-icon class="primary" type="passed" style="font-size: 8em"></zan-icon>
+  <view class="zan-font-18" style="padding: 0 64rpx 64rpx 64rpx;">提交成功</view>
+  <block wx:if="{{wtjNum > 0}}">
+    <view style="width: 90%; padding: 32rpx 0; border-top: 1px solid #f3f3f3">继续提交</view>
+    <block wx:for="{{wtjTasks}}" wx:key="{{index}}">
+      <template is="wtj-card" data="{{...item}}"></template>
+    </block>
+  </block>
+</view>

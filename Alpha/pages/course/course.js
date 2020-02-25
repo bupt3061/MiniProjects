@@ -243,6 +243,10 @@ Page({
         }
       }
 
+      var processedId = courseids[0]
+      console.log('processedId', processedId)
+      app.globalData.processedCourseids.push(processedId)
+
       courses = courses.concat(gCourses)
       courseids = courseids.concat(gCourseids)
 
@@ -250,7 +254,6 @@ Page({
       console.log('courseids', courseids)
       app.globalData.courses = courses
       app.globalData.courseids = courseids
-      app.globalData.processedCourseids.push(courseids[0])
 
       this.setData({
         courses: courses,
