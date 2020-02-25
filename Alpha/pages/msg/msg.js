@@ -12,8 +12,8 @@ Page({
     newMsg: null,
     existedMsg: null,
     show: null,
-    hasCourse: null,
-    hasMsg: null
+    hasCourse: true,
+    hasMsg: true
   },
   /**
    * 初始化函数
@@ -345,13 +345,17 @@ Page({
       hasMsg = true
     }
 
-    courseids = courseids.concat(app.globalData.msgProcessedIds)
-    app.globalData.msgProcessedIds = courseids
+    if(arg == 2) {
+      courseids = courseids.concat(app.globalData.msgProcessedIds)
+      app.globalData.msgProcessedIds = courseids
+      console.log('courseids', courseids)
+    }
+    
     app.globalData.existedMsg = existedMsg
     app.globalData.newMsg = newMsg
     console.log('existedMsg', existedMsg)
     console.log('newMsg', newMsg)
-    console.log('courseids', courseids)
+    
 
     this.setData({
       newMsg: newMsg,
@@ -563,11 +567,10 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function() {
-    const processedCourses = app.globalData.processedCourses
     const processedCourseids = app.globalData.processedCourseids
     const msgProcessedIds = app.globalData.msgProcessedIds
 
-    if (processedCourses && msgProcessedIds.length < processedCourseids.length) {
+    if (msgProcessedIds.length < processedCourseids.length) {
       const arg = 2
       this.init(2)
     } else {

@@ -75,9 +75,10 @@ App({
     existedMsg: [],
     newMsg: [],
     arg: null,
-    processedCourses: false,
     processedCourseids: [],
     indexProcessedIds: [],
-    msgProcessedIds: []
+    msgProcessedIds: [],
+    workProcessedIds: [],
+    evalProcessedIds: []
   }
 })

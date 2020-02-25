@@ -10,37 +10,79 @@ Page({
    */
   data: {
     hasTask: true,
+    hasCourse: true,
     show: false,
-    content: null,
     wtjTasks: [],
     ytjTasks: [],
     ygqTasks: [],
     kxgTasks: [],
     wtjShow: false,
     ytjShow: false,
-    content: null
   },
   /**
    * 初始化函数
    */
-  async init() {
+  async init(arg) {
     var kxgTasks = app.globalData.kxgTasks
     var wtjTasks = app.globalData.wtjTasks
-    const courses = app.globalData.courses
-    const courseids = app.globalData.courseids
     const openid = app.globalData.openid
     const inUploadNum = app.globalData.inUploadNum
     const now = new Date()
+    let hasCourse
+    let hasTask
+    let ygqTasks
+    let ytjTasks
+    let courseids
 
-    if (courseids.length == 0) { // 未添加课程
-      wx.hideLoading()
+    if (arg == 1) {
+      console.log('加载')
 
-      this.setData({
-        hasTask: false,
-        content: '暂无课程'
-      })
+      courseids = app.globalData.courseids
+      console.log("courseids", courseids)
 
-      return
+      if (courseids.length == 0) { // 未添加课程
+        hasCourse = false
+
+        this.setData({
+          hasCourse: hasCourse
+        })
+
+        return
+      } else {
+        hasCourse = true
+      }
+    } else if (arg == 2) {
+      console.log('刷新')
+
+      hasCourse = true
+      const workProcessedIds = app.globalData.workProcessedIds
+      const processedCourseids = app.globalData.processedCourseids
+
+      var temp = []
+      for (var i = 0; i < processedCourseids.length; i++) {
+        for (var j = 0; j < workProcessedIds.length; j++) {
+          if (processedCourseids[i] == workProcessedIds[j]) {
+            continue
+          }
+        }
+        temp.push(processedCourseids[i])
+      }
+
+      // 去重
+      courseids = []
+      var list = app.globalData.ygqTasks.concat(app.globalData.ytjTasks)
+
+      for (var i = 0; i < temp.length; i++) {
+        // 去重
+        for(var j = 0; j < list.length; j++) {
+          if(temp[i] == list[j]) {
+            continue
+          }
+        }
+        courseids.push(temp[i])
+      }
+     
+      console.log('courseids', courseids)
     }
 
     wx.showLoading({
@@ -51,8 +93,8 @@ Page({
      * 1、获得已提交和过期未提交的任务并存储到全局
      */
 
-    var ygqTasks = []
-    var ytjTasks = []
+    ygqTasks = []
+    ytjTasks = []
 
     // 获得所有已过提交期的任务：已过期+已提交
     let pastedUploadCount = await this.getPastedUploadCount(courseids, now)
@@ -71,7 +113,7 @@ Page({
 
     console.log('pastedUploadTasks', pastedUploadTasks)
 
-    if (pastedUploadTasks.length !== 0) {  // 存在已过提交期的任务
+    if (pastedUploadTasks.length !== 0) { // 存在已过提交期的任务
       var pastedUploadTaskids = []
       for (var i = 0; i < pastedUploadTasks.length; i++) {
         pastedUploadTaskids.push(pastedUploadTasks[i]._id)
@@ -83,11 +125,11 @@ Page({
 
       var works = []
 
-      for(var i = 0; i < worksCount; i += 20) {
+      for (var i = 0; i < worksCount; i += 20) {
         let res = await this.getWorksSkip(pastedUploadTaskids, openid, i)
         works = works.concat(res)
 
-        if(works.length == worksCount) {
+        if (works.length == worksCount) {
           break
         }
       }
@@ -103,7 +145,7 @@ Page({
         }
       }
       console.log('works', works)
-      
+
       // 获得已提交和已过期的任务
       for (var i = 0; i < pastedUploadTasks.length; i++) {
         var flag = true
@@ -120,19 +162,26 @@ Page({
       }
     }
 
+    if (arg == 2) {
+      ygqTasks = ygqTasks.concat(app.globalData.ygqTasks)
+      ytjTasks = ytjTasks.concat(app.globalData.ytjTasks)
+    }
+
     console.log('ygqTasks', ygqTasks)
     console.log('ytjTasks', ytjTasks)
 
     if (ytjTasks.length == 0 && wtjTasks.length == 0 && kxgTasks.length == 0 && ygqTasks.length == 0) {
       // 空状态
       wx.hideLoading()
+      hasTask = false
 
       this.setData({
-        hasTask: false,
-        content: '暂无提交任务'
+        hasTask: hasTask
       })
 
       return
+    } else {
+      hasTask = true
     }
 
     /**
@@ -169,7 +218,7 @@ Page({
     console.log('kxgWorksCount', kxgWorksCount)
 
     var kxgWorks = []
-    for(var i = 0; i < kxgWorksCount; i += 20) {
+    for (var i = 0; i < kxgWorksCount; i += 20) {
       let res = await this.getWorksSkip(kxgTaskids, openid, i)
       kxgWorks = kxgWorks.concat(res)
     }
@@ -235,7 +284,7 @@ Page({
     kxgTasks = this.addCourseInfo(kxgTasks)
 
     // 处理长字符串
-    for(var i = 0; i < wtjTasks.length; i++) {
+    for (var i = 0; i < wtjTasks.length; i++) {
       wtjTasks[i].tasknameh = st.handleTaskName(wtjTasks[i].taskname)
       wtjTasks[i].coursenameh = st.handleCourseName(wtjTasks[i].coursename)
     }
@@ -256,6 +305,13 @@ Page({
     }
 
     // 更新数据
+    if (arg == 2) {
+      courseids = courseids.concat(app.globalData.workProcessedIds)
+      console.log('courseids', courseids)
+      app.globalData.workProcessedIds = courseids
+    }
+
+
     console.log('已过期', ygqTasks)
     console.log('已提交', ytjTasks)
     console.log('可修改', kxgTasks)
@@ -284,6 +340,8 @@ Page({
       kxgTasks: kxgTasks,
       wtjShow: wtjShow,
       ytjShow: ytjShow,
+      hasCourse: hasCourse,
+      hasTask: hasTask,
       show: true
     })
 
@@ -338,7 +396,7 @@ Page({
         })
     })
   },
-  getWorksCount: function (pastedUploadTaskids, openid) {
+  getWorksCount: function(pastedUploadTaskids, openid) {
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database()
       const _ = db.command
@@ -407,7 +465,7 @@ Page({
       url: '../details/details?data=' + taskid + '/1',
     })
   },
-  getTimeBetween: function (startDate, endDate) {
+  getTimeBetween: function(startDate, endDate) {
     var days = (endDate - startDate) / (1 * 24 * 60 * 60 * 1000)
     var timeString = null
 
@@ -449,11 +507,6 @@ Page({
 
     return tasks
   },
-  addCourse: function () {
-    wx.navigateTo({
-      url: '../course/course?arg=' + '3',
-    })
-  },
   /**
    * 生命周期函数--监听页面加载
    */
@@ -462,56 +515,66 @@ Page({
     const storedUploadTasks = app.globalData.storedUploadTasks
 
     if (storedUploadTasks) {
-      const ytjTasks = app.globalData.ytjTasks
-      const ygqTasks = app.globalData.ygqTasks
-      const wtjTasks = app.globalData.wtjTasks
-      const kxgTasks = app.globalData.kxgTasks
-      const courseids = app.globalData.courseids
+      const workProcessedIds = app.globalData.workProcessedIds
+      const processedCourseids = app.globalData.processedCourseids
 
-      if(courseids.length == 0) {  // 未添加课程
-        this.setData({
-          hasTask: false,
-          content: '尚未添加课程'
-        })
+      if (workProcessedIds.length < processedCourseids.length) { // 添加了新课程
+        const arg = 2
+        this.init(arg)
 
         return
-      }
+      } else {
+        const ytjTasks = app.globalData.ytjTasks
+        const ygqTasks = app.globalData.ygqTasks
+        const wtjTasks = app.globalData.wtjTasks
+        const kxgTasks = app.globalData.kxgTasks
+        const courseids = app.globalData.courseids
 
-      if (ytjTasks.length == 0 && wtjTasks.length == 0 && kxgTasks.length == 0 && ygqTasks.length == 0) {
-        // 无任务
+        if (courseids.length == 0) { // 未添加课程
+          this.setData({
+            hasCourse: false
+          })
+
+          return
+        }
+
+        if (ytjTasks.length == 0 && wtjTasks.length == 0 && kxgTasks.length == 0 && ygqTasks.length == 0) {
+          // 无任务
+          this.setData({
+            hasTask: false
+          })
+
+          return
+        }
+
+        var wtjShow = true
+        var ytjShow = true
+
+        if (wtjTasks.length == 0 && ygqTasks.length == 0) {
+          wtjShow = false
+        }
+
+        if (kxgTasks.length == 0 && ytjTasks.length == 0) {
+          ytjShow = false
+        }
+
         this.setData({
-          hasTask: false,
-          content: '暂无提交任务'
+          wtjTasks: wtjTasks,
+          ytjTasks: ytjTasks,
+          ygqTasks: ygqTasks,
+          kxgTasks: kxgTasks,
+          wtjShow: wtjShow,
+          ytjShow: ytjShow,
+          show: true
         })
-
-        return
       }
-
-      var wtjShow = true
-      var ytjShow = true
-
-      if (wtjTasks.length == 0 && ygqTasks.length == 0) {
-        wtjShow = false
-      }
-
-      if (kxgTasks.length == 0 && ytjTasks.length == 0) {
-        ytjShow = false
-      }
-
-      this.setData({
-        wtjTasks: wtjTasks,
-        ytjTasks: ytjTasks,
-        ygqTasks: ygqTasks,
-        kxgTasks: kxgTasks,
-        wtjShow: wtjShow,
-        ytjShow: ytjShow,
-        show: true
-      })
-
-      return
+    } else {
+      const arg = 1
+      this.init(arg)
     }
 
-    this.init()
+    const arg = 1
+    this.init(1)
   },
 
   /**
@@ -528,16 +591,25 @@ Page({
     const storedUploadTasks = app.globalData.storedUploadTasks
 
     if (storedUploadTasks) {
+      const workProcessedIds = app.globalData.workProcessedIds
+      const processedCourseids = app.globalData.processedCourseids
+
+      if (workProcessedIds.length < processedCourseids.length) { // 添加了新课程
+        const arg = 2
+        this.init(arg)
+
+        return
+      }
+
       const wtjTasks = app.globalData.wtjTasks
       const ytjTasks = app.globalData.ytjTasks
       const ygqTasks = app.globalData.ygqTasks
       const kxgTasks = app.globalData.kxgTasks
       const courseids = app.globalData.courseids
 
-      if (courseids.length == 0) {  // 未添加课程
+      if (courseids.length == 0) { // 未添加课程
         this.setData({
-          hasTask: false,
-          content: '尚未添加课程'
+          hasCourse: false
         })
 
         return
@@ -546,8 +618,7 @@ Page({
       if (ytjTasks.length == 0 && wtjTasks.length == 0 && kxgTasks.length == 0 && ygqTasks.length == 0) {
         // 无任务
         this.setData({
-          hasTask: false,
-          content: '暂无提交任务'
+          hasTask: false
         })
 
         return
@@ -571,6 +642,8 @@ Page({
         kxgTasks: kxgTasks,
         wtjShow: wtjShow,
         ytjShow: ytjShow,
+        hasTask: true,
+        hasCourse: true,
         show: true
       })
     }

@@ -250,7 +250,6 @@ Page({
       console.log('courseids', courseids)
       app.globalData.courses = courses
       app.globalData.courseids = courseids
-      app.globalData.processedCourses = true
       app.globalData.processedCourseids.push(courseids[0])
 
       this.setData({

@@ -261,7 +261,7 @@ Page({
 
       if(arg == 2) {
         // 处理inUploadNum
-        inUploadNum = app.globalData.inUploadNum + inUploadNum
+        inUploadNum += app.globalData.inUploadNum
         console.log('inUploadNum', inUploadNum)
 
         // 处理kxgTasks
@@ -368,7 +368,7 @@ Page({
         }
       }
 
-      if(arg = 2) {
+      if(arg == 2) {
         // 处理inEvalNum
         inEvalNum += app.globalData.inEvalNum
 
@@ -401,20 +401,20 @@ Page({
         }
 
       }
+
+      // 更新数据
+      if (arg == 2) {
+        courseids = courseids.concat(app.globalData.indexProcessedIds)
+        app.globalData.indexProcessedIds = courseids
+        console.log('indexProcessedIds', courseids)
+      }
+
       console.log('待互评', inEvalNum)
       console.log('未完成', wwcTasks)
       console.log('未互评', whpTasks)
       app.globalData.inEvalNum = inEvalNum
       app.globalData.whpTasks = whpTasks
       app.globalData.wwcTasks = wwcTasks
-
-      // 更新数据
-      if(arg = 2) {
-        var temp = app.globalData.indexProcessedIds
-        temp = temp.concat(courseids)
-        app.globalData.indexProcessedIds = temp
-        console.log('indexProcessedIds', temp)
-      }
 
       this.setData({
         inUploadNum: inUploadNum,
@@ -768,15 +768,10 @@ Page({
    * 页面打开一次就会显示
    */
   onShow: function() {
-    const processedCourses = app.globalData.processedCourses
     const processedCourseids = app.globalData.processedCourseids
     const indexProcessedIds = app.globalData.indexProcessedIds
 
-    console.log(processedCourses)
-    console.log(processedCourseids)
-    console.log(indexProcessedIds)
-
-    if (processedCourses && indexProcessedIds.length < processedCourseids.length) {
+    if (indexProcessedIds.length < processedCourseids.length) {
       const arg = 2
       this.init(arg)
     } else {
