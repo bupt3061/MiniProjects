@@ -1,5 +1,5 @@
 <!--pages/login/login.wxml-->
-<view class="container zan-font-16 zan-c-black" style="padding: 120px 0;" >
+<view class="container zan-font-16 zan-c-black" style="padding: 10r0px 0;" >
   <view style="width: 80%;">
     <view class="item" style="border-bottom: 1px solid {{pBorderColor}};">
       <zan-icon class="zan-font-20" type="contact"></zan-icon>
@@ -11,6 +11,6 @@
       <view wx:if="{{status}}" class="zan-font-14 primary btn" bindtap="sendCode">{{content}}</view>
       <view wx:else class="zan-font-14 primary btn" bindtap="sendCode">{{time}}</view>
     </view>
-    <button class="primary-bg" style="margin-top: 48rpx;">下一步</button>
+    <button class="primary-bg" style="margin-top: 48rpx;" bindtap="clickNext">下一步</button>
   </view>
 </view>

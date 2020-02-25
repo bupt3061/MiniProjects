@@ -9,6 +9,7 @@ Page({
    */
   data: {
     phone: null,
+    smsPhone: null,
     sysCode: null,
     code: null,
     icon: 'password-view',
@@ -76,7 +77,7 @@ Page({
     var phone = this.data.phone
     phone = this.getPhone(phone)
 
-    var flag = this.checkPhone(phone)
+    var flag = this.validatePhone(phone)
     console.log(flag)
 
     if (!flag) {
@@ -85,6 +86,9 @@ Page({
       return
     }
 
+    this.setData({
+      smsPhone: phone
+    })
     console.log("phone", phone)
 
     // 倒计时
@@ -183,7 +187,7 @@ Page({
 
     return res
   },
-  checkPhone: function(phone) {
+  validatePhone: function(phone) {
     var res = null
     let reg = /^1(3[0-9]|4[5,7]|5[0,1,2,3,5,6,7,8,9]|6[2,5,6,7]|7[0,1,7,8]|8[0-9]|9[1,8,9])\d{8}$/;
 
@@ -204,11 +208,7 @@ Page({
   checkCode: function() {
     const code = this.data.code
     const sysCode = this.data.sysCode
-    var flag = null
-
-    if(!code && !sysCode) {
-      flag = false
-    }
+    var flag = true
 
     if(code != sysCode) {
       flag = false
@@ -219,6 +219,49 @@ Page({
         cBorderColor: "#e64240"
       })
     }
+
+    return flag
+  },
+  checkPhone: function() {
+    const phone = this.getPhone(this.data.phone)
+    const smsPhone = this.data.smsPhone
+
+    var flag = true
+
+    if (phone != smsPhone) {
+      flag = false
+    }
+
+    if (!flag) {
+      this.setData({
+        pBorderColor: "#e64240"
+      })
+    }
+
+    return flag
+  },
+  clickNext: function() {
+    const phone = this.data.smsPhone
+
+    // 验证手机和验证码
+    var flag = null
+
+    flag = this.checkPhone()
+    if(!flag) {
+      return
+    }
+
+    flag = this.checkCode()
+    if (!flag) {
+      return
+    }
+
+    console.log('验证成功')
+  
+    // 跳转到下一页
+    wx.navigateTo({
+      url: '../loginNext/loginNext?phone=' + phone,
+    })
   },
   /**
    * 生命周期函数--监听页面加载

@@ -11,7 +11,8 @@
     "pages/mutualeval/mutualeval",
     "pages/collect/collect",
     "pages/course/course",
-    "pages/login/login"
+    "pages/login/login",
+    "pages/loginNext/loginNext"
   ],
   "enablePullDownRefresh": true,
   "window": {

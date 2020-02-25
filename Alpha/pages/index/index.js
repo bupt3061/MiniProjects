@@ -42,7 +42,7 @@ Page({
       wx.hideLoading()
 
       wx.redirectTo({
-        url: '../login/login?openid=' + openid,
+        url: '../loginNext/loginNext',
       })
 
       return
@@ -317,29 +317,6 @@ Page({
   /**
    * 页面其他函数
    */
-  test: function() {
-    var zhenzisms = require('../../utils/zhenzisms.js');
-
-    const apiUrl = "https://sms_developer.zhenzikj.com"
-    const appId = "104606"
-    const appSecret = "1b219489-86f2-4119-8032-a0c8d2ef6105"
-
-    zhenzisms.client.init(apiUrl, appId, appSecret);
-
-    var params = {};
-    params.number = '18810688942';
-    params.message = '您的验证码为:{' + '3687' + '}，如非本人操作请忽略此短信';
-    params.seconds = 60 * 5;
-    params.length = 4;
-
-    zhenzisms.client.sendCode(res => {
-      console.log(res)
-    }, params);
-
-    zhenzisms.client.balance(res => {
-      console.log(res.data)
-    });
-  },
   getInUploadTasksCount: function (courseids, now) {
     /**
      * 获取当前处在提交期的任务的总数
