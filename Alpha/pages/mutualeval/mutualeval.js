@@ -70,6 +70,9 @@ Page({
       }
 
       console.log('courseids', courseids)
+      courseids = courseids.concat(evalProcessedIds)
+      app.globalData.evalProcessedIds = courseids
+      console.log(app.globalData.evalProcessedIds)
     }
 
     wx.showLoading({
@@ -204,11 +207,12 @@ Page({
       console.log('test')
       console.log(app.globalData.evalProcessedIds)
       console.log(app.globalData.indexProcessedIds)
-    } else if (arg == 2) {
-      courseids = courseids.concat(app.globalData.evalProcessedIds)
-      app.globalData.evalProcessedIds = courseids
-      console.log('courseids', courseids)
-    }
+    } 
+    // else if (arg == 2) {
+    //   courseids = courseids.concat(app.globalData.evalProcessedIds)
+    //   app.globalData.evalProcessedIds = courseids
+    //   console.log('courseids', courseids)
+    // }
 
     app.globalData.wwcTasks = wwcTasks
     app.globalData.whpTasks = whpTasks

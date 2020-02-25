@@ -404,6 +404,7 @@ Page({
 
         // 处理wwcTasks
         wwcTasks = wwcTasks.concat(app.globalData.wwcTasks)
+        console.log(wwcTasks)
 
         for (var i = 0; i < wwcTasks.length; i++) {
           // 排序
