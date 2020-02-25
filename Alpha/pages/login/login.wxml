@@ -1,13 +1,13 @@
 <!--pages/login/login.wxml-->
 <view class="container zan-font-16 zan-c-black" style="padding: 120px 0;" >
   <view style="width: 80%;">
-    <view class="item">
+    <view class="item" style="border-bottom: 1px solid {{pBorderColor}};">
       <zan-icon class="zan-font-20" type="contact"></zan-icon>
-      <input placeholder="请输入手机号" maxlength="13" value="{{phone}}" style="padding: 24rpx;" bindinput="inputPhone"></input>
+      <input placeholder="请输入手机号" maxlength="13" value="{{phone}}" style="padding: 24rpx;" bindinput="inputPhone" bindfocus="focusPhone" bindblur="blurPhone"></input>
     </view>
-    <view class="item" style="position: relative;">
+    <view class="item" style="position: relative; border-bottom: 1px solid {{cBorderColor}};">
       <zan-icon class="zan-font-20" type="{{icon}}"></zan-icon>
-      <input type="number" placeholder="请输入验证码" style="padding: 24rpx;" maxlength="4" bindblur="checkCode"></input>
+      <input type="number" placeholder="请输入验证码" style="padding: 24rpx;" maxlength="4" bindblur="blurCode" bindfocus="focusCode" bindinput="inputCode"></input>
       <view wx:if="{{status}}" class="zan-font-14 primary btn" bindtap="sendCode">{{content}}</view>
       <view wx:else class="zan-font-14 primary btn" bindtap="sendCode">{{time}}</view>
     </view>
