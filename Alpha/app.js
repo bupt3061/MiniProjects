@@ -76,6 +76,9 @@ App({
     existedMsg: null,
     newMsg: null,
     arg: null,
-    processedCourses: false
+    processedCourses: false,
+    processedCourseids: [],
+    uploadIndex: false,
+    uploadMsg: false
   }
 })

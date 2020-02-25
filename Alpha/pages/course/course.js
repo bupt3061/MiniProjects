@@ -31,11 +31,8 @@ Page({
 
     if (arg == 1) {
       courses = gCourses
-
-      wx.showLoading({
-        title: '加载中',
-      })
     } else if (arg == 2) {
+      // 添加新课程
       for (var i = 0; i < gCourseids.length; i++) {
         if (courseids[0] == gCourseids[i]) { // 已存在
           this.setData({
@@ -246,6 +243,9 @@ Page({
       app.globalData.courses = courses
       app.globalData.courseids = courseids
       app.globalData.processedCourses = true
+      app.globalData.processedCourseids.push(courseids[0])
+      app.globalData.uploadIndex = false
+      app.globalData.uploadMsg = false
 
       this.setData({
         courses: courses,

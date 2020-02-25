@@ -630,7 +630,9 @@ Page({
    * 页面加载完成，一个页面只会调用一次
    */
   onLoad: function() {
-    this.init()
+    const arg = 1
+
+    this.init(arg)
   },
   /**
    * 生命周期函数--监听页面初次渲染完成（3）
@@ -645,28 +647,36 @@ Page({
    * 页面打开一次就会显示
    */
   onShow: function() {
-    const inUploadNum = app.globalData.inUploadNum
-    const inEvalNum = app.globalData.inEvalNum
-    const courseids = app.globalData.courseids
-    const type = app.globalData.type
-    const openid = app.globalData.openid
+    const processedCourses = app.globalData.processedCourses
+    const uploadIndex = app.globalData.uploadIndex
 
-    if (type == 1) {
-      // 学生
-      var hasCourse = true
-      if (courseids.length == 0) {
-        hasCourse = false
+    if (processedCourses && !uploadIndex) {
+      const arg = 2
+      this.init(arg)
+    } else {
+      const inUploadNum = app.globalData.inUploadNum
+      const inEvalNum = app.globalData.inEvalNum
+      const courseids = app.globalData.courseids
+      const type = app.globalData.type
+      const openid = app.globalData.openid
+
+      if (type == 1) {
+        // 学生
+        var hasCourse = true
+        if (courseids.length == 0) {
+          hasCourse = false
+        }
+
+        this.setData({
+          inUploadNum: inUploadNum,
+          inEvalNum: inEvalNum,
+          type: type,
+          openid: openid,
+          hasCourse: hasCourse
+        })
+      } else if (type == 2) {
+        // 老师
       }
-
-      this.setData({
-        inUploadNum: inUploadNum,
-        inEvalNum: inEvalNum,
-        type: type,
-        openid: openid,
-        hasCourse: hasCourse
-      })
-    } else if (type == 2) {
-      // 老师
     }
   },
 
