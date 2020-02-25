@@ -1,7 +1,22 @@
 <!--pages/msg/msg.wxml-->
 <import src="../template/template.wxml" />
 
-<view wx:if="{{show}}" class="container zan-font-18 zan-c-black" style="padding: 64rpx 0;;">
+<view class="container" wx:if="{{!hasCourse}}" style="padding: 320rpx 0;">
+  <image src="../../img/quexing.png" style="width: 50%;" mode="widthFix"></image>
+  <view class="zan-font-20 zan-c-gray-darker" style="font-weight: bold; margin: 24rpx" bindtap="addCourse">
+    暂无课程
+    <text class="primary"> 添加</text>
+  </view>
+</view>
+
+<view class="container" wx:if="{{!hasMsg}}" style="padding: 320rpx 0;">
+  <image src="../../img/quexing.png" style="width: 50%;" mode="widthFix"></image>
+  <view class="zan-font-20 zan-c-gray-darker" style="font-weight: bold; margin: 24rpx" bindtap="addCourse">
+    暂无消息
+  </view>
+</view>
+
+<view wx:if="{{hasCourse && hasMsg && show}}" class="container zan-font-18 zan-c-black" style="padding: 64rpx 0;;">
   <block wx:for="{{newMsg}}" wx:key="{{index}}">
     <template is="nmsg-card" data="{{...item}}"></template>
   </block>

@@ -13,7 +13,7 @@ Page({
     type: null,
     inUploadNum: 0,
     inEvalNum: 0,
-    hasCourse: true
+    hasCourse: null
   },
   /**
    * 初始化函数
@@ -25,6 +25,7 @@ Page({
     let openid
     let userInfo
     let type
+    let hasCourse
     
     // 显示加载
     wx.showLoading({
@@ -79,6 +80,7 @@ Page({
 
       if (courseids.length == 0) {
         wx.hideLoading()
+        hasCourse = false
         console.log('尚未添加课程')
 
         this.setData({
@@ -86,11 +88,12 @@ Page({
           inEvalNum: 0,
           type: type,
           openid: openid,
-          hasCourse: false
+          hasCourse: hasCourse
         })
 
         return
       } else {
+        hasCourse = true
         courses = await this.getCourses(courseids)
 
         // 添加课程封面
@@ -123,6 +126,7 @@ Page({
     } else if (arg == 2) {
       console.log('刷新')
 
+      hasCourse = true
       const processedCourseids = app.globalData.processedCourseids
       const indexProcessedIds = app.globalData.indexProcessedIds
 
@@ -416,7 +420,8 @@ Page({
         inUploadNum: inUploadNum,
         inEvalNum: inEvalNum,
         type: type,
-        openid: openid
+        openid: openid,
+        hasCourse: hasCourse
       })
 
       wx.hideLoading()

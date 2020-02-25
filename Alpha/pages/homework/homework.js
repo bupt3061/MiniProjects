@@ -17,7 +17,8 @@ Page({
     ygqTasks: [],
     kxgTasks: [],
     wtjShow: false,
-    ytjShow: false
+    ytjShow: false,
+    content: null
   },
   /**
    * 初始化函数
@@ -36,7 +37,7 @@ Page({
 
       this.setData({
         hasTask: false,
-        content: '尚未添加课程'
+        content: '暂无课程'
       })
 
       return
@@ -447,6 +448,11 @@ Page({
     }
 
     return tasks
+  },
+  addCourse: function () {
+    wx.navigateTo({
+      url: '../course/course?arg=' + '3',
+    })
   },
   /**
    * 生命周期函数--监听页面加载

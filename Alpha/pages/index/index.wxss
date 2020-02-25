@@ -15,9 +15,11 @@
 }
 
 .top-tip {
+  position: absolute;
+  top: 150rpx;
   display:flex;
   flex-direction: row;
   justify-content: flex-end;
   align-items: center;
-  width: 80%;
+  width: 74%;
 }

@@ -29,10 +29,6 @@ Page({
     var courses = null
     const now = new Date()
 
-    wx.showLoading({
-      title: '加载中',
-    })
-
     if (arg == 1) {
       // 初始加载
       courses = gCourses
@@ -94,6 +90,10 @@ Page({
 
         return
       }
+
+      wx.showLoading({
+        title: '加载中',
+      })
 
       // 添加课程
       const db = wx.cloud.database()

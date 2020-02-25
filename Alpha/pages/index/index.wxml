@@ -1,8 +1,8 @@
 <!--index.wxml-->
 
 <block wx:if="{{type == 1}}">
-  <view class="container zan-font-16 zan-c-black" style="padding-top: 160rpx;">
-    <view wx:if="{{!hasCourse}}" class="primary top-tip" style="margin-right: 24rpx;" bindtap="addCourse">
+  <view class="container zan-font-16 zan-c-black" style="padding-top: 180rpx; position: relative;">
+    <view wx:if="{{!hasCourse}}" class="primary top-tip" bindtap="addCourse">
       <view style="margin-right: 8rpx">添加课程</view>
       <zan-icon class="zan-font-12" type="arrow"></zan-icon>
     </view>

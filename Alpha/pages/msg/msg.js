@@ -11,15 +11,60 @@ Page({
   data: {
     newMsg: null,
     existedMsg: null,
-    show: false
+    show: false,
+    hasCourse: null,
+    hasMsg: null
   },
   /**
    * 初始化函数
    */
-  async init() {
+  async init(arg) {
     const openid = app.globalData.openid
-    const courseids = app.globalData.courseids
     const now = new Date()
+    let hasCourse
+    let hasMsg = true
+    let courseids
+    let newMsg
+    let existedMsg
+
+    if(arg == 1) {
+      // 初始加载
+      console.log('加载')
+
+      courseids = app.globalData.courseids
+      if (courseids.length == 0) {
+        hasCourse = false
+        this.setData({
+          hasCourse: hasCourse
+        })
+
+        return
+      } else {
+        hasCourse = true
+      }
+
+      console.log("courseids", courseids)
+    } else if(arg == 2) {
+      // 刷新
+      console.log('刷新')
+      hasCourse = true
+
+      const processedCourseids = app.globalData.courseids
+      const msgProcessIds = app.globalData.msgProcessedIds
+
+      var temp = []
+      for(var i = 0; i < processedCourseids.length; i++) {
+        for(var j = 0; j < msgProcessIds.length; j++) {
+          if(processedCourseids[i] == msgProcessedIds[j]) {
+            continue
+          }
+        }
+        temp.push(processedCourseids[i])
+      }
+
+      courseids = temp
+      console.log("courseids", courseids)
+    }
 
     wx.showLoading({
       title: '加载中',
@@ -30,11 +75,11 @@ Page({
     console.log('pastEvalCount', pastEvalCount)
 
     var pastEvalTasks = []
-    for(var i = 0; i < pastEvalCount; i += 20) {
+    for (var i = 0; i < pastEvalCount; i += 20) {
       let res = await this.getPastEvalSkip(courseids, now, i)
       pastEvalTasks = pastEvalTasks.concat(res)
 
-      if(pastEvalTasks.length == pastEvalCount) {
+      if (pastEvalTasks.length == pastEvalCount) {
         break
       }
     }
@@ -51,7 +96,7 @@ Page({
     let existedMsgCount = await this.getExistedMsgCount(pastEvalTaskids, openid)
     console.log('existedMsgCount', existedMsgCount)
 
-    var existedMsg = []
+    existedMsg = []
     for (var i = 0; i < existedMsgCount; i += 20) {
       let res = await this.getExistedMsgSkip(pastEvalTaskids, openid, i)
       existedMsg = existedMsg.concat(res)
@@ -63,13 +108,13 @@ Page({
     var needProcessTasks = []
     for (var i = 0; i < pastEvalCount; i++) {
       var flag = true
-      for(var j = 0; j < existedMsgCount; j++) {
-        if(pastEvalTasks[i]._id == existedMsg[j]._taskid) {
+      for (var j = 0; j < existedMsgCount; j++) {
+        if (pastEvalTasks[i]._id == existedMsg[j]._taskid) {
           flag = false
           continue
         }
       }
-      if(flag) {
+      if (flag) {
         needProcessTasks.push(pastEvalTasks[i])
       }
     }
@@ -77,14 +122,14 @@ Page({
 
     // 获取需处理任务的全部作品
     var needProcessTaskids = []
-    for(var i = 0; i < needProcessTasks.length; i++) {
+    for (var i = 0; i < needProcessTasks.length; i++) {
       needProcessTaskids.push(needProcessTasks[i]._id)
     }
 
     let works = await this.getWorks(needProcessTaskids, openid)
 
     var workids = []
-    for(var i = 0; i < works.length; i++) {
+    for (var i = 0; i < works.length; i++) {
       workids.push(works[i]._id)
     }
     console.log('works', works)
@@ -99,10 +144,10 @@ Page({
     console.log('evals', evals)
 
     // 整合数据
-    for(var i = 0; i < works.length; i++) {
+    for (var i = 0; i < works.length; i++) {
       var temp = []
-      for(var j = 0; j < evals.length; j++) {
-        if(works[i]._id == evals[j]._workid) {
+      for (var j = 0; j < evals.length; j++) {
+        if (works[i]._id == evals[j]._workid) {
           temp.push(evals[j])
         }
       }
@@ -111,9 +156,9 @@ Page({
 
     console.log('works', works)
 
-    for(var i = 0; i < needProcessTasks.length; i++) {
-      for(var j = 0; j < works.length; j++) {
-        if(needProcessTasks[i]._id == works[j]._taskid) {
+    for (var i = 0; i < needProcessTasks.length; i++) {
+      for (var j = 0; j < works.length; j++) {
+        if (needProcessTasks[i]._id == works[j]._taskid) {
           needProcessTasks[i].work = works[j]
           continue
         }
@@ -132,14 +177,14 @@ Page({
     console.log('needProcessTasks', needProcessTasks)
 
     // 计算成绩
-    for(var i = 0; i < needProcessTasks.length; i++) {
+    for (var i = 0; i < needProcessTasks.length; i++) {
       // 互评成绩
-      if(!needProcessTasks[i].evaledNum) {
+      if (!needProcessTasks[i].evaledNum) {
         needProcessTasks[i].evalScore = 0
         continue
       }
       var temp = needProcessTasks[i].evaledNum / 3
-      if(temp >= 1) {
+      if (temp >= 1) {
         temp = 1
       }
       var evalScore = temp * 10
@@ -149,9 +194,9 @@ Page({
 
     console.log('needProcessTasks', needProcessTasks)
 
-    for(var i = 0; i < needProcessTasks.length; i++) {
+    for (var i = 0; i < needProcessTasks.length; i++) {
       // 作业成绩
-      if(!needProcessTasks[i].work) {
+      if (!needProcessTasks[i].work) {
         needProcessTasks[i].workScore = 0
         continue
       }
@@ -166,14 +211,14 @@ Page({
 
       var muls = []
       var ctb_sum = 0
-      for(var m = 0; m < ctb.length; m++) {
+      for (var m = 0; m < ctb.length; m++) {
         var temp = ctb[m] * totals[m]
         muls.push(temp)
         ctb_sum += ctb[m]
       }
 
       var muls_sum = 0
-      for(var n = 0; n < muls.length; n++) {
+      for (var n = 0; n < muls.length; n++) {
         muls_sum += muls[n]
       }
 
@@ -185,7 +230,7 @@ Page({
 
     console.log('needProcessTasks', needProcessTasks)
 
-    for(var i = 0; i < needProcessTasks.length; i++) {
+    for (var i = 0; i < needProcessTasks.length; i++) {
       // 总成绩
       var workScore = needProcessTasks[i].workScore
       var evalScore = needProcessTasks[i].evalScore
@@ -200,14 +245,14 @@ Page({
 
     // 获取新消息列表
     var newMsgList = []
-    for(var i = 0; i < needProcessTasks.length; i++) {
+    for (var i = 0; i < needProcessTasks.length; i++) {
       var data = {}
       data._taskid = needProcessTasks[i]._id
       data.taskname = needProcessTasks[i].taskname
       data.totalscore = needProcessTasks[i].totalScore
       data.endtime = needProcessTasks[i].evaluateend
 
-      if(needProcessTasks[i].work) {
+      if (needProcessTasks[i].work) {
         data.uploadtime = needProcessTasks[i].work.uploadtime
       } else {
         data.uploadtime = '未提交'
@@ -216,21 +261,8 @@ Page({
       newMsgList = newMsgList.concat(data)
     }
 
-    for (var i = 0; i < newMsgList.length; i++) {
-      // 排序
-      for (var j = 0; j < newMsgList.length - i - 1; j++) {
-        if (newMsgList[j].endtime < newMsgList[j + 1].endtime) {
-          var temp = newMsgList[j]
-          newMsgList[j] = newMsgList[j + 1]
-          newMsgList[j + 1] = temp
-        }
-      }
-    }
-
-    console.log('newMsgList', newMsgList)
-
     // 上传数据
-    for(var i = 0; i < newMsgList.length; i++) {
+    for (var i = 0; i < newMsgList.length; i++) {
       var data = newMsgList[i]
 
       const db = wx.cloud.database()
@@ -248,29 +280,20 @@ Page({
     }
 
     // 处理时间
-    for (var j = 0; j < existedMsg.length - i - 1; j++) {
-      // 排序
-      if (existedMsg[j].endtime < existedMsg[j + 1].endtime) {
-        var temp = existedMsg[j]
-        existedMsg[j] = existedMsg[j + 1]
-        existedMsg[j + 1] = temp
-      }
-    }
-
-    for(var i = 0; i < newMsgList.length; i++) {
-      if(newMsgList[i].uploadtime != '未提交') {
+    for (var i = 0; i < newMsgList.length; i++) {
+      if (newMsgList[i].uploadtime != '未提交') {
         newMsgList[i].uploadtime = dt.formatTime(newMsgList[i].uploadtime)
       }
     }
-    
-    for(var i = 0; i < existedMsg.length; i++) {
-      if(existedMsg[i].uploadtime != '未提交') {
+
+    for (var i = 0; i < existedMsg.length; i++) {
+      if (existedMsg[i].uploadtime != '未提交') {
         existedMsg[i].uploadtime = dt.formatTime(existedMsg[i].uploadtime)
       }
     }
-    
+
     // 处理长字符串
-    for(var i = 0; i < newMsgList.length; i++) {
+    for (var i = 0; i < newMsgList.length; i++) {
       newMsgList[i].tasknameh = st.handleTaskName(newMsgList[i].taskname)
     }
 
@@ -279,6 +302,44 @@ Page({
     }
 
     // 更新数据
+    if(arg == 2) {
+      if(newMsgList.length != 0) {
+        newMsgList = newMsgList.concat(app.globalData.newMsg)
+      } else {
+        newMsgList = app.globalData.newMsg
+      }
+      if (existedMsg.length != 0) {
+        existedMsg = existedMsg.concat(app.globalData.existedMsg)
+      } else {
+        existedMsg = app.globalData.existedMsg
+      }
+    }
+
+    for (var i = 0; i < newMsgList.length; i++) {
+      // 排序
+      for (var j = 0; j < newMsgList.length - i - 1; j++) {
+        if (newMsgList[j].endtime < newMsgList[j + 1].endtime) {
+          var temp = newMsgList[j]
+          newMsgList[j] = newMsgList[j + 1]
+          newMsgList[j + 1] = temp
+        }
+      }
+    }
+
+    for (var j = 0; j < existedMsg.length - i - 1; j++) {
+      // 排序
+      if (existedMsg[j].endtime < existedMsg[j + 1].endtime) {
+        var temp = existedMsg[j]
+        existedMsg[j] = existedMsg[j + 1]
+        existedMsg[j + 1] = temp
+      }
+    }
+    
+    // 更新数据
+    if (newMsgList.length == 0 && existedMsg.length == 0) {
+      hasMsg = false
+    }
+
     app.globalData.existedMsg = existedMsg
     app.globalData.newMsg = newMsgList
     console.log('existedMsg', existedMsg)
@@ -287,16 +348,17 @@ Page({
     this.setData({
       newMsg: newMsgList,
       existedMsg: existedMsg,
+      hasMsg: hasMsg,
       show: true
     })
 
     wx.hideLoading()
-    
+
   },
   /**
    * 其他函数
    */
-  getPastEvalCount: function (courseids, now) {
+  getPastEvalCount: function(courseids, now) {
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database()
       const _ = db.command
@@ -318,7 +380,7 @@ Page({
 
     })
   },
-  getPastEvalSkip: function (courseids, now, skip) {
+  getPastEvalSkip: function(courseids, now, skip) {
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database()
       const _ = db.command
@@ -341,7 +403,7 @@ Page({
 
     })
   },
-  getExistedMsgCount: function (pastEvalTaskids, openid) {
+  getExistedMsgCount: function(pastEvalTaskids, openid) {
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database()
       const _ = db.command
@@ -360,9 +422,9 @@ Page({
           console.log(err)
           reject('获取失败')
         })
-    }) 
+    })
   },
-  getExistedMsgSkip: function (pastEvalTaskids, openid, skip) {
+  getExistedMsgSkip: function(pastEvalTaskids, openid, skip) {
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database()
       const _ = db.command
@@ -384,7 +446,7 @@ Page({
         })
     })
   },
-  getWorks: function (needProcessTaskids, openid) {
+  getWorks: function(needProcessTaskids, openid) {
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database()
       const _ = db.command
@@ -405,7 +467,7 @@ Page({
         })
     })
   },
-  getEvals: function (workids) {
+  getEvals: function(workids) {
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database()
       const _ = db.command
@@ -425,7 +487,7 @@ Page({
         })
     })
   },
-  getEvaledTasks: function (openid, needProcessTaskids) {
+  getEvaledTasks: function(openid, needProcessTaskids) {
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database()
       const _ = db.command
@@ -468,11 +530,17 @@ Page({
       url: '../details/details?data=' + taskid + '/1',
     })
   },
+  addCourse: function() {
+    wx.navigateTo({
+      url: '../course/course?arg=' + '3',
+    })
+  },
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function(options) {
-    this.init()
+    const arg = 1
+    this.init(1)
   },
 
   /**
@@ -486,14 +554,23 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function() {
-    const existedMsg = app.globalData.existedMsg
-    const newMsg = app.globalData.newMsg
+    const processedCourses = app.globalData.processedCourses
+    const processedCourseids = app.globalData.processedCourseids
+    const msgProcessedIds = app.globalData.msgProcessedIds
 
-    this.setData({
-      newMsg: newMsg,
-      existedMsg: existedMsg,
-      show: true
-    })
+    if (processedCourses && msgProcessedIds.length < processedCourseids.length) {
+      const arg = 2
+      this.init(2)
+    } else {
+      const existedMsg = app.globalData.existedMsg
+      const newMsg = app.globalData.newMsg
+
+      this.setData({
+        newMsg: newMsg,
+        existedMsg: existedMsg,
+        show: true
+      })
+    }
   },
 
   /**
