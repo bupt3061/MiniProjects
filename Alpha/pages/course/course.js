@@ -150,6 +150,15 @@ Page({
       }
     }
 
+    for (var i = 0; i < tasks.length; i++) {
+      var status = true
+      
+      if(tasks[i].evaluateend < now) {
+        status = false
+      }
+      tasks[i].status = status
+    }
+
     console.log('tasks', tasks)
 
     for (var i = 0; i < courses.length; i++) {
@@ -359,22 +368,22 @@ Page({
       timeString = "已过期"
     } else if (days >= 365) {
       var years = days / 365
-      timeString = "剩余：" + Math.floor(years).toString() + "年"
+      timeString = "剩余学时：" + Math.floor(years).toString() + "年"
     } else if (days > 30 && days < 365) {
       var months = days / 30
-      timeString = "剩余：" + Math.floor(months).toString() + "个月"
+      timeString = "剩余学时：" + Math.floor(months).toString() + "个月"
     } else if (days >= 7 && days < 30) {
       var weeks = days / 7
-      timeString = "剩余：" + Math.floor(weeks).toString() + "周"
+      timeString = "剩余学时：" + Math.floor(weeks).toString() + "周"
     } else if (days >= 1 && days < 7) {
-      timeString = "剩余：" + Math.floor(days).toString() + "天"
+      timeString = "剩余学时：" + Math.floor(days).toString() + "天"
     } else if (days < 1) {
       var hours = days * 24
-      timeString = "剩余：" + Math.floor(hours).toString() + "小时"
+      timeString = "剩余学时：" + Math.floor(hours).toString() + "小时"
 
       if (hours < 1) {
         var mins = hours * 60
-        timeString = "剩余：" + Math.floor(mins).toString() + "分钟"
+        timeString = "剩余学时：" + Math.floor(mins).toString() + "分钟"
       }
     }
 
@@ -419,11 +428,12 @@ Page({
   },
   clickTask: function(e) {
     const taskid = e.currentTarget.dataset.taskid
+    const courseid = e.currentTarget.dataset.courseid
+    const courses = app.globalData.courses
+    const now = new Date()
+
     console.log(taskid)
-  },
-  clickBtn: function(e) {
-    const courseid = e.currentTarget.dataset.cu
-    console.log(index)
+    console.log(e)
   },
   addCourse: function() {
     const that = this
