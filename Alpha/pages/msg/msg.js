@@ -11,9 +11,9 @@ Page({
   data: {
     newMsg: null,
     existedMsg: null,
-    show: null,
     hasCourse: true,
-    hasMsg: true
+    hasMsg: true,
+    show: false
   },
   /**
    * 初始化函数
@@ -165,21 +165,25 @@ Page({
     console.log('works', works)
 
     for (var i = 0; i < needProcessTasks.length; i++) {
+      var temp = null
       for (var j = 0; j < works.length; j++) {
         if (needProcessTasks[i]._id == works[j]._taskid) {
-          needProcessTasks[i].work = works[j]
+          temp = works[j]
           continue
         }
       }
+      needProcessTasks[i].work = temp
     }
 
     for (var i = 0; i < needProcessTasks.length; i++) {
+      var evaledNum = 0
       for (var j = 0; j < evaledTasks.length; j++) {
         if (needProcessTasks[i]._id == evaledTasks[j]._id) {
-          needProcessTasks[i].evaledNum = evaledTasks[j].num
+          evaledNum = evaledTasks[j].num
           continue
         }
       }
+      needProcessTasks[i].evaledNum = evaledNum
     }
 
     console.log('needProcessTasks', needProcessTasks)
@@ -195,8 +199,8 @@ Page({
       if (temp >= 1) {
         temp = 1
       }
-      var evalScore = temp * 10
-      evalScore = Math.round(evalScore * 10) / 10
+
+      var evalScore = Math.round(temp * 10 * 10) / 10
       needProcessTasks[i].evalScore = evalScore
     }
 
@@ -204,7 +208,7 @@ Page({
 
     for (var i = 0; i < needProcessTasks.length; i++) {
       // 作业成绩
-      if ((!needProcessTasks[i].work.evals) || needProcessTasks[i].work.evals.length == 0) {
+      if (needProcessTasks[i].work == null || needProcessTasks[i].work.evals.length == 0) {
         needProcessTasks[i].workScore = 0
         continue
       }
@@ -346,6 +350,7 @@ Page({
     
     app.globalData.existedMsg = existedMsg
     app.globalData.newMsg = newMsg
+    app.globalData.storedMsg = true
     console.log('existedMsg', existedMsg)
     console.log('newMsg', newMsg)
     
@@ -575,45 +580,49 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function() {
-    const processedCourseids = app.globalData.processedCourseids
-    const msgProcessedIds = app.globalData.msgProcessedIds
+    const storedMsg = app.globalData.storedMsg
 
-    console.log('onShow执行了')
+    if(storedMsg) {
+      const processedCourseids = app.globalData.processedCourseids
+      const msgProcessedIds = app.globalData.msgProcessedIds
 
-    if (msgProcessedIds.length < processedCourseids.length) {
-      console.log("processedCourseids", processedCourseids)
-      console.log("msgProcessedIds", msgProcessedIds)
+      console.log('onShow执行了')
 
-      const arg = 2
-      this.init(arg)
-    } else {
-      const existedMsg = app.globalData.existedMsg
-      const newMsg = app.globalData.newMsg
-      const courseids = app.globalData.courseids
+      if (msgProcessedIds.length < processedCourseids.length) {
+        console.log("processedCourseids", processedCourseids)
+        console.log("msgProcessedIds", msgProcessedIds)
 
-      if(courseids.length == 0) {
+        const arg = 2
+        this.init(arg)
+      } else {
+        const existedMsg = app.globalData.existedMsg
+        const newMsg = app.globalData.newMsg
+        const courseids = app.globalData.courseids
+
+        if (courseids.length == 0) {
+          this.setData({
+            hasCourse: false
+          })
+
+          return
+        }
+
+        if (existedMsg.length == 0 && newMsg.length == 0) {
+          this.setData({
+            hasMsg: false
+          })
+
+          return
+        }
+
         this.setData({
-          hasCourse: false
+          newMsg: newMsg,
+          existedMsg: existedMsg,
+          hasCourse: true,
+          hasMsg: true,
+          show: true
         })
-
-        return
       }
-
-      if(existedMsg.length == 0 && newMsg.length == 0) {
-        this.setData({
-          hasMsg: false
-        })
-
-        return
-      }
-
-      this.setData({
-        newMsg: newMsg,
-        existedMsg: existedMsg,
-        hasCourse: true,
-        hasMsg: true,
-        show: true
-      })
     }
   },
 

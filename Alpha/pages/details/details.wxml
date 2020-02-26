@@ -16,9 +16,9 @@
       <image class="avatar-img" src="{{authorAvatarUrl}}"></image>
       <image class="rank" src="{{authorRank}}"></image>
     </view>
-    <view class="zan-font-14 user-name">
-      <view>{{authorNickname}}</view>
-      <view class="zan-c-gray-dark">id: {{authorId}}</view>
+    <view class="user-name">
+      <view class="zan-font-16">{{authorNickname}}</view>
+      <view class="zan-font-14 zan-c-gray-dark">id: {{authorId}}</view>
     </view>
   </view>
 

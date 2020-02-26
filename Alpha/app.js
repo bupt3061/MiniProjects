@@ -72,6 +72,7 @@ App({
     standardKeys: null,
     storedUploadTasks: false,
     storedEvalTasks: false,
+    storedMsg: false,
     existedMsg: [],
     newMsg: [],
     arg: null,

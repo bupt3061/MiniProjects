@@ -354,6 +354,13 @@ Page({
           }
         }
       }
+
+      for(var i = 0; i < evals.length; i++) {
+        const ctb = evals[i].contribution
+        var rank = this.getRank(ctb)
+
+        evals[i].rank = rank
+      }
     }
 
     console.log('evals', evals)
