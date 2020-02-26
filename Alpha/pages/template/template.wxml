@@ -177,22 +177,26 @@
     </view>
     <view wx:if="{{status}}" class="drop-box">
       <block wx:for="{{tasks}}" wx:for-index="idx" wx:for-item="itm" wx:key="{{idx}}">
-        <view wx:if="{{idx % 2 == 0 && status}}" class="task-item-odd" data-courseid="{{itm._courseid}}" data-taskid="{{itm._id}}" bindtap="clickTask">
-          <view>{{itm.tasknameh}}</view>
-          <zan-icon class="zan-c-gray-dark zan-font-14" type="arrow"></zan-icon>
-        </view>
-        <view wx:if="{{idx % 2 == 0 && !status}}" class="task-item-odd zan-c-gray" data-courseid="{{itm._courseid}}" data-taskid="{{itm._id}}">
-          <view>{{itm.tasknameh}}</view>
-          <zan-icon class="zan-font-14" type="arrow"></zan-icon>
-        </view>
-        <view wx:if="{{idx % 2 != 0 && status}}" class="task-item-even" data-courseid="{{itm._courseid}}" data-taskid="{{itm._id}}" bindtap="clickTask">
-          <view>{{itm.tasknameh}}</view>
-          <zan-icon class="zan-c-gray-dark zan-font-14" type="arrow"></zan-icon>
-        </view>
-        <view wx:if="{{idx % 2 != 0 && !status}}" class="task-item-even zan-c-gray" data-courseid="{{itm._courseid}}" data-taskid="{{itm._id}}">
-          <view>{{itm.tasknameh}}</view>
-          <zan-icon class="zan-font-14" type="arrow"></zan-icon>
-        </view>
+        <block wx:if="{{idx % 2 == 0}}">
+          <view wx:if="{{itm.status}}" class="task-item-odd" data-courseid="{{itm._courseid}}" data-taskid="{{itm._id}}" bindtap="clickTask">
+            <view>{{itm.tasknameh}}</view>
+            <zan-icon class="zan-c-gray-dark zan-font-14" type="arrow"></zan-icon>
+          </view>
+          <view wx:else class="task-item-odd zan-c-gray" data-courseid="{{itm._courseid}}" data-taskid="{{itm._id}}">
+            <view>{{itm.tasknameh}}</view>
+            <zan-icon class="zan-font-14" type="arrow"></zan-icon>
+          </view>
+        </block>
+        <block wx:if="{{idx % 2 != 0}}">
+          <view wx:if="{{status}}" class="task-item-even" data-courseid="{{itm._courseid}}" data-taskid="{{itm._id}}" bindtap="clickTask">
+            <view>{{itm.tasknameh}}</view>
+            <zan-icon class="zan-c-gray-dark zan-font-14" type="arrow"></zan-icon>
+          </view>
+          <view wx:if="{{!status}}" class="task-item-even zan-c-gray" data-courseid="{{itm._courseid}}" data-taskid="{{itm._id}}">
+            <view>{{itm.tasknameh}}</view>
+            <zan-icon class="zan-font-14" type="arrow"></zan-icon>
+          </view>
+        </block>
       </block>
     </view>
   </view>

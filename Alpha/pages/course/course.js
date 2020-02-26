@@ -153,7 +153,7 @@ Page({
     for (var i = 0; i < tasks.length; i++) {
       var status = true
       
-      if(tasks[i].evaluateend < now) {
+      if (tasks[i].evaluateend > now) {
         status = false
       }
       tasks[i].status = status

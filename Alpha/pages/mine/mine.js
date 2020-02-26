@@ -22,13 +22,47 @@ Page({
    * 页面初始函数
    */
   init: function() {
-    const userInfo = app.globalData.userInfo
-    const nickname = userInfo.nickname
-    const avatarUrl = userInfo.avatarUrl
-    const ctb = userInfo.contribution
+    const that = this
+    const openid = app.globalData.openid
+    var userInfo = app.globalData.userInfo
+    var nickname = app.globalData.userInfo.nickname
+    const avatarUrl = app.globalData.userInfo.avatarUrl
+    var ctb = app.globalData.userInfo.contribution
     var rank = null
 
     rank = this.getRank(ctb)
+
+    console.log(userInfo)
+    console.log(nickname)
+    console.log(avatarUrl)
+    console.log(rank)
+
+    if(avatarUrl == null || nickname == null || ctb == null) {
+      const db = wx.cloud.database()
+
+      db.collection('user')
+      .where({
+        _openid: openid
+      })
+      .get()
+      .then(res => {
+        const data = res.data
+        console.log(data)
+
+        nickname = data.nickname
+        avatarUrl = data.avatarUrl
+        ctb = data.contribution
+        rank = that.getRank(ctb)
+
+        that.setData({
+          nickname: nickname,
+          avatarUrl: avatarUrl,
+          rank: rank
+        })
+      })
+
+      return
+    }
 
     this.setData({
       nickname: nickname,
