@@ -35,7 +35,7 @@ Page({
     let courseids
 
     if (arg == 1) {
-      console.log('加载')
+      console.log('test, 加载')
 
       courseids = app.globalData.courseids
       console.log("courseids", courseids)
@@ -52,14 +52,9 @@ Page({
         hasCourse = true
       }
     } else if (arg == 2) {
-      console.log('刷新')
-
       hasCourse = true
       const workProcessedIds = app.globalData.workProcessedIds
       const processedCourseids = app.globalData.processedCourseids
-
-      console.log("workProcessedIds", workProcessedIds)
-      console.log("processedCourseids", processedCourseids)
 
       courseids = []
       for (var i = 0; i < processedCourseids.length; i++) {
@@ -75,7 +70,14 @@ Page({
         }
       }
 
+      console.log('test，刷新')
+      console.log("workProcessedIds", workProcessedIds)
+      console.log("processedCourseids", processedCourseids)
+
+      var newWorkProcessedIds = courseids.concat(app.globalData.workProcessedIds)
+      app.globalData.workProcessedIds = newWorkProcessedIds
       console.log('courseids', courseids)
+      console.log('newWorkProcessedIds', newWorkProcessedIds)
     }
 
     wx.showLoading({
@@ -300,11 +302,7 @@ Page({
     // 更新数据
     if(arg == 1) {
       app.globalData.workProcessedIds = app.globalData.indexProcessedIds
-    } else if (arg == 2) {
-      courseids = courseids.concat(app.globalData.workProcessedIds)
-      console.log('courseids', courseids)
-      app.globalData.workProcessedIds = courseids
-    }
+    } 
 
 
     console.log('已过期', ygqTasks)
@@ -508,12 +506,16 @@ Page({
   onLoad: function(options) {
     // 判断是否已存储数据
     const storedUploadTasks = app.globalData.storedUploadTasks
+    console.log('test, onLoad执行了')
     
     if (storedUploadTasks) {
       const workProcessedIds = app.globalData.workProcessedIds
       const processedCourseids = app.globalData.processedCourseids
 
       if (workProcessedIds.length < processedCourseids.length) { // 添加了新课程
+        console.log('processedCourseids', processedCourseids)
+        console.log('workProcessedIds', workProcessedIds)
+        
         const arg = 2
         this.init(arg)
 
@@ -585,12 +587,16 @@ Page({
    */
   onShow: function() {
     const storedUploadTasks = app.globalData.storedUploadTasks
+    console.log('test，onShow执行了')
 
     if (storedUploadTasks) {
       const workProcessedIds = app.globalData.workProcessedIds
       const processedCourseids = app.globalData.processedCourseids
 
       if (workProcessedIds.length < processedCourseids.length) { // 添加了新课程
+        console.log('processedCourseids', processedCourseids)
+        console.log('workProcessedIds', workProcessedIds)
+
         const arg = 2
         this.init(arg)
 

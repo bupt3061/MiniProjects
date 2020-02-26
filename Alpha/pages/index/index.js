@@ -54,7 +54,7 @@ Page({
        * 1、获取用户信息并存储到全局
        * 2、若数据库中和不存在该用户则跳转到登陆界面
        */
-      console.log('加载')
+      console.log('test, 加载')
       openid = await this.getOpenid()
       userInfo = await this.getUserInfo(openid)
 
@@ -146,17 +146,16 @@ Page({
         app.globalData.courses = courses
       }
     } else if (arg == 2) {
-      console.log('刷新')
 
       hasCourse = true
       const processedCourseids = app.globalData.processedCourseids
       const indexProcessedIds = app.globalData.indexProcessedIds
 
-      console.log('test')
-      console.log(processedCourseids)
-      console.log(indexProcessedIds)
+      console.log('test, 刷新')
+      console.log('processedCourseids', processedCourseids)
+      console.log('indexProcessedIds', indexProcessedIds)
 
-      var temp = []
+      courseids = []
       for (var i = 0; i < processedCourseids.length; i++) {
         // 获取未处理过的courseid
         var flag = true
@@ -167,11 +166,13 @@ Page({
           }
         }
         if (flag) {
-          temp.push(processedCourseids[i])
+          courseids.push(processedCourseids[i])
         }
       }
 
-      courseids = temp
+      var newindexProcessedIds = courseids.concat(indexProcessedIds)
+      app.globalData.indexProcessedIds = newindexProcessedIds
+      console.log('indexProcessedIds', newindexProcessedIds)
       console.log('courseids', courseids)
     }
 
@@ -435,11 +436,6 @@ Page({
       }
 
       // 更新数据
-      if (arg == 2) {
-        courseids = courseids.concat(app.globalData.indexProcessedIds)
-        app.globalData.indexProcessedIds = courseids
-        console.log('indexProcessedIds', courseids)
-      }
 
       console.log('待互评', inEvalNum)
       console.log('未完成', wwcTasks)
@@ -778,8 +774,8 @@ Page({
    * 页面加载完成，一个页面只会调用一次
    */
   onLoad: function() {
+    console.log('onLoad执行了')
     const arg = 1
-
     this.init(arg)
   },
   /**
@@ -797,10 +793,11 @@ Page({
   onShow: function() {
     const processedCourseids = app.globalData.processedCourseids
     const indexProcessedIds = app.globalData.indexProcessedIds
+    console.log('test, onShow执行了')
 
     if (indexProcessedIds.length < processedCourseids.length) {
-      console.log(processedCourseids)
-      console.log(indexProcessedIds)
+      console.log('processedCourseids', processedCourseids)
+      console.log('indexProcessedIds', indexProcessedIds)
 
       const arg = 2
       this.init(arg)

@@ -46,13 +46,15 @@ Page({
       console.log("courseids", courseids)
     } else if(arg == 2) {
       // 刷新
-      console.log('刷新')
       hasCourse = true
 
+      console.log('test, 刷新')
       const processedCourseids = app.globalData.courseids
       const msgProcessedIds = app.globalData.msgProcessedIds
+      console.log('processedCourseids', processedCourseids)
+      console.log('msgProcessedIds', msgProcessedIds)
 
-      var temp = []
+      courseids = []
       for(var i = 0; i < processedCourseids.length; i++) {
         var flag = true
         for(var j = 0; j < msgProcessedIds.length; j++) {
@@ -62,11 +64,13 @@ Page({
           }
         }
         if(flag) {
-          temp.push(processedCourseids[i])
+          courseids.push(processedCourseids[i])
         }
       }
 
-      courseids = temp
+      var newMsgProcessedIds = courseids.concat(app.globalData.msgProcessedIds)
+      app.globalData.msgProcessedIds = newMsgProcessedIds
+      console.log('newMsgProcessedIds', newMsgProcessedIds)
       console.log("courseids", courseids)
     }
 
@@ -344,15 +348,8 @@ Page({
     // 更新数据
     if (newMsg.length == 0 && existedMsg.length == 0) {
       hasMsg = false
-      console.log('hahaha')
     } else {
       hasMsg = true
-    }
-
-    if(arg == 2) {
-      courseids = courseids.concat(app.globalData.msgProcessedIds)
-      app.globalData.msgProcessedIds = courseids
-      console.log('courseids', courseids)
     }
     
     app.globalData.existedMsg = existedMsg
@@ -556,6 +553,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function(options) {
+    console.log('onLoad执行了')
     const arg = 1
     this.init(1)
   },
@@ -575,6 +573,7 @@ Page({
     const msgProcessedIds = app.globalData.msgProcessedIds
 
     if (msgProcessedIds.length < processedCourseids.length) {
+      console.log('onShow执行了')
       const arg = 2
       this.init(2)
     } else {

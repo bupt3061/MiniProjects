@@ -31,7 +31,7 @@ Page({
     let ygqETasks
 
     if (arg == 1) {
-      console.log('加载')
+      console.log('test, 加载')
 
       courseids = app.globalData.courseids
       if (courseids.length == 0) { // 未添加课程
@@ -46,12 +46,11 @@ Page({
 
       console.log('courseids', courseids)
     } else if (arg == 2) {
-      console.log('刷新')
-
       hasCourse = true
       const evalProcessedIds = app.globalData.evalProcessedIds
       const processedCourseids = app.globalData.processedCourseids
 
+      console.log('test, 刷新')
       console.log("evalProcessedIds", evalProcessedIds)
       console.log("processedCourseids", processedCourseids)
 
@@ -69,10 +68,10 @@ Page({
         }
       }
 
+      var newEvalProcessedIds = courseids.concat(evalProcessedIds)
+      app.globalData.evalProcessedIds = newEvalProcessedIds
       console.log('courseids', courseids)
-      courseids = courseids.concat(evalProcessedIds)
-      app.globalData.evalProcessedIds = courseids
-      console.log(app.globalData.evalProcessedIds)
+      console.log('newEvalProcessedIds', newEvalProcessedIds)
     }
 
     wx.showLoading({
@@ -424,12 +423,16 @@ Page({
    */
   onLoad: function(options) {
     const storedEvalTasks = app.globalData.storedEvalTasks
+    console.log('onLoad执行了')
 
     if (storedEvalTasks) {
       const evalProcessedIds = app.globalData.evalProcessedIds
       const processedCourseids = app.globalData.processedCourseids
 
       if (evalProcessedIds.length < processedCourseids.length) { // 添加了新课程
+        console.log("evalProcessedIds", evalProcessedIds)
+        console.log("processedCourseids", processedCourseids)
+
         const arg = 2
         this.init(arg)
 
@@ -499,12 +502,16 @@ Page({
    */
   onShow: function() {
     const storedEvalTasks = app.globalData.storedEvalTasks
+    console.log('test, onShow执行了')
 
     if (storedEvalTasks) {
       const evalProcessedIds = app.globalData.evalProcessedIds
       const processedCourseids = app.globalData.processedCourseids
 
       if (evalProcessedIds.length < processedCourseids.length) { // 添加了新课程
+        console.log("evalProcessedIds", evalProcessedIds)
+        console.log("processedCourseids", processedCourseids)
+
         const arg = 2
         this.init(arg)
 
