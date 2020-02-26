@@ -68,19 +68,11 @@ Page({
       /**
        * 1：查看
        */
+      status = false
+
       work = await this.getWork(taskid, openid)
+      console.log('work', work)
 
-      if (!work) {
-        console.log('无作品')
-        this.setData({
-          progress: progress,
-          hasWork: false,
-          status: true
-        })
-        wx.hideLoading()
-
-        return
-      }
     } else {
       /**
        * 2：互评
@@ -90,6 +82,9 @@ Page({
        * needEvalNum：未互评任务数
        * 2、若不存在则获取并存储到全局
        */
+      status = true
+      canEvaluate = true
+
       var progress = 0
       var evaledNum = 0
       var needEvalNum = 3
@@ -97,9 +92,7 @@ Page({
       var randomList = []
       var idx = 0
       var flag = false // 全局是否已存在该互评作品的信息，默认不存在
-
-      canEvaluate = true
-      status = true
+      
 
       if (arg == '2') { // 未完成
         /**

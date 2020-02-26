@@ -201,3 +201,19 @@
     </view>
   </view>
 </template>
+
+<template name="work-card">
+  <view class='work-card' data-id="{{_id}}" bindtap="clickWork">
+    <image class="work-cover" src="{{workCover}}" mode="center"></image>
+    <view class="basic-info">
+      <view class="zan-font-18 work-title">{{titleh}}</view>
+      <view class="other-info">
+        <view class="author-info">
+          <image class="author-avatar" src="{{avatarUrl}}"></image>
+          <view class="zan-font-14">{{nickname}}</view>
+        </view>
+        <view class="zan-font-14 zan-c-gray-dark">{{evalNum}}评论</view>
+      </view>
+    </view>
+  </view>
+</template>

@@ -1,0 +1,6 @@
+<!--pages/worklist/worklist.wxml-->
+<import src="../template/template.wxml" />
+
+<view class="container zan-font-16 zan-c-black" style="padding: 32rpx 0;">
+  <template is="work-card"></template>
+</view>

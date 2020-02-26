@@ -12,7 +12,8 @@
     "pages/collect/collect",
     "pages/course/course",
     "pages/login/login",
-    "pages/loginNext/loginNext"
+    "pages/loginNext/loginNext",
+    "pages/worklist/worklist"
   ],
   "enablePullDownRefresh": true,
   "window": {

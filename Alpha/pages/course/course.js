@@ -428,12 +428,11 @@ Page({
   },
   clickTask: function(e) {
     const taskid = e.currentTarget.dataset.taskid
-    const courseid = e.currentTarget.dataset.courseid
-    const courses = app.globalData.courses
-    const now = new Date()
-
     console.log(taskid)
-    console.log(e)
+
+    wx.navigateTo({
+      url: '../worklist/worklist?taskid=' + taskid,
+    })
   },
   addCourse: function() {
     const that = this
