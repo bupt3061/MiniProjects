@@ -21,48 +21,23 @@ Page({
   /**
    * 页面初始函数
    */
-  init: function() {
-    const that = this
+  async init() {
     const openid = app.globalData.openid
-    var userInfo = app.globalData.userInfo
-    var nickname = app.globalData.userInfo.nickname
-    const avatarUrl = app.globalData.userInfo.avatarUrl
-    var ctb = app.globalData.userInfo.contribution
-    var rank = null
+    let userInfo = app.globalData.userInfo
 
-    rank = this.getRank(ctb)
+    if (userInfo == null) {
+      userInfo = await this.getUserInfo(openid)
+    }
+
+    var nickname = userInfo.nickname
+    var avatarUrl = userInfo.avatarUrl
+    var ctb = userInfo.contribution
+    var rank = this.getRank(ctb)
 
     console.log(userInfo)
     console.log(nickname)
     console.log(avatarUrl)
     console.log(rank)
-
-    if(avatarUrl == null || nickname == null || ctb == null) {
-      const db = wx.cloud.database()
-
-      db.collection('user')
-      .where({
-        _openid: openid
-      })
-      .get()
-      .then(res => {
-        const data = res.data
-        console.log(data)
-
-        nickname = data.nickname
-        avatarUrl = data.avatarUrl
-        ctb = data.contribution
-        rank = that.getRank(ctb)
-
-        that.setData({
-          nickname: nickname,
-          avatarUrl: avatarUrl,
-          rank: rank
-        })
-      })
-
-      return
-    }
 
     this.setData({
       nickname: nickname,
@@ -73,9 +48,30 @@ Page({
   /**
    * 其他函数
    */
+  getUserInfo: function (openid) {
+    return new Promise((resolve, reject) => {
+      const db = wx.cloud.database()
+
+      db.collection('user')
+        .where({
+          _openid: openid
+        })
+        .get()
+        .then(res => {
+          const data = res.data
+          resolve(data)
+        })
+        .catch(err => {
+          console.log(err)
+          reject("获取失败")
+        })
+    })
+  },
   toCollect: function() {
+    app.globalData.wlArg = '2'
+    
     wx.navigateTo({
-      url: '../collect/collect',
+      url: '../worklist/worklist',
     })
   },
   toCourse: function() {

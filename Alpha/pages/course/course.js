@@ -429,9 +429,11 @@ Page({
   clickTask: function(e) {
     const taskid = e.currentTarget.dataset.taskid
     console.log(taskid)
+    app.globalData.wlArg = '1'
+    app.globalData.wlTaskid = taskid
 
     wx.navigateTo({
-      url: '../worklist/worklist?taskid=' + taskid,
+      url: '../worklist/worklist?data=' + taskid + '/1',
     })
   },
   addCourse: function() {

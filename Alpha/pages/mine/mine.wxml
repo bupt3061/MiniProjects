@@ -21,7 +21,7 @@
       <view>我的课程</view>
       <zan-icon class="zan-font-14 zan-c-gray-dark" type="arrow"></zan-icon>
     </view>
-    <view class="item" bindtap="toMark">
+    <view class="item" bindtap="toCollect">
       <view>我的收藏</view>
       <zan-icon class="zan-font-14 zan-c-gray-dark" type="arrow"></zan-icon>
     </view>

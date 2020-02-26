@@ -203,14 +203,14 @@
 </template>
 
 <template name="work-card">
-  <view class='work-card' data-id="{{_id}}" bindtap="clickWork">
+  <view class='work-card' data-workid="{{_id}}" data-taskid="{{_taskid}}" bindtap="clickWork">
     <image class="work-cover" src="{{workCover}}" mode="center"></image>
     <view class="basic-info">
       <view class="zan-font-18 work-title">{{titleh}}</view>
       <view class="other-info">
         <view class="author-info">
-          <image class="author-avatar" src="{{avatarUrl}}"></image>
-          <view class="zan-font-14">{{nickname}}</view>
+          <image class="author-avatar" src="{{userInfo.avatarUrl}}"></image>
+          <view class="zan-font-14">{{userInfo.nickname}}</view>
         </view>
         <view class="zan-font-14 zan-c-gray-dark">{{evalNum}}评论</view>
       </view>

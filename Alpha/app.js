@@ -76,10 +76,15 @@ App({
     existedMsg: [],
     newMsg: [],
     arg: null,
+    wlArg: null,
+    wlTaskid: null,
+    wlWorkid: null,
     processedCourseids: [],
     indexProcessedIds: [],
     msgProcessedIds: [],
     workProcessedIds: [],
-    evalProcessedIds: []
+    evalProcessedIds: [],
+    worksList: {},
+    markedWorksList: []
   }
 })

@@ -22,6 +22,7 @@ Page({
     hasWork: true,
     taskid: null,
     work: null,
+    workid: null,
     title: '',
     describe: '',
     tempUrls: null,
@@ -52,6 +53,7 @@ Page({
     const openid = app.globalData.openid
     const now = new Date()
     let work
+    var hasWork = false
     var canEvaluate = false // 默认不能评论
     var status = false
     var pastEval = false // 是否已过互评期
@@ -72,7 +74,10 @@ Page({
 
       work = await this.getWork(taskid, openid)
       console.log('work', work)
+    } else if(arg == '4'){
+      const workid = this.data.workid
 
+      work = await this.getWork2(workid)
     } else {
       /**
        * 2：互评
@@ -92,7 +97,7 @@ Page({
       var randomList = []
       var idx = 0
       var flag = false // 全局是否已存在该互评作品的信息，默认不存在
-      
+
 
       if (arg == '2') { // 未完成
         /**
@@ -107,7 +112,7 @@ Page({
             evaledNum = wwcTasks[i].evaledNum
             console.log('evaledNum', evaledNum)
             if (wwcTasks[i].needEvalWorksList) {
-              flag = true  // 存在信息
+              flag = true // 存在信息
               console.log('存在互评信息')
 
               needEvalNum = wwcTasks[i].needEvalNum
@@ -134,7 +139,7 @@ Page({
 
               idx = wwcTasks[i].idx
               randomList = wwcTasks[i].randomList
-              if(idx > randomList.length - 1) {
+              if (idx > randomList.length - 1) {
                 console.log('无作品')
 
                 this.setData({
@@ -175,7 +180,7 @@ Page({
         console.log('evaledNum', evaledNum)
       }
 
-      if(!flag) {
+      if (!flag) {
         progress = (evaledNum / needEvalNum) * 100
         console.log('progress', progress)
         console.log('needEvalNum', needEvalNum)
@@ -184,7 +189,7 @@ Page({
         let evaledWorks = await this.getEvaledWorks(openid, taskid)
         var evaledWorkids = []
 
-        for(var i = 0; i < evaledWorks.length; i++) {
+        for (var i = 0; i < evaledWorks.length; i++) {
           evaledWorkids.push(evaledWorks[i]._workid)
         }
 
@@ -220,16 +225,16 @@ Page({
 
         console.log('needEvalWorksList', needEvalWorksList)
 
-        for(var i = 0; i < needEvalWorksCount; i++) {
+        for (var i = 0; i < needEvalWorksCount; i++) {
           randomList.push(i)
         }
         randomList = randomList.sort(this.randomsort)
         console.log('randomList', randomList)
 
         // 更新全局数据
-        if(arg == '2') {
-          for(var i = 0; i < wwcTasks.length; i++) {
-            if(wwcTasks[i]._id == taskid) {
+        if (arg == '2') {
+          for (var i = 0; i < wwcTasks.length; i++) {
+            if (wwcTasks[i]._id == taskid) {
               wwcTasks[i].needEvalNum = needEvalNum
               wwcTasks[i].randomList = randomList
               wwcTasks[i].needEvalWorksList = needEvalWorksList
@@ -237,10 +242,10 @@ Page({
               break
             }
           }
-          
+
           console.log('未完成', wwcTasks)
           app.globalData.wwcTasks = wwcTasks
-        } else if(arg == '3') {
+        } else if (arg == '3') {
           for (var i = 0; i < whpTasks.length; i++) {
             if (whpTasks[i]._id == taskid) {
               whpTasks[i].needEvalNum = needEvalNum
@@ -262,15 +267,15 @@ Page({
     }
 
     /**
-       * 处理work信息
-       */
+     * 处理work信息
+     */
     // 获得任务信息
     let taskInfo = await this.getTaskInfo(taskid)
     const standard = taskInfo.standard
     const standardKeys = Object.keys(standard)
     const evaluateend = taskInfo.evaluateend
 
-    if(now > evaluateend) {
+    if (now > evaluateend) {
       pastEval = true
 
       const authorOpenid = work._openid
@@ -281,7 +286,6 @@ Page({
       authorId = hs.hash(authorOpenid)
       const ctb = authorInfo[0].contribution
       authorRank = this.getRank(ctb)
-      console.log(hs.hash('12324'))
       console.log("authorNickname", authorNickname)
       console.log("authorAvatarUrl", authorAvatarUrl)
       console.log("authorId", authorId)
@@ -348,7 +352,7 @@ Page({
         }
       }
 
-      for(var i = 0; i < evals.length; i++) {
+      for (var i = 0; i < evals.length; i++) {
         const ctb = evals[i].contribution
         var rank = this.getRank(ctb)
 
@@ -402,7 +406,7 @@ Page({
 
     return rank
   },
-  getAuthorInfo: function (authorId) {
+  getAuthorInfo: function(authorId) {
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database()
       const _ = db.command
@@ -516,15 +520,33 @@ Page({
     }, this.data.duration)
 
   },
-  getWork: function(taskid, openid) {
+  getWork: function (taskid, openid) {
     // 获取已提交作品信息
     return new Promise((resolve, reject) => {
       const work = wx.cloud.database().collection('work')
 
       work.where({
-          _openid: openid,
-          _taskid: taskid
-        }).get()
+        _openid: openid,
+        _taskid: taskid
+      }).get()
+        .then(res => {
+          const data = res.data[0]
+          resolve(data)
+        })
+        .catch(err => {
+          console.log(err)
+          reject('获取失败')
+        })
+    })
+  },
+  getWork2: function (workid) {
+    // 获取已提交作品信息
+    return new Promise((resolve, reject) => {
+      const work = wx.cloud.database().collection('work')
+
+      work.where({
+        _id: workid
+      }).get()
         .then(res => {
           const data = res.data[0]
           resolve(data)
@@ -540,8 +562,8 @@ Page({
       const work = wx.cloud.database().collection('work')
 
       work.where({
-        _id: workid
-      }).get()
+          _id: workid
+        }).get()
         .then(res => {
           const data = res.data[0]
           resolve(data)
@@ -764,7 +786,7 @@ Page({
         })
     })
   },
-  getNeedEvalWorksCount: function (evaledWorkids, taskid, openid) {
+  getNeedEvalWorksCount: function(evaledWorkids, taskid, openid) {
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database()
       const _ = db.command
@@ -773,7 +795,7 @@ Page({
         .where({
           _id: _.nin(evaledWorkids),
           _taskid: taskid,
-          _openid: _.nin([openid,])
+          _openid: _.nin([openid, ])
         })
         .count()
         .then(res => {
@@ -795,7 +817,7 @@ Page({
         .where({
           _id: _.nin(evaledWorkids),
           _taskid: taskid,
-          _openid: _.nin([openid,])
+          _openid: _.nin([openid, ])
         })
         .skip(skip)
         .get()
@@ -829,7 +851,7 @@ Page({
         })
     })
   },
-  toComment: function () {
+  toComment: function() {
     const workid = this.data.work._id
     const taskid = this.data.taskid
     const arg = this.data.arg
@@ -838,7 +860,7 @@ Page({
       url: '../comment/comment?data=' + workid + '/' + taskid + '/' + arg,
     })
   },
-  randomsort: function (a, b) {
+  randomsort: function(a, b) {
     return Math.random() > .5 ? -1 : 1
   },
   /**
@@ -846,11 +868,24 @@ Page({
    */
   onLoad: function(options) {
     const list = options.data.split('/')
-    const taskid = list[0]
-    const arg = list[1]
+    const arg = list[list.length - 1]
+    var taskid
 
-    console.log('taskid', taskid)
+    if(arg == '4') {
+      taskid = list[0]
+      const workid = list[1]
+      console.log('workid', workid)
+
+      this.setData({
+        workid: workid
+      })
+    } else {
+      taskid = list[0]
+      console.log('taskid', taskid)
+    }
+
     console.log('arg', arg)
+    console.log('taskid', taskid)
 
     this.setData({
       arg: arg
@@ -872,12 +907,11 @@ Page({
   onShow: function() {
     const arg = app.globalData.arg
 
-    if(arg == '2') {
+    if (arg == '2') {
       const inEvalTask = app.globalData.inEvalTask
       const taskid = inEvalTask.taskid
       const status = inEvalTask.status
       if (status) {
-        // this.init(taskid, '2')
         this.setData(inEvalTask.data)
       }
     }

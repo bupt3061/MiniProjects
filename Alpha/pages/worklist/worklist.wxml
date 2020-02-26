@@ -1,6 +1,15 @@
 <!--pages/worklist/worklist.wxml-->
 <import src="../template/template.wxml" />
 
-<view class="container zan-font-16 zan-c-black" style="padding: 32rpx 0;">
-  <template is="work-card"></template>
+<view wx:if="{{!hasWork && show}}" class="container" style="padding: 320rpx 0;">
+  <image src="../../img/quexing.png" style="width: 50%;" mode="widthFix"></image>
+  <view class="zan-font-20 zan-c-gray-darker" style="font-weight: bold; margin: 24rpx" bindtap="addCourse">
+    {{content}}
+  </view>
+</view>
+
+<view wx:if="{{hasWork && show}}" class="container zan-font-16 zan-c-black" style="padding: 32rpx 0;">
+  <block wx:for="{{works}}" wx:key="{{index}}">
+    <template is="work-card" data="{{...item}}"></template>
+  </block>
 </view>

@@ -26,8 +26,17 @@ function handleListTaskName(str) {
   return str.slice(0, 11) + '...'
 }
 
+function handleWorkName(str) {
+  if (str.length <= 28) {
+    return str
+  }
+
+  return str.slice(0, 28) + '...'
+}
+
 module.exports = {
   handleTaskName: handleTaskName,
   handleCourseName: handleCourseName,
-  handleListTaskName: handleListTaskName
+  handleListTaskName: handleListTaskName,
+  handleWorkName: handleWorkName
 }
