@@ -774,7 +774,21 @@ Page({
    * 页面加载完成，一个页面只会调用一次
    */
   onLoad: function() {
-    console.log('onLoad执行了')
+    console.log('test, onLoad执行了')
+
+    const processedCourseids = app.globalData.processedCourseids
+    const indexProcessedIds = app.globalData.indexProcessedIds
+
+    if (indexProcessedIds.length < processedCourseids.length) {
+      console.log('processedCourseids', processedCourseids)
+      console.log('indexProcessedIds', indexProcessedIds)
+
+      const arg = 2
+      this.init(arg)
+
+      return
+    }
+
     const arg = 1
     this.init(arg)
   },

@@ -29,7 +29,7 @@ Page({
 
     if(arg == 1) {
       // 初始加载
-      console.log('加载')
+      console.log('test, 加载')
 
       courseids = app.globalData.courseids
       if (courseids.length == 0) {
@@ -68,7 +68,7 @@ Page({
         }
       }
 
-      var newMsgProcessedIds = courseids.concat(app.globalData.msgProcessedIds)
+      var newMsgProcessedIds = courseids.concat(msgProcessedIds)
       app.globalData.msgProcessedIds = newMsgProcessedIds
       console.log('newMsgProcessedIds', newMsgProcessedIds)
       console.log("courseids", courseids)
@@ -187,7 +187,7 @@ Page({
     // 计算成绩
     for (var i = 0; i < needProcessTasks.length; i++) {
       // 互评成绩
-      if (!needProcessTasks[i].evaledNum) {
+      if (!needProcessTasks[i].evaledNum || needProcessTasks[i].evaledNum == 0) {
         needProcessTasks[i].evalScore = 0
         continue
       }
@@ -204,7 +204,7 @@ Page({
 
     for (var i = 0; i < needProcessTasks.length; i++) {
       // 作业成绩
-      if (!needProcessTasks[i].work) {
+      if ((!needProcessTasks[i].work.evals) || needProcessTasks[i].work.evals.length == 0) {
         needProcessTasks[i].workScore = 0
         continue
       }
@@ -313,16 +313,8 @@ Page({
 
     // 更新数据
     if(arg == 2) {
-      if(newMsg.length != 0) {
-        newMsg = newMsg.concat(app.globalData.newMsg)
-      } else {
-        newMsg = app.globalData.newMsg
-      }
-      if (existedMsg.length != 0) {
-        existedMsg = existedMsg.concat(app.globalData.existedMsg)
-      } else {
-        existedMsg = app.globalData.existedMsg
-      }
+      newMsg = newMsg.concat(app.globalData.newMsg)
+      existedMsg = existedMsg.concat(app.globalData.existedMsg)
     }
 
     for (var i = 0; i < newMsg.length; i++) {
@@ -553,7 +545,21 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function(options) {
-    console.log('onLoad执行了')
+    console.log('otest, nLoad执行了')
+
+    const processedCourseids = app.globalData.processedCourseids
+    const msgProcessedIds = app.globalData.msgProcessedIds
+
+    if (msgProcessedIds.length < processedCourseids.length) {
+      console.log("processedCourseids", processedCourseids)
+      console.log("msgProcessedIds", msgProcessedIds)
+
+      const arg = 2
+      this.init(arg)
+
+      return
+    }
+
     const arg = 1
     this.init(1)
   },
@@ -572,17 +578,40 @@ Page({
     const processedCourseids = app.globalData.processedCourseids
     const msgProcessedIds = app.globalData.msgProcessedIds
 
+    console.log('onShow执行了')
+
     if (msgProcessedIds.length < processedCourseids.length) {
-      console.log('onShow执行了')
+      console.log("processedCourseids", processedCourseids)
+      console.log("msgProcessedIds", msgProcessedIds)
+
       const arg = 2
-      this.init(2)
+      this.init(arg)
     } else {
       const existedMsg = app.globalData.existedMsg
       const newMsg = app.globalData.newMsg
+      const courseids = app.globalData.courseids
+
+      if(courseids.length == 0) {
+        this.setData({
+          hasCourse: false
+        })
+
+        return
+      }
+
+      if(existedMsg.length == 0 && newMsg.length == 0) {
+        this.setData({
+          hasMsg: false
+        })
+
+        return
+      }
 
       this.setData({
         newMsg: newMsg,
         existedMsg: existedMsg,
+        hasCourse: true,
+        hasMsg: true,
         show: true
       })
     }

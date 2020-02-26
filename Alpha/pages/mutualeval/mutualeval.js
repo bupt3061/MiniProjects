@@ -47,13 +47,12 @@ Page({
       console.log('courseids', courseids)
     } else if (arg == 2) {
       hasCourse = true
+      console.log('test, 刷新')
       const evalProcessedIds = app.globalData.evalProcessedIds
       const processedCourseids = app.globalData.processedCourseids
-
-      console.log('test, 刷新')
       console.log("evalProcessedIds", evalProcessedIds)
       console.log("processedCourseids", processedCourseids)
-
+      
       courseids = []
       for (var i = 0; i < processedCourseids.length; i++) {
         var flag = true

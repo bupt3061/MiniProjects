@@ -52,9 +52,13 @@ Page({
         hasCourse = true
       }
     } else if (arg == 2) {
+      console.log('test，刷新')
+
       hasCourse = true
       const workProcessedIds = app.globalData.workProcessedIds
       const processedCourseids = app.globalData.processedCourseids
+      console.log("workProcessedIds", workProcessedIds)
+      console.log("processedCourseids", processedCourseids)
 
       courseids = []
       for (var i = 0; i < processedCourseids.length; i++) {
@@ -70,11 +74,7 @@ Page({
         }
       }
 
-      console.log('test，刷新')
-      console.log("workProcessedIds", workProcessedIds)
-      console.log("processedCourseids", processedCourseids)
-
-      var newWorkProcessedIds = courseids.concat(app.globalData.workProcessedIds)
+      var newWorkProcessedIds = courseids.concat(workProcessedIds)
       app.globalData.workProcessedIds = newWorkProcessedIds
       console.log('courseids', courseids)
       console.log('newWorkProcessedIds', newWorkProcessedIds)
@@ -515,7 +515,7 @@ Page({
       if (workProcessedIds.length < processedCourseids.length) { // 添加了新课程
         console.log('processedCourseids', processedCourseids)
         console.log('workProcessedIds', workProcessedIds)
-        
+
         const arg = 2
         this.init(arg)
 
