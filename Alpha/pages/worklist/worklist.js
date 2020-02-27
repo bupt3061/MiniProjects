@@ -10,6 +10,7 @@ Page({
   data: {
     hasWork: false,
     works: null,
+    workids: null,
     show: false,
     taskid: null,
     arg: null,
@@ -125,6 +126,11 @@ Page({
       workids = markedWorkids
       console.log('works', works)
       console.log('workids', workids)
+    } else if(arg == '3') {  // 新添加
+      workids = this.data.workids
+      console.log('workids', workids)
+
+      works = await this.getWorks(workids)
     }
 
     // 获取评论数
@@ -172,6 +178,11 @@ Page({
       app.globalData.worksList[this.data.taskid] = works
     } else if (arg == '2') {
       app.globalData.markedWorksList = works
+    } else if(arg == '3') {
+      works = works.concat(app.globalData.markedWorksList)
+      app.globalData.markedWorksList = works
+
+      console.log(works)
     }
     wx.hideLoading()
 
@@ -230,7 +241,8 @@ Page({
 
       db.collection('marked')
         .where({
-          _openid: openid
+          _openid: openid,
+          status: true
         })
         .count()
         .then(res => {
@@ -249,7 +261,8 @@ Page({
 
       db.collection('marked')
         .where({
-          _openid: openid
+          _openid: openid,
+          status: true
         })
         .skip(skip)
         .orderBy('markedtime', 'desc')
@@ -297,6 +310,26 @@ Page({
           console.log(err)
           reject('获取失败')
         })
+    })
+  },
+  getWorks: function(workids) {
+    return new Promise((resolve, reject) => {
+      const db = wx.cloud.database()
+      const _ = db.command
+
+      db.collection('work')
+      .where({
+        _id: _.in(workids)
+      })
+      .get()
+      .then(res => {
+        const data = res.data
+        resolve(data)
+      })
+      .catch(err => {
+        reject('获取失败')
+        console.log(err)
+      })
     })
   },
   getEvalNum: function(workid) {
@@ -364,6 +397,7 @@ Page({
         if (worksList[taskid].length == 0) {
           this.setData({
             hasWork: false,
+            content: '暂无作品',
             show: true
           })
 
@@ -385,6 +419,55 @@ Page({
     } else if (arg == '2') {
       const markedWorksList = app.globalData.markedWorksList
       console.log('2:', markedWorksList)
+
+      const newAddedCourseids = app.globalData.newAddedCourseids
+      const processedAddedIds = app.globalData.processedAddedIds
+      console.log('test', newAddedCourseids)
+      console.log('test', processedAddedIds)
+
+      if (processedAddedIds.length < newAddedCourseids.length) {
+        const arg = '3'
+
+        var workids = []
+        for (var i = 0; i < newAddedCourseids.length; i++) {
+          var flag = true
+          for (var j = 0; j < processedAddedIds.length; j++) {
+            if (newAddedCourseids[i] == processedAddedIds[j]) {
+              flag = false
+              continue
+            }
+          }
+          if (flag) {
+            workids.push(newAddedCourseids[i])
+          }
+        }
+
+        if (markedWorksList.length != 0) {
+          this.setData({
+            works: markedWorksList,
+            hasWork: true,
+            show: true
+          })
+        } else {
+          this.setData({
+            hasWork: false,
+            show: true
+          })
+        }
+
+        this.setData({
+          workids: workids
+        })
+
+        this.init(arg)
+        console.log(workids)
+
+        // 更新数据
+        var newProcessedAddedIds = workids.concat(app.globalData.processedAddedIds)
+        app.globalData.processedAddedIds = newProcessedAddedIds
+
+        return
+      }
 
       if (markedWorksList.length != 0) {
         this.setData({
@@ -416,7 +499,6 @@ Page({
    */
   onShow: function() {
     const arg = app.globalData.wlArg
-    console.log('test, onShow执行了')
 
     if (arg == '1') {
       const taskid = app.globalData.wlTaskid
@@ -429,6 +511,7 @@ Page({
         if (worksList[taskid].length == 0) {
           this.setData({
             hasWork: false,
+            content: '暂无作品',
             show: true
           })
 
@@ -450,8 +533,53 @@ Page({
     } else if (arg == '2') {
       const markedWorksList = app.globalData.markedWorksList
 
+      const newAddedCourseids = app.globalData.newAddedCourseids
+      const processedAddedIds = app.globalData.processedAddedIds
+      console.log('test', newAddedCourseids)
+      console.log('test', processedAddedIds)
+
+      if (processedAddedIds.length < newAddedCourseids.length) {
+        const arg = '3'
+
+        var workids = []
+        for (var i = 0; i < newAddedCourseids.length; i++) {
+          var flag = true
+          for (var j = 0; j < processedAddedIds.length; j++) {
+            if (newAddedCourseids[i] == processedAddedIds[j]) {
+              flag = false
+              continue
+            }
+          }
+          if (flag) {
+            workids.push(newAddedCourseids[i])
+          }
+        }
+
+        if (markedWorksList.length != 0) {
+          this.setData({
+            works: markedWorksList,
+            hasWork: true,
+            show: true
+          })
+        } else {
+          this.setData({
+            hasWork: false,
+            show: true
+          })
+        }
+
+        this.setData({
+          workids: workids
+        })
+
+        this.init(arg)
+        console.log(workids)
+
+        return
+      }
+
       if (markedWorksList.length != 0) {
-        console.log('2:', markedWorksList)
+        console.log('2:', markedWorksList)        
         this.setData({
           works: markedWorksList,
           hasWork: true,

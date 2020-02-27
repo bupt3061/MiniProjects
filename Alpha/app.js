@@ -85,6 +85,8 @@ App({
     workProcessedIds: [],
     evalProcessedIds: [],
     worksList: {},
-    markedWorksList: []
+    markedWorksList: [],
+    newAddedCourseids: [],
+    processedAddedIds: []
   }
 })

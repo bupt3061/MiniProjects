@@ -427,6 +427,7 @@ Page({
     })
   },
   marked: function() {
+    // 上传数据
     const marked = wx.cloud.database().collection('marked')
 
     if (this.data.mexisted) {
@@ -481,8 +482,15 @@ Page({
       })
     }, this.data.duration)
 
+    // 更新数据
+    const workid = this.data.work._id
+    app.globalData.newAddedCourseids.push(workid)
+    console.log('新收藏id', app.globalData.newAddedCourseids)
+    console.log('已处理id', app.globalData.processedAddedIds)
+    console.log('workid', workid)
   },
   cancleMarked: function() {
+    // 上传数据
     const marked = wx.cloud.database().collection('marked')
 
     marked.where({
@@ -519,6 +527,51 @@ Page({
       })
     }, this.data.duration)
 
+    // 更新数据
+    const workid = this.data.work._id
+    const newAddedCourseids = app.globalData.newAddedCourseids
+    const processedAddedIds = app.globalData.processedAddedIds
+    const markedWorksList = app.globalData.markedWorksList
+
+    var temp0 = []
+    for (var i = 0; i < newAddedCourseids.length; i++) {
+      var flag = true
+      if (newAddedCourseids[i] == workid) {
+        flag = false
+      }
+      if(flag) {
+        temp0.push(newAddedCourseids[i])
+      }
+    }
+
+    var temp1 = []
+    for (var i = 0; i < processedAddedIds.length; i++) {
+      var flag = true
+      if (processedAddedIds[i] == workid) {
+        flag = false
+      }
+      if (flag) {
+        temp1.push(processedAddedIds[i])
+      }
+    }
+
+    app.globalData.newAddedCourseids = temp0
+    app.globalData.processedAddedIds = temp1
+    console.log('新收藏id', app.globalData.newAddedCourseids)
+    console.log('已处理id', app.globalData.processedAddedIds)
+
+    var temp2 = []
+    for (var i = 0; i < markedWorksList.length; i++) {
+      var flag = true
+      if (markedWorksList[i]._id == workid) {
+        flag = false
+      }
+      if(flag) {
+        temp2.push(markedWorksList[i])
+      }
+    }
+    app.globalData.markedWorksList = temp2
+    console.log('收藏作品', app.globalData.markedWorksList)
   },
   getWork: function (taskid, openid) {
     // 获取已提交作品信息
