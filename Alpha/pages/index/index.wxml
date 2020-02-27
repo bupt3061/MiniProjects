@@ -1,5 +1,6 @@
 <!--index.wxml-->
-<zan-toptips content="{{content}}" duration="{{ duration }}" is-show="{{ $zanui.toptips.show }}" backgroundColor="#14d1b5"/>
+<!-- <button bindtap="test">test</button> -->
+<import src="../template/template.wxml" />
 
 <zan-dialog id="zan-dialog"></zan-dialog>
 
@@ -16,8 +17,13 @@
   </view>
 </block>
 
-<block wx:if="{{type == 2}}">
-  <view class="container zan-font-16 zan-c-gray-darker">
-    <text>教师</text>
+<block wx:else>
+  <view class="container zan-font-16 zan-c-black" style="padding-top: 64rpx 0;">
+    <view class="card primary zan-font-18" style="height: 160rpx; width: 90%; justify-content: center; ">
+      <zan-icon type="add-o" style="margin-right: 12rpx;"></zan-icon>
+      <view>添加课程</view>
+    </view> 
+
+    
   </view>
 </block>

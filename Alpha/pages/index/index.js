@@ -10,6 +10,7 @@ Page({
    * 页面的初始数据
    */
   data: {
+    show: false,
     openid: null,
     type: null,
     inUploadNum: 0,
@@ -75,7 +76,6 @@ Page({
 
       /**
        * 1、获取课程信息
-       * 2、若未添加课程则显示顶部提示
        */
       courseids = userInfo.courses
 
@@ -435,12 +435,51 @@ Page({
       wx.hideLoading()
     } else if (type == 2) {
       // 教师端
+      wx.hideLoading()
+
+      this.setData({
+        courses: courses,
+        show: true
+      })
     }
 
   },
   /**
    * 页面其他函数
    */
+  async test() {
+    let userdata = await this.getUserdata()
+    console.log(userdata)
+
+    wx.cloud.callFunction({
+      name: 'excel',
+      data: {
+        userdata: userdata
+      },
+      success: res => {
+        console.log(res.result.fileID)
+      },
+      fail: err => {
+        console.log(err)
+      }
+    })
+  },
+  getUserdata: function() {
+    return new Promise((resolve, reject) => {
+      const db = wx.cloud.database()
+
+      db.collection('user')
+      .get()
+      .then(res => {
+        const data = res.data
+        resolve(data)
+      })
+      .catch(err => {
+        reject('获取失败')
+        console.log(err)
+      })
+    })
+  },
   handleDialog: function() {
     Dialog({
       title: '暂无课程',

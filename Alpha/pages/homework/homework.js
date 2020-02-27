@@ -76,8 +76,8 @@ Page({
 
       var newWorkProcessedIds = courseids.concat(workProcessedIds)
       app.globalData.workProcessedIds = newWorkProcessedIds
-      console.log('courseids', courseids)
       console.log('newWorkProcessedIds', newWorkProcessedIds)
+      console.log('courseids', courseids)
     }
 
     wx.showLoading({
