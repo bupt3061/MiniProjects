@@ -217,3 +217,23 @@
     </view>
   </view>
 </template>
+
+<template name="tcourse-card">
+  <view data-taskid="{{_id}}" bindtap="clickTCourse" style="width: 90%; display: flex; flex-direction: row; background-color: white; border-radius: 18rpx; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2); margin-bottom: 32rpx; align-items: center; position: relative; ">
+    <view style="width: 160rpx; height: 160rpx; border-radius: 18rpx;">
+      <image style="height: 100%; width: 100%; border-radius: 18rpx;" mode="scaleToFill" src="{{coverPath}}" />
+    </view>
+    <view style="padding: 32rpx;">
+      <view data-id="{{_id}}" style="display: flex; flex-direction: row; align-items:center; margin-bottom: 14rpx;" bindtap="toPost">
+        <view style="font-weight: bold; margin-right: 12rpx;">{{tcoursenameh}}</view>
+        <zan-icon class="zan-font-14 zan-c-gray" type="qr"></zan-icon>
+      </view>
+      <view class="zan-font-12 zan-c-gray-darker">{{zhouqi}}</view>
+    </view>
+    <view class="primary" style="position: absolute; right: 0; display: flex; flex-direction: row; padding-right: 32rpx;">
+      <view data-id="{{_id}}" style="margin-right: 12rpx" bindtap="toModify">修改</view>
+      <view style="margin-right: 12rpx">|</view>
+      <view bindtap="toTask">查看</view>
+    </view>
+  </view>
+</template>

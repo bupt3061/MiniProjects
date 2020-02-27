@@ -15,10 +15,23 @@ App({
 
     // 获取设备信息
     const info = wx.getSystemInfoSync()
+    // px转换到rpx的比例
+    const pxToRpxScale = 750 / info.windowWidth;
+    // 导航栏的高度
+    const navigationHeight = 44
+   
     const screenWidth = info.screenWidth
+    const screenHeight = info.screenHeight
+    const windowHeight = info.windowHeight
 
+    console.log('navigationHeight', navigationHeight)
+    this.globalData.navigationHeight = navigationHeight
     console.log('screenWidth', screenWidth)
     this.globalData.screenWidth = screenWidth
+    console.log('screenHeight', screenHeight)
+    this.globalData.screenHeight = screenHeight
+    console.log('windowHeight', windowHeight)
+    this.globalData.windowHeight = windowHeight
 
     // 登录
     wx.login({
@@ -68,6 +81,9 @@ App({
     inEvalNum: 0,
     inEvalTask: null,
     screenWidth: null,
+    screenHeight: null,
+    windowHeight: null,
+    navigationHeight: null,
     standard: null,
     standardKeys: null,
     storedUploadTasks: false,

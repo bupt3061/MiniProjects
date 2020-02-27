@@ -2,6 +2,7 @@
 
 // 获取全局变量
 const app = getApp()
+const dt = require('../../utils/date.js')
 const st = require('../../utils/string.js')
 const Dialog = require('../../dist/dialog/dialog');
 
@@ -435,6 +436,17 @@ Page({
       wx.hideLoading()
     } else if (type == 2) {
       // 教师端
+      // 处理时间
+      for(var i = 0; i < courses.length; i++) {
+        var zhouqi = dt.formatTime(courses[i].starttime) + '-' + dt.formatTime(courses[i].endtime)
+        courses[i].zhouqi = zhouqi
+      }
+
+      // 处理长字符串
+      for (var i = 0; i < courses.length; i++) {
+        courses[i].tcoursenameh = st.handleCourseName2(courses[i].coursename)
+      }
+
       wx.hideLoading()
 
       this.setData({
@@ -821,6 +833,14 @@ Page({
   toMutualEval: function() {
     wx.navigateTo({
       url: '../mutualeval/mutualeval',
+    })
+  },
+  toPost: function(e) {
+    const courseid = e.currentTarget.dataset.id
+    console.log(courseid)
+
+    wx.navigateTo({
+      url: '../post/post?courseid=' + courseid,
     })
   },
   /**

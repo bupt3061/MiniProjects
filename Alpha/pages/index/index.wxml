@@ -24,6 +24,8 @@
       <view>添加课程</view>
     </view> 
 
-    
+    <block wx:for="{{courses}}" wx:key="{{index}}">
+      <template is="tcourse-card" data="{{...item}}"></template>
+    </block>
   </view>
 </block>

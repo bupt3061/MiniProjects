@@ -7,7 +7,7 @@ function handleTaskName(str) {
     return str
   }
 
-  return str.slice(0, 7) + '...'
+  return str.slice(0, 8) + '...'
 }
 
 function handleCourseName(str) {
@@ -18,12 +18,20 @@ function handleCourseName(str) {
   return str.slice(0, 5)
 }
 
+function handleCourseName2(str) {
+  if (str.length <= 6) {
+    return str
+  }
+
+  return str.slice(0, 6) + '...'
+}
+
 function handleListTaskName(str) {
   if (str.length <= 12) {
     return str
   }
 
-  return str.slice(0, 11) + '...'
+  return str.slice(0, 12) + '...'
 }
 
 function handleWorkName(str) {
@@ -38,5 +46,6 @@ module.exports = {
   handleTaskName: handleTaskName,
   handleCourseName: handleCourseName,
   handleListTaskName: handleListTaskName,
-  handleWorkName: handleWorkName
+  handleWorkName: handleWorkName,
+  handleCourseName2: handleCourseName2
 }
