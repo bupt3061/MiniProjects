@@ -21,26 +21,24 @@ Page({
     const screenWidth = this.data.screenWidth
     const windowHeight = this.data.windowHeight
     const navigationHeight = this.data.navigationHeight
+    const QRCode = require('weapp-qrcode')
 
     // 绘制二维码
-    this.drawQRCode()
-
-    wx.canvasToTempFilePath({
+    QRCode({
+      width: screenWidth * 0.6,
+      height: screenWidth * 0.6,
       canvasId: 'qrcode',
-      success: res => {
-        console.log(res)
-      },
-      fail: err => {
-        console.log(err)
-      }
-    }, this)
+      text: courseid
+    })
+
+    this.drawQRCode()
 
     // 获取课程名
     const courses = app.globalData.courses
 
     var coursename = null
-    for(var i = 0; i < courses.length; i++) {
-      if(courses[i]._id == courseid) {
+    for (var i = 0; i < courses.length; i++) {
+      if (courses[i]._id == courseid) {
         coursename = courses[i].coursename
         break
       }
@@ -108,19 +106,15 @@ Page({
   },
   drawQRCode: function() {
     // 绘制二维码
-    const that = this
-    const courseid = this.data.courseid
-    const screenWidth = this.data.screenWidth
-    const windowHeight = this.data.windowHeight
-    const navigationHeight = this.data.navigationHeight
-    const QRCode = require('weapp-qrcode')
-
-    QRCode({
-      width: screenWidth * 0.6,
-      height: screenWidth * 0.6,
+    wx.canvasToTempFilePath({
       canvasId: 'qrcode',
-      text: courseid
-    })
+      success: res => {
+        console.log(res)
+      },
+      fail: err => {
+        console.log(err)
+      }
+    }, this)
   },
   /**
    * 生命周期函数--监听页面加载
