@@ -83,6 +83,7 @@
     "zan-toptips": "/dist/toptips/index",
     "zan-loadmore": "/dist/loadmore/index",
     "zan-toptips": "/dist/toptips/index",
-    "zan-field": "/dist/field/index"
+    "zan-field": "/dist/field/index",
+    "zan-dialog": "/dist/dialog/index"
   }
 }

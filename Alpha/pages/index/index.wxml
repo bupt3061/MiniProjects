@@ -1,6 +1,8 @@
 <!--index.wxml-->
 <zan-toptips content="{{content}}" duration="{{ duration }}" is-show="{{ $zanui.toptips.show }}" backgroundColor="#14d1b5"/>
 
+<zan-dialog id="zan-dialog"></zan-dialog>
+
 <block wx:if="{{type == 1}}">
   <view class="container zan-font-16 zan-c-black" style="padding-top: 180rpx; position: relative;">
     <view class="card" bindtap="toHomework">

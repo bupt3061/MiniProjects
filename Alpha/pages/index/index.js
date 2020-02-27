@@ -3,24 +3,18 @@
 // 获取全局变量
 const app = getApp()
 const st = require('../../utils/string.js')
+const Dialog = require('../../dist/dialog/dialog');
 
 Page({
   /**
    * 页面的初始数据
    */
   data: {
-    duration: 5000,
-    content: '前往我的添加课程',
-    $zanui: {
-      toptips: {
-        show: false
-      }
-    },
     openid: null,
     type: null,
     inUploadNum: 0,
     inEvalNum: 0,
-    hasCourse: null
+    hasCourse: false
   },
   /**
    * 初始化函数
@@ -90,28 +84,14 @@ Page({
         hasCourse = false
         console.log('尚未添加课程')
 
+        this.handleDialog()
         this.setData({
           inUploadNum: 0,
           inEvalNum: 0,
           type: type,
           openid: openid,
-          hasCourse: hasCourse,
-          $zanui: {
-            toptips: {
-              show: true
-            }
-          }
+          hasCourse: hasCourse
         })
-
-        setTimeout(() => {
-          this.setData({
-            $zanui: {
-              toptips: {
-                show: false
-              }
-            }
-          })
-        }, this.data.duration);
 
         return
       } else {
@@ -461,6 +441,41 @@ Page({
   /**
    * 页面其他函数
    */
+  handleDialog: function() {
+    Dialog({
+      title: '暂无课程',
+      message: '前往"我的/我的课程"添加',
+      selector: '#zan-dialog',
+      buttons: [{
+        text: '取消',
+        color: '#666',
+        type: 'cancel'
+      }, {
+        text: '前往',
+        color: '#14d1b5',
+        type: 'qianwang'
+      }]
+    }).then(({
+      type,
+      hasOpenDataPromise,
+      openDataPromise
+    }) => {
+      // type 可以用于判断具体是哪一个按钮被点击
+      if (type == 'qianwang') {
+        wx.navigateTo({
+          url: '../course/course',
+        })
+      }
+
+      if (hasOpenDataPromise) {
+        openDataPromise.then((data) => {
+          console.log('成功获取信息', data);
+        }).catch((data) => {
+          console.log('获取信息失败', data);
+        });
+      }
+    });
+  },
   getInUploadTasksCount: function(courseids, now) {
     /**
      * 获取当前处在提交期的任务的总数
