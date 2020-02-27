@@ -2,6 +2,6 @@
 
 <view style="height: 100%;">
   <canvas canvas-id="post" style="width: 100%; height: 100%; position: relative">
-    <canvas canvas-id="qrcode" style="width: {{screenWidth * 0.6}}px; height: {{screenWidth * 0.6}}px; position: absolute; left: {{screenWidth * 0.2}}px; top: {{(windowHeight + navigationHeight) * 0.33 - screenWidth * 0.3}}px;"></canvas>
+    <canvas hidden="{{hidden}}"  canvas-id="qrcode" style="width: {{screenWidth * 0.6}}px; height: {{screenWidth * 0.6}}px; position: absolute; left: {{screenWidth * 0.2}}px; top: {{(windowHeight + navigationHeight) * 0.33 - screenWidth * 0.3}}px;"></canvas>
   </canvas>
 </view>

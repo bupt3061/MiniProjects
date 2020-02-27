@@ -7,6 +7,7 @@ Page({
    * 页面的初始数据
    */
   data: {
+    hidden: false,
     navigationHeight: null,
     screenWidth: null,
     windowHeight: null,
@@ -20,10 +21,21 @@ Page({
     const screenWidth = this.data.screenWidth
     const windowHeight = this.data.windowHeight
     const navigationHeight = this.data.navigationHeight
-    // 绘制二维码
-    const QRCode = require('weapp-qrcode')
 
-    // // 获取课程名
+    // 绘制二维码
+    this.drawQRCode()
+
+    wx.canvasToTempFilePath({
+      canvasId: 'qrcode',
+      success: res => {
+        console.log(res)
+      },
+      fail: err => {
+        console.log(err)
+      }
+    }, this)
+
+    // 获取课程名
     const courses = app.globalData.courses
 
     var coursename = null
@@ -34,6 +46,19 @@ Page({
       }
     }
     console.log(coursename)
+
+    // 随机获取文本
+    var texts = [
+      "长风破浪会有时",
+      "梅花香自苦寒来",
+      "劝君惜取少年时",
+      "千里之行始于足下",
+      "不鸣则已，一鸣惊人",
+      "观千剑而后识器"
+    ]
+
+    var random = Math.floor(Math.random() * texts.length)
+    const text = texts[random]
 
     // 绘制背景矩形
     const ctx = wx.createCanvasContext('post')
@@ -59,15 +84,13 @@ Page({
     ctx.font = '16px Arial';
     ctx.textAlign = 'center';
     ctx.fillStyle = '#000';
-    ctx.fillText(coursename, screenWidth / 2, (windowHeight + navigationHeight) * 0.66 - 32, screenWidth * 0.6);
+    ctx.fillText(coursename, screenWidth / 2, (windowHeight + navigationHeight) * 0.33 + screenWidth * 0.3 + 40, screenWidth * 0.6);
+    // 绘制文本
+    ctx.font = '20px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#000';
+    ctx.fillText(text, screenWidth / 2, (windowHeight + navigationHeight) * 0.82, screenWidth * 0.6);
     ctx.draw()
-
-    QRCode({
-      width: screenWidth * 0.6,
-      height: screenWidth * 0.6,
-      canvasId: 'qrcode',
-      text: courseid
-    })
   },
   /**
    * 其他函数
@@ -82,6 +105,22 @@ Page({
     context.fillRect(x + r, y + r, w - r * 2, h - r * 2);
     context.stroke();
     context.closePath();
+  },
+  drawQRCode: function() {
+    // 绘制二维码
+    const that = this
+    const courseid = this.data.courseid
+    const screenWidth = this.data.screenWidth
+    const windowHeight = this.data.windowHeight
+    const navigationHeight = this.data.navigationHeight
+    const QRCode = require('weapp-qrcode')
+
+    QRCode({
+      width: screenWidth * 0.6,
+      height: screenWidth * 0.6,
+      canvasId: 'qrcode',
+      text: courseid
+    })
   },
   /**
    * 生命周期函数--监听页面加载
