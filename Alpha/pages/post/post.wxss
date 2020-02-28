@@ -4,3 +4,16 @@ page {
   background-color: #14d1b5;
   height: 100%;
 }
+
+.toast {
+  z-index: 1; 
+  position: absolute; 
+  top: 50%; 
+  width: 100px; 
+  text-align:center; 
+  color: white; 
+  background-color: rgba(0, 0, 0, 0.6); 
+  border-radius: 8rpx;
+  padding: 24rpx;
+  box-sizing: border-box;
+}

@@ -12,7 +12,9 @@ Page({
     screenWidth: null,
     windowHeight: null,
     courseid: null,
-    state: null
+    state: null,
+    show: false,
+    coursename: null
   },
   /**
    * 初始化函数
@@ -64,6 +66,10 @@ Page({
     }
     console.log(coursename)
 
+    this.setData({
+      coursename: coursename
+    })
+
     // 获取随机文本
     var random = Math.floor(Math.random() * texts.length)
     text = texts[random]
@@ -79,6 +85,8 @@ Page({
     ctx.fillRect(0, 0, screenWidth, windowHeight + navigationHeight)
     // 绘制圆角矩形
     this.roundRectColor(ctx, 24, 48, screenWidth - 48, windowHeight + navigationHeight - 48 - 48, 24)
+    // // 绘制下载图标
+    // ctx.drawImage('../../img/download.png', screenWidth - 42, 18, 18, 18)
     // 绘制圆
     ctx.beginPath();
     ctx.arc(24, (windowHeight + navigationHeight) * 0.66, 8, 0 * Math.PI / 180, 360 * Math.PI / 180);
@@ -141,22 +149,46 @@ Page({
       resolve(true)
     })
   },
-  canvasToTempImage: function (canvasId) {
+  canvasToTempImage: function(canvasId) {
     return new Promise((resolve, reject) => {
       //把当前画布指定区域的内容导出生成指定大小的图片，并返回文件路径。
       wx.canvasToTempFilePath({
         canvasId: canvasId,
-        success: function (res) {
+        success: function(res) {
           var tempFilePath = res.tempFilePath;
           resolve(tempFilePath)
         },
-        fail: function (res) {
+        fail: function(res) {
           console.log(res);
         }
       });
     })
   },
-  
+  async download() {
+    const that = this
+    const coursename = this.data.coursename
+    let postUrl
+
+    postUrl = await this.canvasToTempImage("post")
+    console.log(postUrl)
+    console.log(postUrl + '/down?filename=' + encodeURI(coursename))
+
+    wx.saveImageToPhotosAlbum({
+      filePath: postUrl,
+      success: res => {
+        console.log(res)
+        that.setData({
+          show: true
+        })
+
+        setTimeout(function() {
+          that.setData({
+            show: false
+          })
+        }, 1000)
+      }
+    })
+  },
   /**
    * 生命周期函数--监听页面加载
    */

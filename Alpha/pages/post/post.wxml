@@ -1,9 +1,10 @@
 <!--pages/post/post.wxml-->
-<view style="height: 100%; position: relative;">
-  <view style="position: absolute; top: 8rpx; right: 32rpx; z-index: 1">
-    <image src="../../img/download.png" style="width: 40rpx; height: 40rpx;"></image>
-  </view>
-  <canvas canvas-id="post" style="width: 100%; height: 100%; position: absolute;">
-  </canvas>
-  <canvas hidden="{{hidden}}" canvas-id="qrCanvas" style="width: {{screenWidth * 0.6}}px; height: {{screenWidth * 0.6}}px; position: absolute; left: -300rpx; top: -300px;"></canvas>
-</view>
+<cover-view wx:if="{{show}}" class="toast" style="left: {{screenWidth / 2 - 40}}px;">
+  下载成功
+</cover-view>
+<cover-view style="z-index: 2; color: white; position: absolute; top: 2%; right: 5%;" bindtap="download">
+  保存
+</cover-view>
+<canvas canvas-id="post" style="width: 100%; height: 100%;">
+</canvas>
+<canvas hidden="{{hidden}}" canvas-id="qrCanvas" style="width: {{screenWidth * 0.6}}px; height: {{screenWidth * 0.6}}px; position: absolute; left: -300rpx; top: -300px;"></canvas>
