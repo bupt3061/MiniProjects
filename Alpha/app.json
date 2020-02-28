@@ -15,7 +15,9 @@
     "pages/loginNext/loginNext",
     "pages/worklist/worklist",
     "pages/post/post",
-    "pages/addcourse/addcourse"
+    "pages/addcourse/addcourse",
+    "pages/addtask/addtask",
+    "pages/datavis/datavis"
   ],
   "enablePullDownRefresh": true,
   "window": {
@@ -56,6 +58,7 @@
   "debug": true,
   "sitemapLocation": "sitemap.json",
   "usingComponents": {
+    "f2": "@antv/wx-f2",
     "zan-icon": "/dist/icon/index",
     "zan-button": "/dist/btn/index",
     "zan-loading": "/dist/loading/index",

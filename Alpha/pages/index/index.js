@@ -437,7 +437,7 @@ Page({
     } else if (type == 2) {
       // 教师端
       // 处理时间
-      for(var i = 0; i < courses.length; i++) {
+      for (var i = 0; i < courses.length; i++) {
         var zhouqi = dt.formatTime(courses[i].starttime) + '-' + dt.formatTime(courses[i].endtime)
         courses[i].zhouqi = zhouqi
       }
@@ -481,15 +481,15 @@ Page({
       const db = wx.cloud.database()
 
       db.collection('user')
-      .get()
-      .then(res => {
-        const data = res.data
-        resolve(data)
-      })
-      .catch(err => {
-        reject('获取失败')
-        console.log(err)
-      })
+        .get()
+        .then(res => {
+          const data = res.data
+          resolve(data)
+        })
+        .catch(err => {
+          reject('获取失败')
+          console.log(err)
+        })
     })
   },
   handleDialog: function() {
