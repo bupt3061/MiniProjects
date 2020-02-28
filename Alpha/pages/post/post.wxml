@@ -1,7 +1,9 @@
 <!--pages/post/post.wxml-->
-  <image src="../../img/download.png" style="position: absolute; width: 40rpx; height: 40rpx; top: 24px; right: 32px; z-index: 2;"></image>
-  
 <view style="height: 100%; position: relative;">
-  <canvas canvas-id="post" style="width: 100%; height: 100%;"></canvas>
-  <canvas hidden="{{hidden}}" canvas-id="qrCanvas" style="width: {{screenWidth * 0.6}}px; height: {{screenWidth * 0.6}}px; position: absolute; left: -300rpx; right: -300px;"></canvas>
+  <view style="position: absolute; top: 8rpx; right: 32rpx; z-index: 1">
+    <image src="../../img/download.png" style="width: 40rpx; height: 40rpx;"></image>
+  </view>
+  <canvas canvas-id="post" style="width: 100%; height: 100%; position: absolute;">
+  </canvas>
+  <canvas hidden="{{hidden}}" canvas-id="qrCanvas" style="width: {{screenWidth * 0.6}}px; height: {{screenWidth * 0.6}}px; position: absolute; left: -300rpx; top: -300px;"></canvas>
 </view>

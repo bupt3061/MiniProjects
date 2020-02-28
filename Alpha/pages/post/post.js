@@ -99,7 +99,7 @@ Page({
     ctx.font = '18px Arial';
     ctx.textAlign = 'center';
     ctx.fillStyle = '#000';
-    ctx.fillText(coursename, screenWidth / 2, (windowHeight + navigationHeight) * 0.33 + (screenWidth * 0.4 + 12), screenWidth * 0.6);
+    ctx.fillText(coursename, screenWidth / 2, (windowHeight + navigationHeight) * 0.33 + (screenWidth * 0.4 + 8), screenWidth * 0.6);
     // 绘制文本
     ctx.font = 'bold 20px Arial';
     ctx.textAlign = 'center';
