@@ -843,6 +843,11 @@ Page({
       url: '../post/post?courseid=' + courseid,
     })
   },
+  toAddCourse: function() {
+    wx.navigateTo({
+      url: '../addcourse/addcourse?arg=' + '1',
+    })
+  },
   /**
    * 生命周期函数--监听页面加载（1）
    * 页面加载完成，一个页面只会调用一次

@@ -1,0 +1,5 @@
+/* pages/addcourse/addcourse.wxss */
+
+page {
+  box-sizing: border-box;
+}

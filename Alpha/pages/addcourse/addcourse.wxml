@@ -1,0 +1,18 @@
+<!--pages/addcourse/addcourse.wxml-->
+
+<view class="container zan-font-16 zan-c-black">
+  <view class="zan-font-14 zan-c-gray-dark" style="width: 100%; padding: 14rpx 32rpx; box-sizing: border-box">基本信息</view>
+  <view style="width: 100%; padding: 24rpx 32rpx; background-color: white; display: flex; flex-direction: row; border-top: 1px solid #f1f1f1; border-bottom: 1px solid #f1f1f1; box-sizing: border-box">
+    <view style="width: 25%">课程名</view>
+    <view style="width: 75%">
+      <input placeholder="请输入"></input>
+    </view>
+  </view>
+  <view style="width: 100%; padding: 24rpx 32rpx; background-color: white; display: flex; flex-direction: row; border-top: 1px solid #f1f1f1; border-bottom: 1px solid #f1f1f1; box-sizing: border-box; position: relative">
+    <view style="width: 25%">开课时间</view>
+    <view style="width: 75%">
+      <zan-date-picker placeholder="请选择"></zan-date-picker>
+    </view>
+    <zan-icon type="arrow" style="position: absolute; right: 32rpx;"></zan-icon>
+  </view>
+</view>
