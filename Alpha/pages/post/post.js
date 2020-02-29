@@ -7,6 +7,7 @@ Page({
    * 页面的初始数据
    */
   data: {
+    hasCanvas: false,
     hidden: false,
     navigationHeight: null,
     screenWidth: null,
@@ -116,7 +117,8 @@ Page({
     ctx.draw()
 
     this.setData({
-      hidden: true
+      hidden: true,
+      hasCanvas: true
     })
   },
   roundRectColor: function(context, x, y, w, h, r) { //绘制圆角矩形（纯色填充）

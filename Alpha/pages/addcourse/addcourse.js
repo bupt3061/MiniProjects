@@ -1,10 +1,21 @@
 // pages/addcourse/addcourse.js
+const st = require('../../utils/string.js')
+const app = getApp()
+
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
+    duration: 1000,
+    content: null,
+    $zanui: {
+      toptips: {
+        show: false
+      }
+    },
+    arg: null,
     notUse: ["hours", "minutes", "seconds"],
     format: "YYYY-MM-DD",
     coursename: null,
@@ -12,7 +23,6 @@ Page({
     endtime: null,
     coverPath: null,
     coverName: null,
-    cover: null,
     hasCover: false
   },
   /**
@@ -48,28 +58,16 @@ Page({
     const timestr = year + '/' + month + '/' + day + " 00:00:00"
     const endtime = new Date(timestr)
     console.log('date', date)
-    console.log('endtime', starttime)
+    console.log('endtime', endtime)
 
     this.setData({
       endtime: endtime
     })
   },
   preview: function (e) {
-    const path = e.currentTarget.dataset.path
-    var files = this.data.files
-    var idx = 0
-    var paths = []
-
-    for (var i = 0; i < files.length; i++) {
-      paths.push(files[i].path)
-      if (files[i].path == path) {
-        idx = i
-      }
-    }
-
     wx.previewImage({
-      current: paths[idx], //当前预览的图片
-      urls: paths, //所有要预览的图片
+      current: this.data.coverPath, //当前预览的图片
+      urls: [this.data.coverPath, ], //所有要预览的图片
     })
   },
   async addCover() {
@@ -105,12 +103,199 @@ Page({
       hasCover: false
     })
   },
+  checkCoursename: function() {
+    const coursename = this.data.coursename
+
+    if(coursename == '' || coursename == null) {
+      this.setData({
+        $zanui: {
+          toptips: {
+            show: true
+          }
+        },
+        content: '请填写课程名'
+      })
+
+      setTimeout(() => {
+        this.setData({
+          $zanui: {
+            toptips: {
+              show: false
+            }
+          }
+        })
+      }, this.data.duration);
+
+      return false
+    }
+
+    return true
+  },
+  checkStarttime: function () {
+    const starttime = this.data.starttime
+
+    if (starttime == null) {
+      this.setData({
+        $zanui: {
+          toptips: {
+            show: true
+          }
+        },
+        content: '请选择开课时间'
+      })
+
+      setTimeout(() => {
+        this.setData({
+          $zanui: {
+            toptips: {
+              show: false
+            }
+          }
+        })
+      }, this.data.duration);
+
+      return false
+    }
+
+    return true
+  },
+  checkEndtime: function () {
+    const endtime = this.data.endtime
+
+    if (endtime == null) {
+      this.setData({
+        $zanui: {
+          toptips: {
+            show: true
+          }
+        },
+        content: '请选择结课时间'
+      })
+
+      setTimeout(() => {
+        this.setData({
+          $zanui: {
+            toptips: {
+              show: false
+            }
+          }
+        })
+      }, this.data.duration);
+
+      return false
+    }
+
+    return true
+  },
+  uploadCover: function() {
+    return new Promise((resolve, reject) => {
+      const coursename = this.data.coursename
+      const coverPath = this.data.coverPath
+      wx.cloud.uploadFile({
+        cloudPath: 'courseCover/' + coursename,
+        filePath: coverPath, // 文件路径
+      }).then(res => {
+        // get resource ID
+        const cloudPath = res.fileID
+        resolve(cloudPath)
+      }).catch(err => {
+        // handle error
+        reject('获取失败')
+        console.log(err)
+      })
+    })
+  },
+  async summit() {
+    var flag = true
+    const now = new Date()
+    const coursename = this.data.coursename
+    const starttime = this.data.starttime
+    const endtime = this.data.endtime
+    let cover
+
+    // 检查课程名
+    flag = this.checkCoursename()
+    if(!flag) {
+      return 
+    }
+
+    // 检查课程开始时间
+    flag = this.checkStarttime()
+    if(!flag) {
+      return
+    }
+
+    // 检查课程结束时间
+    flag = this.checkEndtime()
+    if(!flag) {
+      return
+    }
+
+    // 检查是否有封面
+    flag = this.data.hasCover
+    if(!flag) {
+      return
+    }
+
+    // 获取封面
+    cover = await this.uploadCover()
+    console.log(cover)
+
+    // 上传数据
+    wx.showLoading({
+      title: '上传中',
+    })
+
+    const data = {
+      coursename: coursename,
+      cover: cover,
+      starttime: starttime,
+      endtime: endtime,
+      cretime: now,
+    } 
+
+    const db = wx.cloud.database()
+    db.collection('course')
+    .add({
+      data
+    })
+    .then(res => {
+      console.log(res)
+    })
+    .catch(err => {
+      console.log(err)
+    })
+
+    // 更新全局数据
+    const tcoursenameh = st.handleCourseName2(coursename)
+    const zhouqi = dt.formatTime(starttime) + '-' + dt.formatTime(endtime)
+    const item = {
+      coursename: coursename,
+      cover: cover,
+      coverPath: coverPath,
+      cretime: now,
+      starttime:starttime,
+      endtime: endtime,
+      tcoursenameh: tcoursenameh,
+      zhouqi: zhouqi
+    }
+    var courses = app.globalData.courses
+    courses = courses.unshift(item)
+    app.globalData.courses = courses
+    console.log(courses)
+
+    wx.hideLoading()
+  },
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
     const arg = options.arg
     console.log(arg)
+
+    this.setData({
+      arg: arg
+    })
   },
 
   /**
