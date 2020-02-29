@@ -47,8 +47,8 @@ Page({
     let endPlaceHolder
 
     // 获取课程
-    for(var i = 0; i < courses.length; i++) {
-      if(courses[i]._id == courseid) {
+    for (var i = 0; i < courses.length; i++) {
+      if (courses[i]._id == courseid) {
         course = courses[i]
       }
     }
@@ -69,7 +69,7 @@ Page({
     var syear = starttime.getFullYear()
     var smonth = starttime.getMonth() + 1
     var sday = starttime.getDate()
-    startPlaceHolder = syear + '-' + smonth + '-' +sday
+    startPlaceHolder = syear + '-' + smonth + '-' + sday
 
     var eyear = endtime.getFullYear()
     var emonth = endtime.getMonth() + 1
@@ -498,7 +498,7 @@ Page({
       title: '更新中',
     })
 
-    if(coverName != null) {  // 更新了图片
+    if (coverName != null) { // 更新了图片
       // 获取封面
       cover = await this.uploadCover()
       console.log(cover)
@@ -517,18 +517,18 @@ Page({
     const db = wx.cloud.database()
 
     db.collection('course')
-    .where({
-      _id: courseid
-    })
-    .update({
-      data
-    })
-    .then(res => {
-      console.log(res)
-    })
-    .catch(err => {
-      console.log(err)
-    })
+      .where({
+        _id: courseid
+      })
+      .update({
+        data
+      })
+      .then(res => {
+        console.log(res)
+      })
+      .catch(err => {
+        console.log(err)
+      })
 
     // 更新全局数据
     course.coursename = coursename
@@ -550,71 +550,178 @@ Page({
 
     wx.hideLoading()
   },
-  tapDelete: function() {
-    Dialog({
-      title: "确认删除",
-      buttons: [{
-        text: '取消',
-        type: 'cancel'
-      },
-      {
-        text: '确认',
-        color: '#e64240',
-        type: 'confirm'
-      }]
-    }).then(({ type, hasOpenDataPromise, openDataPromise }) => {
-      // type 可以用于判断具体是哪一个按钮被点击
-      console.log('=== dialog with custom buttons ===', `type: ${type}`);
+  handleDialog: function() {
+    return new Promise((resolve, reject) => {
+      Dialog({
+          title: "确认删除",
+          buttons: [{
+              text: '取消',
+              type: 'cancel'
+            },
+            {
+              text: '确认',
+              color: '#e64240',
+              type: 'confirm'
+            }
+          ]
+        })
+        .then(({
+          type,
+          hasOpenDataPromise,
+          openDataPromise
+        }) => {
+          // type 可以用于判断具体是哪一个按钮被点击
+          console.log('=== dialog with custom buttons ===', `type: ${type}`);
 
-      if (type == 'confirm') {
-        const courseid = this.data.courseid
-        const db = wx.cloud.database()
+          if (type == 'confirm') {
+            resolve(true)
+          }
 
-        wx.showLoading({
-          title: '删除中',
+          resolve(false)
+
+          if (hasOpenDataPromise) {
+            openDataPromise.then((data) => {
+              console.log('成功获取信息', data);
+            }).catch((data) => {
+              console.log('获取信息失败', data);
+            });
+          }
+        })
+        .catch(err => {
+          console.log(err)
+          reject('获取失败')
+        })
+    })
+  },
+  async tapDelete() {
+    let confirm = await this.handleDialog()
+    console.log(confirm)
+
+    if (confirm) {
+      wx.showLoading({
+        title: '删除中',
+      })
+
+      const db = wx.cloud.database()
+      const _ = db.command
+      const courseid = this.data.courseid
+      const openid = app.globalData.openid
+
+      // 删除课程
+      db.collection('course')
+        .where({
+          _id: courseid
+        })
+        .remove()
+        .then(res => {
+          console.log(res)
+        })
+        .catch(err => {
+          reject('获取失败')
         })
 
-        db.collection("course")
-          .where({
-            _id: courseid
-          })
-          .remove()
-          .then(res => {
-            console.log(res)
+      // 删除用户信息中的id
+      var courses = app.globalData.courses
 
-            // 更新全局数据
-            var temp = []
-            const courses = app.globalData.courses
-            for(var i = 0; i < courses.length; i++) {
-              if(courses[i]._id == courseid) {
-                continue
-              }
-              temp.push(courses[i])
-            }
-            app.globalData.courses = temp
-
-            wx.hideLoading()
-
-            wx.switchTab({
-              url: '../index/index',
-            })
-          })
-          .catch(err => {
-            console.log(err)
-            reject(false)
-          })
+      var temp = []
+      var courseids = []
+      for(var i = 0; i < courses.length; i++) {
+        if(courses[i]._id == courseid) {
+          continue
+        }
+        temp.push(courses[i])
+        courseids.push(courses[i]._id)
       }
+      courses = temp
+      console.log(courseids)
+      console.log(courses)
 
-      resolve(false)
+      db.collection('user')
+      .where({
+        _openid: openid
+      })
+      .update({
+        data: {
+          courses: courseids
+        }
+      })
+      .then(res => {
+        console.log(res)
+      })
+      .catch(err => {
+        console.log(err)
+      })
 
-      if (hasOpenDataPromise) {
-        openDataPromise.then((data) => {
-          console.log('成功获取信息', data);
-        }).catch((data) => {
-          console.log('获取信息失败', data);
-        });
-      }
-    });
+      // 更新全局数据
+      app.globalData.courses = courses
+
+      wx.hideLoading()
+
+      wx.switchTab({
+        url: '../index/index',
+      })
+    }
+    // Dialog({
+    //   title: "确认删除",
+    //   buttons: [{
+    //     text: '取消',
+    //     type: 'cancel'
+    //   },
+    //   {
+    //     text: '确认',
+    //     color: '#e64240',
+    //     type: 'confirm'
+    //   }]
+    // }).then(({ type, hasOpenDataPromise, openDataPromise }) => {
+    //   // type 可以用于判断具体是哪一个按钮被点击
+    //   console.log('=== dialog with custom buttons ===', `type: ${type}`);
+
+    //   if (type == 'confirm') {
+    //     const courseid = this.data.courseid
+    //     const db = wx.cloud.database()
+
+    //     wx.showLoading({
+    //       title: '删除中',
+    //     })
+
+    //     db.collection("course")
+    //       .where({
+    //         _id: courseid
+    //       })
+    //       .remove()
+    //       .then(res => {
+    //         console.log(res)
+
+    //         // 更新全局数据
+    //         var temp = []
+    //         const courses = app.globalData.courses
+    //         for(var i = 0; i < courses.length; i++) {
+    //           if(courses[i]._id == courseid) {
+    //             continue
+    //           }
+    //           temp.push(courses[i])
+    //         }
+    //         app.globalData.courses = temp
+
+    //         wx.hideLoading()
+
+    //         wx.switchTab({
+    //           url: '../index/index',
+    //         })
+    //       })
+    //       .catch(err => {
+    //         console.log(err)
+    //       })
+    //   }
+
+    //   if (hasOpenDataPromise) {
+    //     openDataPromise.then((data) => {
+    //       console.log('成功获取信息', data);
+    //     }).catch((data) => {
+    //       console.log('获取信息失败', data);
+    //     });
+    //   }
+    // });
   },
   /**
    * 生命周期函数--监听页面加载
@@ -624,7 +731,7 @@ Page({
     const arg = list[list.length - 1]
     console.log(arg)
 
-    if(arg == '2') {
+    if (arg == '2') {
       const courseid = list[0]
       console.log(courseid)
       this.setData({
