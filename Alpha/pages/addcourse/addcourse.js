@@ -1,5 +1,6 @@
 // pages/addcourse/addcourse.js
 const st = require('../../utils/string.js')
+const dt = require('../../utils/date.js')
 const app = getApp()
 
 Page({
@@ -187,6 +188,63 @@ Page({
 
     return true
   },
+  checkTime: function() {
+    const starttime = this.data.starttime
+    const endtime = this.data.endtime
+
+    if(endtime <= starttime) {
+      this.setData({
+        $zanui: {
+          toptips: {
+            show: true
+          }
+        },
+        content: '请正确设置时间'
+      })
+
+      setTimeout(() => {
+        this.setData({
+          $zanui: {
+            toptips: {
+              show: false
+            }
+          }
+        })
+      }, this.data.duration);
+
+      return false
+    }
+
+    return true
+  },
+  checkCover: function() {
+    const hasCover = this.data.hasCover
+
+    if(!hasCover) {
+      this.setData({
+        $zanui: {
+          toptips: {
+            show: true
+          }
+        },
+        content: '请添加课程封面'
+      })
+
+      setTimeout(() => {
+        this.setData({
+          $zanui: {
+            toptips: {
+              show: false
+            }
+          }
+        })
+      }, this.data.duration);
+
+      return false
+    }
+
+    return true
+  },
   uploadCover: function() {
     return new Promise((resolve, reject) => {
       const coursename = this.data.coursename
@@ -211,6 +269,7 @@ Page({
     const coursename = this.data.coursename
     const starttime = this.data.starttime
     const endtime = this.data.endtime
+    const coverPath = this.data.coverPath
     let cover
 
     // 检查课程名
@@ -232,7 +291,13 @@ Page({
     }
 
     // 检查是否有封面
-    flag = this.data.hasCover
+    flag = this.checkCover()
+    if(!flag) {
+      return
+    }
+
+    // 检查时间
+    flag = this.checkTime()
     if(!flag) {
       return
     }
@@ -280,7 +345,11 @@ Page({
       zhouqi: zhouqi
     }
     var courses = app.globalData.courses
-    courses = courses.unshift(item)
+    var temp = [item, ]
+    for(var i = 0; i < courses.length; i++) {
+      temp.push(courses[i])
+    }
+    courses = temp
     app.globalData.courses = courses
     console.log(courses)
 
