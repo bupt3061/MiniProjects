@@ -2,6 +2,7 @@
 const st = require('../../utils/string.js')
 const dt = require('../../utils/date.js')
 const app = getApp()
+const Dialog = require('../../dist/dialog/dialog');
 
 Page({
 
@@ -20,11 +21,74 @@ Page({
     notUse: ["hours", "minutes", "seconds"],
     format: "YYYY-MM-DD",
     coursename: null,
+    courseid: null,
     starttime: null,
     endtime: null,
+    startPlaceHolder: "选择时间",
+    endPlaceHolder: "选择时间",
+    cover: null,
     coverPath: null,
     coverName: null,
-    hasCover: false
+    hasCover: false,
+    course: null
+  },
+  /**
+   * 初始化函数
+   */
+  async init(courseid) {
+    const courses = app.globalData.courses
+    let course
+    let coursename
+    let endtime
+    let starttime
+    let coverPath
+    let cover
+    let startPlaceHolder
+    let endPlaceHolder
+
+    // 获取课程
+    for(var i = 0; i < courses.length; i++) {
+      if(courses[i]._id == courseid) {
+        course = courses[i]
+      }
+    }
+    coursename = course.coursename
+    coverPath = course.coverPath
+    starttime = course.starttime
+    endtime = course.endtime
+    cover = course.cover
+    console.log(course)
+    console.log(coursename)
+    console.log(coverPath)
+    console.log(starttime)
+    console.log(endtime)
+    console.log(courseid)
+    console.log(cover)
+
+    // 处理时间
+    var syear = starttime.getFullYear()
+    var smonth = starttime.getMonth() + 1
+    var sday = starttime.getDate()
+    startPlaceHolder = syear + '-' + smonth + '-' +sday
+
+    var eyear = endtime.getFullYear()
+    var emonth = endtime.getMonth() + 1
+    var eday = endtime.getDate()
+    endPlaceHolder = eyear + '-' + emonth + '-' + eday
+
+    // 设置数据
+    this.setData({
+      coursename: coursename,
+      coverPath: coverPath,
+      starttime: starttime,
+      endtime: endtime,
+      courseid: courseid,
+      cover: cover,
+      hasCover: true,
+      endPlaceHolder: endPlaceHolder,
+      startPlaceHolder: startPlaceHolder,
+      course: course
+    })
   },
   /**
    * 其他函数
@@ -65,7 +129,7 @@ Page({
       endtime: endtime
     })
   },
-  preview: function (e) {
+  preview: function(e) {
     wx.previewImage({
       current: this.data.coverPath, //当前预览的图片
       urls: [this.data.coverPath, ], //所有要预览的图片
@@ -83,7 +147,7 @@ Page({
       })
     }
   },
-  chooseImg: function () {
+  chooseImg: function() {
     return new Promise((resolve, reject) => {
       wx.chooseMessageFile({
         count: 1,
@@ -101,13 +165,14 @@ Page({
   },
   deleteCover: function() {
     this.setData({
-      hasCover: false
+      hasCover: false,
+      coverPath: null
     })
   },
   checkCoursename: function() {
     const coursename = this.data.coursename
 
-    if(coursename == '' || coursename == null) {
+    if (coursename == '' || coursename == null) {
       this.setData({
         $zanui: {
           toptips: {
@@ -132,7 +197,7 @@ Page({
 
     return true
   },
-  checkStarttime: function () {
+  checkStarttime: function() {
     const starttime = this.data.starttime
 
     if (starttime == null) {
@@ -160,7 +225,7 @@ Page({
 
     return true
   },
-  checkEndtime: function () {
+  checkEndtime: function() {
     const endtime = this.data.endtime
 
     if (endtime == null) {
@@ -192,7 +257,7 @@ Page({
     const starttime = this.data.starttime
     const endtime = this.data.endtime
 
-    if(endtime <= starttime) {
+    if (endtime <= starttime) {
       this.setData({
         $zanui: {
           toptips: {
@@ -220,7 +285,7 @@ Page({
   checkCover: function() {
     const hasCover = this.data.hasCover
 
-    if(!hasCover) {
+    if (!hasCover) {
       this.setData({
         $zanui: {
           toptips: {
@@ -247,10 +312,10 @@ Page({
   },
   uploadCover: function() {
     return new Promise((resolve, reject) => {
-      const coursename = this.data.coursename
+      const coverName = this.data.coverName
       const coverPath = this.data.coverPath
       wx.cloud.uploadFile({
-        cloudPath: 'courseCover/' + coursename,
+        cloudPath: 'courseCover/' + coverName,
         filePath: coverPath, // 文件路径
       }).then(res => {
         // get resource ID
@@ -265,6 +330,7 @@ Page({
   },
   async summit() {
     var flag = true
+    const openid = app.globalData.openid
     const now = new Date()
     const coursename = this.data.coursename
     const starttime = this.data.starttime
@@ -272,33 +338,38 @@ Page({
     const coverPath = this.data.coverPath
     let cover
 
+    // 上传数据
+    wx.showLoading({
+      title: '上传中',
+    })
+
     // 检查课程名
     flag = this.checkCoursename()
-    if(!flag) {
-      return 
+    if (!flag) {
+      return
     }
 
     // 检查课程开始时间
     flag = this.checkStarttime()
-    if(!flag) {
+    if (!flag) {
       return
     }
 
     // 检查课程结束时间
     flag = this.checkEndtime()
-    if(!flag) {
-      return
-    }
-
-    // 检查是否有封面
-    flag = this.checkCover()
-    if(!flag) {
+    if (!flag) {
       return
     }
 
     // 检查时间
     flag = this.checkTime()
-    if(!flag) {
+    if (!flag) {
+      return
+    }
+
+    // 检查是否有封面
+    flag = this.checkCover()
+    if (!flag) {
       return
     }
 
@@ -306,22 +377,150 @@ Page({
     cover = await this.uploadCover()
     console.log(cover)
 
-    // 上传数据
-    wx.showLoading({
-      title: '上传中',
-    })
-
     const data = {
       coursename: coursename,
       cover: cover,
       starttime: starttime,
       endtime: endtime,
       cretime: now,
-    } 
+    }
+
+    let courseid = await this.addCourse(data)
+    console.log(courseid)
+
+    // 更新数据
+    const db = wx.cloud.database()
+    const _ = db.command
+
+    db.collection('user')
+      .where({
+        _openid: openid
+      })
+      .update({
+        data: {
+          courses: _.push([courseid, ])
+        }
+      })
+      .then(res => {
+        console.log(res)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+
+    const tcoursenameh = st.handleCourseName2(coursename)
+    const zhouqi = dt.formatTime(starttime) + '-' + dt.formatTime(endtime)
+    const item = {
+      _id: courseid,
+      coursename: coursename,
+      cover: cover,
+      coverPath: coverPath,
+      cretime: now,
+      starttime: starttime,
+      endtime: endtime,
+      tcoursenameh: tcoursenameh,
+      zhouqi: zhouqi
+    }
+    var courses = app.globalData.courses
+    var temp = [item, ]
+    for (var i = 0; i < courses.length; i++) {
+      temp.push(courses[i])
+    }
+    courses = temp
+    app.globalData.courses = courses
+    console.log(courses)
+
+    wx.switchTab({
+      url: '../index/index',
+    })
+
+    wx.hideLoading()
+  },
+  addCourse: function(data) {
+    return new Promise((resolve, reject) => {
+      const db = wx.cloud.database()
+      db.collection('course')
+        .add({
+          data
+        })
+        .then(res => {
+          resolve(res._id)
+        })
+        .catch(err => {
+          console.log(err)
+          reject('获取失败')
+        })
+    })
+  },
+  async update() {
+    var flag = true
+    var course = this.data.course
+    const courseid = this.data.courseid
+    const coursename = this.data.coursename
+    const starttime = this.data.starttime
+    const endtime = this.data.endtime
+    const coverPath = this.data.coverPath
+    const coverName = this.data.coverName
+    let cover
+
+    // 检查课程名
+    flag = this.checkCoursename()
+    if (!flag) {
+      return
+    }
+
+    // 检查课程开始时间
+    flag = this.checkStarttime()
+    if (!flag) {
+      return
+    }
+
+    // 检查课程结束时间
+    flag = this.checkEndtime()
+    if (!flag) {
+      return
+    }
+
+    // 检查时间
+    flag = this.checkTime()
+    if (!flag) {
+      return
+    }
+
+    // 检查是否有封面
+    flag = this.checkCover()
+    if (!flag) {
+      return
+    }
+
+    // 上传数据
+    wx.showLoading({
+      title: '更新中',
+    })
+
+    if(coverName != null) {  // 更新了图片
+      // 获取封面
+      cover = await this.uploadCover()
+      console.log(cover)
+    } else {
+      cover = this.data.course.cover
+    }
+
+    // 上传数据
+    var data = {
+      coursename: coursename,
+      cover: cover,
+      starttime: starttime,
+      endtime: endtime
+    }
 
     const db = wx.cloud.database()
+
     db.collection('course')
-    .add({
+    .where({
+      _id: courseid
+    })
+    .update({
       data
     })
     .then(res => {
@@ -332,35 +531,108 @@ Page({
     })
 
     // 更新全局数据
-    const tcoursenameh = st.handleCourseName2(coursename)
-    const zhouqi = dt.formatTime(starttime) + '-' + dt.formatTime(endtime)
-    const item = {
-      coursename: coursename,
-      cover: cover,
-      coverPath: coverPath,
-      cretime: now,
-      starttime:starttime,
-      endtime: endtime,
-      tcoursenameh: tcoursenameh,
-      zhouqi: zhouqi
-    }
+    course.coursename = coursename
+    course.tcoursenameh = st.handleCourseName2(coursename)
+    course.cover = cover
+    course.coverPath = coverPath
+    course.starttime = starttime
+    course.endtime = endtime
+    course.zhouqi = dt.formatTime(starttime) + '-' + dt.formatTime(endtime)
+
     var courses = app.globalData.courses
-    var temp = [item, ]
-    for(var i = 0; i < courses.length; i++) {
-      temp.push(courses[i])
+    for (var i = 0; i < courses.length; i++) {
+      if (courses[i]._id == courseid) {
+        courses[i] = course
+      }
     }
-    courses = temp
     app.globalData.courses = courses
     console.log(courses)
 
     wx.hideLoading()
   },
+  tapDelete: function() {
+    Dialog({
+      title: "确认删除",
+      buttons: [{
+        text: '取消',
+        type: 'cancel'
+      },
+      {
+        text: '确认',
+        color: '#e64240',
+        type: 'confirm'
+      }]
+    }).then(({ type, hasOpenDataPromise, openDataPromise }) => {
+      // type 可以用于判断具体是哪一个按钮被点击
+      console.log('=== dialog with custom buttons ===', `type: ${type}`);
+
+      if (type == 'confirm') {
+        const courseid = this.data.courseid
+        const db = wx.cloud.database()
+
+        wx.showLoading({
+          title: '删除中',
+        })
+
+        db.collection("course")
+          .where({
+            _id: courseid
+          })
+          .remove()
+          .then(res => {
+            console.log(res)
+
+            // 更新全局数据
+            var temp = []
+            const courses = app.globalData.courses
+            for(var i = 0; i < courses.length; i++) {
+              if(courses[i]._id == courseid) {
+                continue
+              }
+              temp.push(courses[i])
+            }
+            app.globalData.courses = temp
+
+            wx.hideLoading()
+
+            wx.switchTab({
+              url: '../index/index',
+            })
+          })
+          .catch(err => {
+            console.log(err)
+            reject(false)
+          })
+      }
+
+      resolve(false)
+
+      if (hasOpenDataPromise) {
+        openDataPromise.then((data) => {
+          console.log('成功获取信息', data);
+        }).catch((data) => {
+          console.log('获取信息失败', data);
+        });
+      }
+    });
+  },
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad: function (options) {
-    const arg = options.arg
+  onLoad: function(options) {
+    const list = options.data.split('/')
+    const arg = list[list.length - 1]
     console.log(arg)
+
+    if(arg == '2') {
+      const courseid = list[0]
+      console.log(courseid)
+      this.setData({
+        courseid: courseid
+      })
+
+      this.init(courseid)
+    }
 
     this.setData({
       arg: arg
@@ -370,49 +642,49 @@ Page({
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
-  onReady: function () {
+  onReady: function() {
 
   },
 
   /**
    * 生命周期函数--监听页面显示
    */
-  onShow: function () {
+  onShow: function() {
 
   },
 
   /**
    * 生命周期函数--监听页面隐藏
    */
-  onHide: function () {
+  onHide: function() {
 
   },
 
   /**
    * 生命周期函数--监听页面卸载
    */
-  onUnload: function () {
+  onUnload: function() {
 
   },
 
   /**
    * 页面相关事件处理函数--监听用户下拉动作
    */
-  onPullDownRefresh: function () {
+  onPullDownRefresh: function() {
 
   },
 
   /**
    * 页面上拉触底事件的处理函数
    */
-  onReachBottom: function () {
+  onReachBottom: function() {
 
   },
 
   /**
    * 用户点击右上角分享
    */
-  onShareAppMessage: function () {
+  onShareAppMessage: function() {
 
   }
 })

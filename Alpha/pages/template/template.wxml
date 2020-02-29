@@ -219,7 +219,7 @@
 </template>
 
 <template name="tcourse-card">
-  <view data-taskid="{{_id}}" bindtap="clickTCourse" style="width: 90%; display: flex; flex-direction: row; background-color: white; border-radius: 18rpx; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2); margin-bottom: 32rpx; align-items: center; position: relative; ">
+  <view data-taskid="{{_id}}" style="width: 90%; display: flex; flex-direction: row; background-color: white; border-radius: 18rpx; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2); margin-bottom: 32rpx; align-items: center; position: relative; ">
     <view style="width: 160rpx; height: 160rpx; border-radius: 18rpx;">
       <image style="height: 100%; width: 100%; border-radius: 18rpx;" mode="scaleToFill" src="{{coverPath}}" />
     </view>

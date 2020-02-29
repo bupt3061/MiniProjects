@@ -66,7 +66,6 @@ App({
     openid: null,
     type: null,
     userInfo: null,
-    avatarIDs: ['cloud://test-m3m5d.7465-test-m3m5d-1300027116/avatar/stu.jpg', 'cloud://test-m3m5d.7465-test-m3m5d-1300027116/avatar/teach.jpg'],
     tasks: null,
     wtjTasks: [],
     ytjTasks: [],

@@ -16,7 +16,8 @@ Page({
     type: null,
     inUploadNum: 0,
     inEvalNum: 0,
-    hasCourse: false
+    hasCourse: false,
+    courses: null
   },
   /**
    * 初始化函数
@@ -81,20 +82,30 @@ Page({
       courseids = userInfo.courses
 
       if (courseids.length == 0) {
-        wx.hideLoading()
-        hasCourse = false
-        console.log('尚未添加课程')
+        if(type == 1) {
+          wx.hideLoading()
+          hasCourse = false
+          console.log('尚未添加课程')
 
-        this.handleDialog()
-        this.setData({
-          inUploadNum: 0,
-          inEvalNum: 0,
-          type: type,
-          openid: openid,
-          hasCourse: hasCourse
-        })
+          this.handleDialog()
+          this.setData({
+            inUploadNum: 0,
+            inEvalNum: 0,
+            type: type,
+            openid: openid,
+            hasCourse: hasCourse
+          })
 
-        return
+          return
+        } else if(type == 2) {
+          wx.hideLoading()
+
+          this.setData({
+            show: true
+          })
+
+          return
+        }
       } else {
         hasCourse = true
         courses = await this.getCourses(courseids)
@@ -845,7 +856,14 @@ Page({
   },
   toAddCourse: function() {
     wx.navigateTo({
-      url: '../addcourse/addcourse?arg=' + '1',
+      url: '../addcourse/addcourse?data=' + '1',
+    })
+  },
+  toModify: function(e) {
+    const courseid = e.currentTarget.dataset.id
+    console.log(courseid)
+    wx.navigateTo({
+      url: '../addcourse/addcourse?data=' + courseid + '/2',
     })
   },
   /**
@@ -884,9 +902,19 @@ Page({
    * 页面打开一次就会显示
    */
   onShow: function() {
+    const type = app.globalData.type
+    const courses = app.globalData.courses
     const processedCourseids = app.globalData.processedCourseids
     const indexProcessedIds = app.globalData.indexProcessedIds
     console.log('test, onShow执行了')
+
+    if(type == 2) {
+      this.setData({
+        courses: courses
+      })
+
+      return
+    }
 
     if (indexProcessedIds.length < processedCourseids.length) {
       console.log('processedCourseids', processedCourseids)
