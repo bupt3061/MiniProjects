@@ -4,11 +4,11 @@
 }
 
 picker-view-column.year-view-column {
-  width: 50px;
-  flex: 2;
+  width: 30px;
+  /* flex: 2; */
 }
 picker-view-column {
-  width: 30px;
+  width: 20px;
   text-align: center;
 }
 .hidden {

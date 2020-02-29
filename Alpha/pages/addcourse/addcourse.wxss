@@ -3,3 +3,20 @@
 page {
   box-sizing: border-box;
 }
+
+.add {
+  color: #999;
+  font-size: 4em;
+  text-align: center;
+  line-height: 180rpx;
+  border: solid 4px #999;
+  margin-bottom: 32rpx;
+  box-sizing: border-box;
+}
+
+.del {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 12rpx;
+}

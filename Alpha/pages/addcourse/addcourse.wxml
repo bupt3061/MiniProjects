@@ -5,14 +5,33 @@
   <view style="width: 100%; padding: 24rpx 32rpx; background-color: white; display: flex; flex-direction: row; border-top: 1px solid #f1f1f1; border-bottom: 1px solid #f1f1f1; box-sizing: border-box">
     <view style="width: 25%">课程名</view>
     <view style="width: 75%">
-      <input placeholder="请输入"></input>
+      <input placeholder="请输入" bindinput="inputCoursename"></input>
     </view>
   </view>
-  <view style="width: 100%; padding: 24rpx 32rpx; background-color: white; display: flex; flex-direction: row; border-top: 1px solid #f1f1f1; border-bottom: 1px solid #f1f1f1; box-sizing: border-box; position: relative">
+  <view style="width: 100%; padding: 24rpx 32rpx; background-color: white; display: flex; flex-direction: row; border-bottom: 1px solid #f1f1f1; box-sizing: border-box; position: relative">
     <view style="width: 25%">开课时间</view>
     <view style="width: 75%">
-      <zan-date-picker placeholder="请选择"></zan-date-picker>
+      <zan-date-picker placeholder="时间" not-use="{{notUse}}" format="{{format}}" bindchange="startDate"></zan-date-picker>
     </view>
-    <zan-icon type="arrow" style="position: absolute; right: 32rpx;"></zan-icon>
+    <zan-icon class="zan-c-gray-dark zan-font-14" type="arrow" style="position: absolute; right: 32rpx;"></zan-icon>
+  </view>
+  <view style="width: 100%; padding: 24rpx 32rpx; background-color: white; display: flex; flex-direction: row; border-bottom: 1px solid #f1f1f1; box-sizing: border-box; position: relative">
+    <view style="width: 25%">结课时间</view>
+    <view style="width: 75%">
+      <zan-date-picker placeholder="时间" not-use="{{notUse}}" format="{{format}}" bindchange="endDate"></zan-date-picker>
+    </view>
+    <zan-icon class="zan-c-gray-dark zan-font-14" type="arrow" style="position: absolute; right: 32rpx;"></zan-icon>
+  </view>
+  <view class="zan-font-14 zan-c-gray-dark" style="width: 100%; padding: 14rpx 32rpx; box-sizing: border-box">课程封面</view>
+  <view style="width: 100%; display: flex; flex-direction: row; align-items: flex-start;justify-content: flex-start">
+    <view wx:if="{{hasCover}}" style="height: 200rpx; width: 200rpx; margin: 24rpx 32rpx; position: relative">
+      <image style="width: 100%; height: 100%" src="{{coverPath}}" mode="aspectFill" bindtap="preview"></image>
+      <view class="del" bindtap="deleteCover">
+        <zan-icon type="close" style="color: white;"></zan-icon>
+      </view>
+    </view>
+    <view wx:else class="add" style="height: 200rpx; width: 200rpx; margin: 24rpx 32rpx" bindtap="addCover">
+      +
+    </view>
   </view>
 </view>
