@@ -38,16 +38,94 @@ Page({
     stepperMax: 100,
     addLoading: false,
     upLoading: false,
-    delLoading: false
+    delLoading: false,
+    taskid: null
   },
   /**
    * 初始化函数
    */
+  init: function(taskid) {
+    const courseid = this.data.courseid
+    var standards
+    var taskname
+    var uploadstart
+    var uploadend
+    var evaluatestart
+    var evaluateend
+    var startUpPlaceHolder
+    var endUpPlaceHolder
+    var startEvalPlaceHolder
+    var endEvalPlaceHolder
+    var standard
+    var standards
+    var task
 
+    const tasklist = app.globalData.tasklist
+    const tasks = tasklist.courseid
+    console.log(tasks)
+    console.log(tasklist)
+
+    for (var i = 0; i < tasks.length; i++) {
+      if (taskid == tasks[i]._id) {
+        task = tasks[i]
+      }
+    }
+
+    console.log(task)
+
+    standard = task.standard
+    taskname = task.taskname
+    uploadstart = task.uploadstart
+    uploadend = task.uploadend
+    evaluatestart = task.evaluatestart
+    evaluateend = task.evaluateend
+    startUpPlaceHolder = dt.formatTimeFull(uploadstart)
+    endUpPlaceHolder = dt.formatTimeFull(uploadend)
+    startEvalPlaceHolder = dt.formatTimeFull(evaluatestart)
+    endEvalPlaceHolder = dt.formatTimeFull(evaluateend)
+
+    const keys = Object.keys(standard)
+    if (keys[0] == '总分') {
+      standards = [{
+        key: null,
+        ratio: 0,
+        status: true
+      }, ]
+    } else {
+      for (var i = 0; i < keys.length; i++) {
+        var temp = {
+          key: keys[i],
+          ratio: standard[key] * 100,
+          status: false
+        }
+
+        if (i == keys.length - 1) {
+          temp.status = true
+        }
+
+        standards.push(temp)
+      }
+    }
+
+    this.setData({
+      standards: standards,
+      taskname: taskname,
+      uploadstart: uploadstart,
+      uploadend: uploadend,
+      evaluatestart: evaluatestart,
+      evaluateend: evaluateend,
+      startUpPlaceHolder: startUpPlaceHolder,
+      endUpPlaceHolder: endUpPlaceHolder,
+      startEvalPlaceHolder: startEvalPlaceHolder,
+      endEvalPlaceHolder: endEvalPlaceHolder,
+      taskid: taskid
+    })
+
+  },
   /**
    * 其他函数
    */
-  inputTaskname: function (e) {
+  inputTaskname: function(e) {
     const taskname = e.detail.value
     console.log("taskname", taskname)
 
@@ -55,7 +133,7 @@ Page({
       taskname: taskname
     })
   },
-  startUpTime: function (e) {
+  startUpTime: function(e) {
     const date = e.detail.value
     const year = date[0]
     const month = date[1]
@@ -72,7 +150,7 @@ Page({
       uploadstart: uploadstart
     })
   },
-  endUpTime: function (e) {
+  endUpTime: function(e) {
     const date = e.detail.value
     const year = date[0]
     const month = date[1]
@@ -89,7 +167,7 @@ Page({
       uploadend: uploadend
     })
   },
-  startEvalTime: function (e) {
+  startEvalTime: function(e) {
     const date = e.detail.value
     const year = date[0]
     const month = date[1]
@@ -106,7 +184,7 @@ Page({
       evaluatestart: evaluatestart
     })
   },
-  endEvalTime: function (e) {
+  endEvalTime: function(e) {
     const date = e.detail.value
     const year = date[0]
     const month = date[1]
@@ -123,7 +201,7 @@ Page({
       evaluateend: evaluateend
     })
   },
-  inputKey: function (e) {
+  inputKey: function(e) {
     const idx = e.currentTarget.dataset.idx
     const value = e.detail.value
     var standards = this.data.standards
@@ -136,7 +214,7 @@ Page({
       standards: standards
     })
   },
-  plusStepper: function (e) {
+  plusStepper: function(e) {
     const idx = e.currentTarget.dataset.idx
     console.log(e)
     var standards = this.data.standards
@@ -147,7 +225,7 @@ Page({
       standards: standards
     })
   },
-  minusStepper: function (e) {
+  minusStepper: function(e) {
     const idx = e.currentTarget.dataset.idx
     var standards = this.data.standards
     standards[idx].ratio -= 10
@@ -156,7 +234,7 @@ Page({
       standards: standards
     })
   },
-  addItem: function () {
+  addItem: function() {
     var standards = this.data.standards
 
     const data = {
@@ -172,7 +250,7 @@ Page({
       standards: standards
     })
   },
-  delItem: function (e) {
+  delItem: function(e) {
     const idx = e.currentTarget.dataset.idx
     console
     var standards = this.data.standards
@@ -189,7 +267,7 @@ Page({
       standards: temp
     })
   },
-  addTask: function (data) {
+  addTask: function(data) {
     return new Promise((resolve, reject) => {
       const db = wx.cloud.database()
 
@@ -467,7 +545,7 @@ Page({
       res[standards[i].key] = standards[i].ratio / 100
     }
 
-    if(sum != 100) {
+    if (sum != 100) {
       this.setData({
         $zanui: {
           toptips: {
@@ -620,7 +698,7 @@ Page({
         url: '../tasklist/tasklist?courseid=' + courseid,
       })
     }, 2000)
-    
+
   },
   /**
    * 初始化函数
@@ -635,8 +713,15 @@ Page({
    */
   onLoad: function(options) {
     const list = options.data.split('/')
+    const arg = list[list.length - 1]
     const courseid = list[0]
-    const arg = list[1]
+    console.log(courseid)
+
+    if (arg == '2') {
+      var taskid = list[1]
+      console.log(taskid)
+      this.init(taskid)
+    }
 
     this.setData({
       courseid: courseid,

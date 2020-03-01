@@ -154,11 +154,12 @@ Page({
       url: '../addtask/addtask?data=' + courseid + '/1',
     })
   },
-  toModify: function() {
+  toModify: function(e) {
     const courseid = this.data.courseid
+    const taskid = e.currentTarget.dataset.taskid
 
     wx.navigateTo({
-      url: '../addtask/addtask?data=' + courseid + '/2',
+      url: '../addtask/addtask?data=' + courseid + '/' +taskid + '/2',
     })
   },
   /**
