@@ -208,8 +208,13 @@ Page({
 
     for (var i = 0; i < needProcessTasks.length; i++) {
       // 作业成绩
-      if (needProcessTasks[i].work == null || needProcessTasks[i].work.evals.length == 0) {
+      if (needProcessTasks[i].work == null) {  // 没交作业
         needProcessTasks[i].workScore = 0
+        continue
+      }
+
+      if (needProcessTasks[i].work.evals.length == 0) {  // 无人评价
+        needProcessTasks[i].workScore = 6.5
         continue
       }
 

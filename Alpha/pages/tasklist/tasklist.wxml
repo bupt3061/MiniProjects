@@ -1,2 +1,12 @@
 <!--pages/tasklist/tasklist.wxml-->
-<text>pages/tasklist/tasklist.wxml</text>
+<import src="../template/template.wxml" />
+
+<view hidden="{{!show}}" class="container zan-font-16 zan-c-black" style="padding-top: 32rpx;">
+  <view class="card primary zan-font-18" style="height: 160rpx; width: 90%; justify-content: center; " bindtap="toAddTask">
+    <zan-icon type="add-o" style="margin-right: 12rpx;"></zan-icon>
+    <view>添加任务</view>
+  </view>
+  <block wx:for="{{tasks}}" wx:key="{{index}}">
+    <template is="ttask-card" data="{{...item}}"></template>
+  </block>
+</view>

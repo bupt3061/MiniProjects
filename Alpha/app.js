@@ -102,6 +102,7 @@ App({
     worksList: {},
     markedWorksList: [],
     newAddedCourseids: [],
-    processedAddedIds: []
+    processedAddedIds: [],
+    tasklist: {}
   }
 })

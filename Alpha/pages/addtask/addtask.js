@@ -12,7 +12,14 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
+    const list = options.data.split('/')
+    const courseid = list[0]
+    const arg = list[1]
 
+    this.setData({
+      courseid: courseid,
+      arg: arg
+    })
   },
 
   /**

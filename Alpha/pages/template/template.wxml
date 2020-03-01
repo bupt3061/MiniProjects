@@ -237,3 +237,25 @@
     </view>
   </view>
 </template>
+
+<template name="ttask-card">
+  <view data-taskid="{{_id}}" style="width: 90%; display: flex; flex-direction: row; background-color: white; border-radius: 18rpx; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2); margin-bottom: 32rpx; align-items: center; position: relative; ">
+    <view style="padding: 32rpx;">
+      <view style="display: flex; flex-direction: row; align-items:center; margin-bottom: 14rpx;">
+        <view style="font-weight: bold; margin-right: 12rpx;">{{ttasknameh}}</view>
+        <zan-tag wx:if="{{state == 1}}" disabled>未开始</zan-tag>
+        <zan-tag wx:if="{{state == 2}}" type="primary">提交中</zan-tag>
+        <zan-tag wx:if="{{state == 3}}" type="warn">互评中</zan-tag>
+        <zan-tag wx:if="{{state == 4}}" disabled>已过期</zan-tag>
+      </view>
+      <view class="zan-font-12 zan-c-gray-darker">{{zhouqi}}</view>
+    </view>
+    <view class="primary" style="position: absolute; right: 0; display: flex; flex-direction: row; padding-right: 32rpx;">
+      <view data-taskid="{{_id}}" style="margin-right: 12rpx" bindtap="toModify">修改</view>
+      <block wx:if="{{state == 4}}">
+        <view style="margin-right: 12rpx">|</view>
+        <view data-taskid="{{_id}}" bindtap="toTaskList">分析</view>
+      </block>
+    </view>
+  </view>
+</template>
