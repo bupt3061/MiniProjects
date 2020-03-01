@@ -1,2 +1,68 @@
 <!--pages/addtask/addtask.wxml-->
-<text>pages/addtask/addtask.wxml</text>
+<zan-toptips content="{{content}}" duration="{{ duration }}" is-show="{{ $zanui.toptips.show }}" backgroundColor="{{backgroundColor}}" />
+
+<zan-dialog id="zan-dialog"></zan-dialog>
+
+<view class="container zan-font-16 zan-c-black">
+  <view class="zan-font-14 zan-c-gray-dark" style="width: 100%; padding: 14rpx 32rpx; box-sizing: border-box">基本信息</view>
+  <view style="width: 100%; padding: 24rpx 32rpx; background-color: white; display: flex; flex-direction: row; border-top: 1px solid #f1f1f1; border-bottom: 1px solid #f1f1f1; box-sizing: border-box">
+    <view style="width: 25%">任务名</view>
+    <view style="width: 75%">
+      <input placeholder="请输入" bindinput="inputTaskname" value="{{taskname}}"></input>
+    </view>
+  </view>
+
+  <view style="width: 100%; padding: 24rpx 32rpx; background-color: white; display: flex; flex-direction: row; border-bottom: 1px solid #f1f1f1; box-sizing: border-box; position: relative">
+    <view style="width: 25%">提交开始</view>
+    <view style="width: 75%">
+      <zan-date-picker placeholder="{{startUpPlaceHolder}}" bindchange="startUpTime"></zan-date-picker>
+    </view>
+    <zan-icon class="zan-c-gray-dark zan-font-14" type="arrow" style="position: absolute; right: 32rpx;"></zan-icon>
+  </view>
+
+  <view style="width: 100%; padding: 24rpx 32rpx; background-color: white; display: flex; flex-direction: row; border-bottom: 1px solid #f1f1f1; box-sizing: border-box; position: relative">
+    <view style="width: 25%">提交结束</view>
+    <view style="width: 75%">
+      <zan-date-picker placeholder="{{endUpPlaceHolder}}" bindchange="endUpTime"></zan-date-picker>
+    </view>
+    <zan-icon class="zan-c-gray-dark zan-font-14" type="arrow" style="position: absolute; right: 32rpx;"></zan-icon>
+  </view>
+
+  <view style="width: 100%; padding: 24rpx 32rpx; background-color: white; display: flex; flex-direction: row; border-bottom: 1px solid #f1f1f1; box-sizing: border-box; position: relative">
+    <view style="width: 25%">互评开始</view>
+    <view style="width: 75%">
+      <zan-date-picker placeholder="{{startEvalPlaceHolder}}" bindchange="startEvalTime"></zan-date-picker>
+    </view>
+    <zan-icon class="zan-c-gray-dark zan-font-14" type="arrow" style="position: absolute; right: 32rpx;"></zan-icon>
+  </view>
+
+  <view style="width: 100%; padding: 24rpx 32rpx; background-color: white; display: flex; flex-direction: row; border-bottom: 1px solid #f1f1f1; box-sizing: border-box; position: relative">
+    <view style="width: 25%">互评结束</view>
+    <view style="width: 75%">
+      <zan-date-picker placeholder="{{endEvalPlaceHolder}}" bindchange="endEvalTime"></zan-date-picker>
+    </view>
+    <zan-icon class="zan-c-gray-dark zan-font-14" type="arrow" style="position: absolute; right: 32rpx;"></zan-icon>
+  </view>
+
+  <view class="zan-font-14 zan-c-gray-dark" style="width: 100%; padding: 14rpx 32rpx; box-sizing: border-box">评价维度(可选)</view>
+  <!-- <block wx:for="{{standars}}" wx:key="{{index}">
+
+  </block> -->
+  <view style="width: 100%; padding: 24rpx 32rpx; background-color: white; display: flex; flex-direction: row; align-items: center; border-bottom: 1px solid #f1f1f1; box-sizing: border-box; position: relative">
+    <view style="width: 12%">维度</view>
+    <view style="width: 26%">
+      <input placeholder="请输入" bindinput="inputKey" value="{{key}}" maxlength="10"></input>
+    </view>
+    <view style="width: 12%">占比</view>
+    <view style="width: 40%">
+      <zan-stepper data-idx="{{0}}" stepper="{{ stepper.stepper }}" min="{{ stepper.min }}" max="{{ stepper.max }}" bindchange="handleStepper"></zan-stepper>
+    </view>
+    <zan-icon class="zan-c-gray-dark zan-font-14" type="add-o" style="position: absolute; right: 32rpx;"></zan-icon>
+  </view>
+
+  <button wx:if="{{arg == 1}}" loading="{{addLoading}}" class="primary-bg" style="width: 90%; margin: 64rpx 0;" bindtap="summit">提交</button>
+  <block wx:else>
+    <button loading="{{upLoading}}" class="primary-bg" style="width: 90%; margin: 64rpx 0 32rpx 0;" bindtap="update">保存</button>
+    <button loading="{{delLoading}}" class="zan-c-gray-dark" style="width: 90%; background-color: white;" bindtap="tapDelete">删除</button>
+  </block>
+</view>

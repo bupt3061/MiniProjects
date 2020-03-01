@@ -154,12 +154,29 @@ Page({
       url: '../addtask/addtask?data=' + courseid + '/1',
     })
   },
+  toModify: function() {
+    const courseid = this.data.courseid
+
+    wx.navigateTo({
+      url: '../addtask/addtask?data=' + courseid + '/2',
+    })
+  },
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
     const courseid = options.courseid
+    const tasklist = app.globalData.tasklist
     console.log('courseid')
+
+    if (tasklist[courseid] != null) {
+      this.setData({
+        tasks: tasklist[courseid],
+        show: true
+      })
+
+      return
+    }
 
     this.init(courseid)
   },
@@ -175,7 +192,15 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
+    const tasklist = app.globalData.tasklist
+    const courseid = this.data.courseid
 
+    if(tasklist[courseid] != null) {
+      this.setData({
+        tasks: tasklist[courseid],
+        show: true
+      })
+    }
   },
 
   /**

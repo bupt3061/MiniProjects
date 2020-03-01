@@ -69,12 +69,9 @@
     "zan-card": "/dist/card/index",
     "zan-panel": "/dist/panel/index",
     "zan-checkbox": "/dist/checkbox/index",
-    "zan-date-picker": "/dist/datetime-picker/index",
-    "zan-field": "/dist/field/index",
     "zan-radio": "/dist/radio/index",
     "zan-search": "/dist/search/index",
     "zan-select": "/dist/select/index",
-    "zan-stepper": "/dist/stepper/index",
     "zan-switch": "/dist/switch/index",
     "zan-tag": "/dist/tag/index",
     "zan-badge": "/dist/badge/index",
@@ -82,15 +79,13 @@
     "zan-noticebar": "/dist/noticebar/index",
     "zan-steps": "/dist/steps/index",
     "zan-actionsheet": "/dist/actionsheet/index",
-    "zan-dialog": "/dist/dialog/index",
     "zan-popup": "/dist/popup/index",
     "zan-tab": "/dist/tab/index",
     "zan-toptips": "/dist/toptips/index",
     "zan-loadmore": "/dist/loadmore/index",
-    "zan-toptips": "/dist/toptips/index",
     "zan-field": "/dist/field/index",
     "zan-dialog": "/dist/dialog/index",
-    "zan-field": "/dist/field/index",
-    "zan-date-picker": "/dist/datetime-picker/index"
+    "zan-date-picker": "/dist/datetime-picker/index",
+    "zan-stepper": "/dist/stepper/index"
   }
 }
