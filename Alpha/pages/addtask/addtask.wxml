@@ -1,4 +1,6 @@
 <!--pages/addtask/addtask.wxml-->
+<import src="../template/template.wxml" />
+
 <zan-toptips content="{{content}}" duration="{{ duration }}" is-show="{{ $zanui.toptips.show }}" backgroundColor="{{backgroundColor}}" />
 
 <zan-dialog id="zan-dialog"></zan-dialog>
@@ -45,20 +47,21 @@
   </view>
 
   <view class="zan-font-14 zan-c-gray-dark" style="width: 100%; padding: 14rpx 32rpx; box-sizing: border-box">评价维度(可选)</view>
-  <!-- <block wx:for="{{standars}}" wx:key="{{index}">
-
-  </block> -->
-  <view style="width: 100%; padding: 24rpx 32rpx; background-color: white; display: flex; flex-direction: row; align-items: center; border-bottom: 1px solid #f1f1f1; box-sizing: border-box; position: relative">
-    <view style="width: 12%">维度</view>
-    <view style="width: 26%">
-      <input placeholder="请输入" bindinput="inputKey" value="{{key}}" maxlength="10"></input>
+  <block wx:for="{{standards}}" wx:key="{{index}}">
+    <view style="width: 100%; padding: 24rpx 32rpx; background-color: white; display: flex; flex-direction: row; align-items: center; border-bottom: 1px solid #f1f1f1; box-sizing: border-box; position: relative">
+    <view style="width: 12%">维度:</view>
+    <view style="width: 28%">
+      <input data-idx="{{index}}" placeholder="请输入" bindinput="inputKey" value="{{item.key}}" maxlength="{{maxlength}}"></input>
     </view>
-    <view style="width: 12%">占比</view>
-    <view style="width: 40%">
-      <zan-stepper data-idx="{{0}}" stepper="{{ stepper.stepper }}" min="{{ stepper.min }}" max="{{ stepper.max }}" bindchange="handleStepper"></zan-stepper>
+    <view style="width: 12%">占比:</view>
+    <view style="width: 36%">
+      <zan-stepper data-idx="{{index}}" stepper="{{item.ratio}}" min="{{stepperMin}}" max="{{stepperMax}}" bindminus="minusStepper" bindplus="plusStepper"></zan-stepper>
     </view>
-    <zan-icon class="zan-c-gray-dark zan-font-14" type="add-o" style="position: absolute; right: 32rpx;"></zan-icon>
+    <view>%</view>
+    <zan-icon data-idx="{{index}}" wx:if="{{item.status}}" class="zan-c-gray-dark zan-font-14" type="add-o" style="position: absolute; right: 32rpx;" bindtap="addItem"></zan-icon>
+    <zan-icon data-idx="{{index}}" wx:else class="zan-c-gray-dark zan-font-14" type="minus-o" style="position: absolute; right: 32rpx;" bindtap="delItem"></zan-icon>
   </view>
+  </block>
 
   <button wx:if="{{arg == 1}}" loading="{{addLoading}}" class="primary-bg" style="width: 90%; margin: 64rpx 0;" bindtap="summit">提交</button>
   <block wx:else>

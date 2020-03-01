@@ -194,6 +194,7 @@ Page({
   onShow: function () {
     const tasklist = app.globalData.tasklist
     const courseid = this.data.courseid
+    console.log('onShow执行了')
 
     if(tasklist[courseid] != null) {
       this.setData({
