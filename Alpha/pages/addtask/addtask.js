@@ -46,7 +46,7 @@ Page({
    */
   init: function(taskid) {
     const courseid = this.data.courseid
-    var standards
+    var standards = []
     var taskname
     var uploadstart
     var uploadend
@@ -60,8 +60,9 @@ Page({
     var standards
     var task
 
+    console.log(courseid)
     const tasklist = app.globalData.tasklist
-    const tasks = tasklist.courseid
+    const tasks = tasklist[courseid]
     console.log(tasks)
     console.log(tasklist)
 
@@ -95,7 +96,7 @@ Page({
       for (var i = 0; i < keys.length; i++) {
         var temp = {
           key: keys[i],
-          ratio: standard[key] * 100,
+          ratio: standard[keys[i]] * 100,
           status: false
         }
 
@@ -701,14 +702,6 @@ Page({
 
   },
   /**
-   * 初始化函数
-   */
-
-  /**
-   * 其他函数
-   */
-
-  /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function(options) {
@@ -720,6 +713,12 @@ Page({
     if (arg == '2') {
       var taskid = list[1]
       console.log(taskid)
+
+      this.setData({
+        courseid: courseid,
+        arg: arg
+      })
+
       this.init(taskid)
     }
 
