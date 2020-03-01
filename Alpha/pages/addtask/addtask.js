@@ -518,7 +518,7 @@ Page({
 
     var res = {}
     var sum = 0
-    for (var i = 0; i < standards.length; i++) {
+    for (var i = 0; i < standards.length - 1; i++) {
       if (standards[i].key == null || standards[i].key == '' || standards[i].ratio == 0) {
         this.setData({
           $zanui: {
@@ -544,6 +544,14 @@ Page({
 
       sum += standards[i].ratio
       res[standards[i].key] = standards[i].ratio / 100
+    }
+
+    const last_standard = standards[standards.length - 1]
+    if((last_standard.key == '' || last_standard.key == null) && last_standard.ratio == 0) {
+      console.log('未填写')
+    } else if (last_standard.key != '' && last_standard.ratio != 0) {
+      sum += last_standard.ration
+      res[last_standard.key] = last_standard.ratio / 100
     }
 
     if (sum != 100) {
@@ -695,6 +703,150 @@ Page({
     })
 
     setTimeout(function() {
+      wx.redirectTo({
+        url: '../tasklist/tasklist?courseid=' + courseid,
+      })
+    }, 2000)
+
+  },
+  async update() {
+    const courseid = this.data.courseid
+    const taskid = this.data.taskid
+    const taskname = this.data.taskname
+    const uploadstart = this.data.uploadstart
+    const uploadend = this.data.uploadend
+    const evaluatestart = this.data.evaluatestart
+    const evaluateend = this.data.evaluateend
+    const standards = this.data.standards
+    const now = new Date()
+    let standard
+    let data
+
+    // 检查数据
+    var flag = true
+
+    flag = this.checkTaskname()
+    if (!flag) {
+      return
+    }
+
+    flag = this.checkUploadstart()
+    console.log(flag)
+    if (!flag) {
+      return
+    }
+
+    flag = this.checkUploadend()
+    if (!flag) {
+      return
+    }
+
+    flag = this.checkUpTime()
+    if (!flag) {
+      return
+    }
+
+    flag = this.checkEvaluatestart()
+    if (!flag) {
+      return
+    }
+
+    flag = this.checkEvaluateend()
+    if (!flag) {
+      return
+    }
+
+    flag = this.checkEvalTime()
+    if (!flag) {
+      return
+    }
+
+    var res = this.checkStandards()
+    if (res == 1) {
+      standard = {
+        '总分': 1
+      }
+    } else if (!res) {
+      return
+    } else {
+      standard = res
+    }
+
+    console.log(standard)
+
+    this.setData({
+      upLoading: true,
+    })
+
+    // 更新数据
+    data = {
+      taskname: taskname,
+      uploadstart: uploadstart,
+      uploadend: uploadend,
+      evaluatestart: evaluatestart,
+      evaluateend: evaluateend,
+      cretime: now,
+      standard: standard
+    }
+
+    const db = wx.cloud.database()
+
+    db.collection('task')
+    .where({
+      _id: taskid
+    })
+    .update({
+      data
+    })
+    .then(res => {
+      console.log(res)
+    })
+    .catch(err => {
+      console.log(err)
+    }) 
+
+    // 更新全局数据
+    var state = null
+    if (uploadstart > now) {
+      state = '1'
+    } else if (uploadstart <= now && now <= uploadend) {
+      state = '2'
+    } else if (evaluatestart <= now && now <= evaluateend) {
+      state = '3'
+    } else {
+      state = '4'
+    }
+    const zhouqi = dt.formatTime(uploadstart) + '-' + dt.formatTime(evaluateend)
+    const ttasknameh = st.handleTaskName(taskname)
+    const item = {
+      cretime: now,
+      evaluateend: evaluateend,
+      evaluatestart: evaluatestart,
+      standard: standard,
+      state: state,
+      taskname: taskname,
+      ttasknameh: ttasknameh,
+      uploadstart: uploadstart,
+      uploadend: uploadend,
+      zhouqi: zhouqi,
+      _courseid: courseid,
+      _id: id
+    }
+
+    var tasks = app.globalData.tasklist[courseid]
+    tasks = [item,].concat(tasks)
+    app.globalData.tasklist[courseid] = tasks
+    console.log(tasks)
+
+    this.setData({
+      upLoading: false
+    })
+
+    wx.showToast({
+      title: '已更新',
+    })
+
+    setTimeout(function () {
       wx.redirectTo({
         url: '../tasklist/tasklist?courseid=' + courseid,
       })
