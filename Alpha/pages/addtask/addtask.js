@@ -615,10 +615,12 @@ Page({
       title: '已添加',
     })
 
-    setTimeout(function() {}, 2000)
-    wx.navigateTo({
-      url: '../tasklist/tasklist',
-    })
+    setTimeout(function() {
+      wx.redirectTo({
+        url: '../tasklist/tasklist?courseid=' + courseid,
+      })
+    }, 2000)
+    
   },
   /**
    * 初始化函数
