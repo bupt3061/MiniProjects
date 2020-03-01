@@ -43,6 +43,11 @@ page {
   color: #FAAD14;
 }
 
+.alert-bg {
+  color: white;
+  background-color: #FAAD14;
+}
+
 .input {
   display: flex;
   flex-direction: row;

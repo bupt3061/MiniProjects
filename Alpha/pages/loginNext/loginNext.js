@@ -1,4 +1,6 @@
 // pages/loginNext/loginNext.js
+const app = getApp()
+
 Page({
 
   /**
@@ -98,9 +100,27 @@ Page({
 
     return flag
   },
-  comfirm: function (e) {
+  addUser: function(data) {
+    return new Promise((resolve, reject) => {
+      const db = wx.cloud.database()
+
+      db.collection('user')
+        .add({
+          data
+        })
+        .then(res => {
+          console.log(res)
+          resolve(res._id)
+        })
+        .catch(err => {
+          console.log(err)
+          reject('添加失败')
+        })
+    })
+  },
+  async comfirm (e) {
     // 验证姓名和身份
-    var flag = null
+    var flag = true
 
     flag = this.checkName()
     if(!flag) {
@@ -112,7 +132,7 @@ Page({
     flag = this.checkType()
     if (!flag) {
       console.log('身份为空')
-
+      
       return
     }
 
@@ -130,8 +150,10 @@ Page({
     const regtime = new Date()
     const org = this.data.org
     const type = this.data.type
+    const name = this.data.name
 
     const data = {
+      name: name,
       nickname: nickname,
       avatarUrl: avatarUrl,
       gender: gender,
@@ -144,18 +166,12 @@ Page({
       regtime: regtime
     }
 
-    const db = wx.cloud.database()
+    let res = await this.addUser(data)
+    console.log(res)
 
-    db.collection('user')
-    .add({
-      data
-    })
-    .then(res => {
-      console.log(res)
-    })
-    .catch(err => {
-      console.log(err)
-    })
+    // 更新全局数据
+    app.globalData.userInfo = userInfo
+    app.globalData.type = type
 
     wx.switchTab({
       url: '../index/index',

@@ -1,6 +1,6 @@
 <!--pages/addcourse/addcourse.wxml-->
 
-<zan-toptips content="{{content}}" duration="{{ duration }}" is-show="{{ $zanui.toptips.show }}" backgroundColor="#FAAD14" />
+<zan-toptips content="{{content}}" duration="{{ duration }}" is-show="{{ $zanui.toptips.show }}" backgroundColor="{{backgroundColor}}" />
 
 <zan-dialog id="zan-dialog"></zan-dialog>
 
@@ -38,9 +38,9 @@
       +
     </view>
   </view>
-  <button wx:if="{{arg == 1}}" class="primary-bg" style="width: 90%; margin: 64rpx 0;" bindtap="summit">提交</button>
+  <button wx:if="{{arg == 1}}" loading="{{addLoading}}" class="primary-bg" style="width: 90%; margin: 64rpx 0;" bindtap="summit">提交</button>
   <block wx:else>
-    <button class="primary-bg" style="width: 90%; margin: 64rpx 0 32rpx 0;" bindtap="update">保存</button>
-    <button class="zan-c-gray-dark" style="width: 90%; background-color: white;" bindtap="tapDelete">删除</button>
+    <button loading="{{upLoading}}" class="primary-bg" style="width: 90%; margin: 64rpx 0 32rpx 0;" bindtap="update">保存</button>
+    <button loading="{{delLoading}}" class="zan-c-gray-dark" style="width: 90%; background-color: white;" bindtap="tapDelete">删除</button>
   </block>
 </view>

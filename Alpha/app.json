@@ -9,7 +9,6 @@
     "pages/details/details",
     "pages/comment/comment",
     "pages/mutualeval/mutualeval",
-    "pages/collect/collect",
     "pages/course/course",
     "pages/login/login",
     "pages/loginNext/loginNext",
@@ -17,7 +16,8 @@
     "pages/post/post",
     "pages/addcourse/addcourse",
     "pages/addtask/addtask",
-    "pages/datavis/datavis"
+    "pages/datavis/datavis",
+    "pages/tasklist/tasklist"
   ],
   "enablePullDownRefresh": true,
   "window": {

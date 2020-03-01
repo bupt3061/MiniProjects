@@ -1,18 +1,28 @@
-// pages/collect/collect.js
+// pages/tasklist/tasklist.js
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
-
+    tasks: null
   },
+  /**
+   * 初始化函数
+   */
+  async init(courseid) {
+    // let tasks
 
+    // let tasksCount = await this.getTasksCount()
+  },
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
+    const courseid = options.courseid
+    console.log('courseid')
 
+    this.init(courseid)
   },
 
   /**

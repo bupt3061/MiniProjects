@@ -51,8 +51,8 @@ Page({
        * 1、获取用户信息并存储到全局
        * 2、若数据库中和不存在该用户则跳转到登陆界面
        */
-      console.log('test, 加载')
       openid = await this.getOpenid()
+      console.log('test, 加载')
       userInfo = await this.getUserInfo(openid)
 
       console.log('openid', openid)
@@ -456,6 +456,17 @@ Page({
       // 处理长字符串
       for (var i = 0; i < courses.length; i++) {
         courses[i].tcoursenameh = st.handleCourseName2(courses[i].coursename)
+      }
+
+      // 排序
+      for (var i = 0; i < courses.length; i++) {
+        for (var j = 0; j < courses.length - i - 1; j++) {
+          if (courses[j].cretime < courses[j + 1].cretime) {
+            var temp = courses[j]
+            courses[j] = courses[j + 1]
+            courses[j + 1] = temp
+          }
+        }
       }
 
       wx.hideLoading()
@@ -864,6 +875,14 @@ Page({
     console.log(courseid)
     wx.navigateTo({
       url: '../addcourse/addcourse?data=' + courseid + '/2',
+    })
+  },
+  toTaskList: function(e) {
+    const id = e.currentTarget.dataset.id
+    console.log("courseid", id)
+
+    wx.navigateTo({
+      url: '../tasklist/tasklist?courseid=' + id,
     })
   },
   /**

@@ -8,6 +8,12 @@ Page({
    * 页面的初始数据
    */
   data: {
+    duration: 1000,
+    $zanui: {
+      toptips: {
+        show: false
+      }
+    },
     phone: null,
     smsPhone: null,
     sysCode: null,
@@ -70,7 +76,7 @@ Page({
       cBorderColor: "#f1f1f1"
     })
   },
-  sendCode: function() {
+  async sendCode() {
     const that = this
 
     // 获取并验证电话
@@ -82,6 +88,31 @@ Page({
 
     if (!flag) {
       console.log("电话号码错误")
+
+      return
+    }
+
+    let exsited = await this.phoneExisted(phone)
+    console.log(exsited)
+    if (exsited) {
+      this.setData({
+        $zanui: {
+          toptips: {
+            show: true
+          }
+        },
+        pBorderColor: "#e64240"
+      });
+
+      setTimeout(() => {
+        this.setData({
+          $zanui: {
+            toptips: {
+              show: false
+            }
+          }
+        })
+      }, this.data.duration);
 
       return
     }
@@ -222,6 +253,30 @@ Page({
 
     return flag
   },
+  phoneExisted: function(phone) {
+    return new Promise((resolve, reject) => {
+      const db = wx.cloud.database()
+
+      db.collection('user')
+      .where({
+        phone: phone
+      })
+      .count()
+      .then(res => {
+        const total = res.total
+        console.log(total)
+        if(total > 0) {
+          resolve(true)
+        } else {
+          resolve(false)
+        }
+      })
+      .catch(err => {
+        console.log(err)
+        reject('查询失败')
+      })
+    })
+  },
   checkPhone: function() {
     const phone = this.getPhone(this.data.phone)
     const smsPhone = this.data.smsPhone
@@ -240,7 +295,7 @@ Page({
 
     return flag
   },
-  clickNext: function() {
+  async clickNext() {
     const phone = this.data.smsPhone
 
     // 验证手机和验证码

@@ -1,4 +1,6 @@
 <!--pages/login/login.wxml-->
+<zan-toptips content="该号码已注册" duration="{{ duration }}" is-show="{{ $zanui.toptips.show }}" />
+
 <view class="container zan-font-16 zan-c-black" style="padding: 160rpx 0;" >
   <view style="width: 80%;">
     <view class="item" style="border-bottom: 1px solid {{pBorderColor}};">

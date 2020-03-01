@@ -233,7 +233,7 @@
     <view class="primary" style="position: absolute; right: 0; display: flex; flex-direction: row; padding-right: 32rpx;">
       <view data-id="{{_id}}" style="margin-right: 12rpx" bindtap="toModify">修改</view>
       <view style="margin-right: 12rpx">|</view>
-      <view bindtap="toTask">查看</view>
+      <view data-id="{{_id}}" bindtap="toTaskList">查看</view>
     </view>
   </view>
 </template>

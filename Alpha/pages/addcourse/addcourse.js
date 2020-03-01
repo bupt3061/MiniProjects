@@ -17,6 +17,10 @@ Page({
         show: false
       }
     },
+    backgroundColor: "#FAAD14",
+    upLoading: false,
+    delLoading: false,
+    addLoading: false,
     arg: null,
     notUse: ["hours", "minutes", "seconds"],
     format: "YYYY-MM-DD",
@@ -120,7 +124,7 @@ Page({
     const year = date[0]
     const month = date[1]
     const day = date[2]
-    const timestr = year + '/' + month + '/' + day + " 00:00:00"
+    const timestr = year + '/' + month + '/' + day + " 23:59:59"
     const endtime = new Date(timestr)
     console.log('date', date)
     console.log('endtime', endtime)
@@ -339,9 +343,15 @@ Page({
     let cover
 
     // 上传数据
-    wx.showLoading({
-      title: '上传中',
+    // wx.showLoading({
+    //   title: '上传中',
+    // })
+
+    this.setData({
+      addLoading: true
     })
+
+    setTimeout(function() {}, 2000)
 
     // 检查课程名
     flag = this.checkCoursename()
@@ -430,11 +440,21 @@ Page({
     app.globalData.courses = courses
     console.log(courses)
 
-    wx.switchTab({
-      url: '../index/index',
+    this.setData({
+      addLoading: false
     })
 
-    wx.hideLoading()
+    wx.showToast({
+      title: '已添加',
+    })
+
+    setTimeout(function() {
+      wx.switchTab({
+        url: '../index/index',
+      })
+    }, 2000)
+
+    // wx.hideLoading()
   },
   addCourse: function(data) {
     return new Promise((resolve, reject) => {
@@ -462,6 +482,12 @@ Page({
     const coverPath = this.data.coverPath
     const coverName = this.data.coverName
     let cover
+
+    this.setData({
+      upLoading: true
+    })
+
+    setTimeout(function () { }, 2000)
 
     // 检查课程名
     flag = this.checkCoursename()
@@ -492,11 +518,6 @@ Page({
     if (!flag) {
       return
     }
-
-    // 上传数据
-    wx.showLoading({
-      title: '更新中',
-    })
 
     if (coverName != null) { // 更新了图片
       // 获取封面
@@ -548,7 +569,14 @@ Page({
     app.globalData.courses = courses
     console.log(courses)
 
-    wx.hideLoading()
+    wx.showToast({
+      title: '已更新',
+    })
+
+    this.setData({
+      upLoading: false
+    })
+
   },
   handleDialog: function() {
     return new Promise((resolve, reject) => {
@@ -598,9 +626,13 @@ Page({
     console.log(confirm)
 
     if (confirm) {
-      wx.showLoading({
-        title: '删除中',
+      this.setData({
+        delLoading: true
       })
+
+      setTimeout(function () {
+
+      }, 2000)
 
       const db = wx.cloud.database()
       const _ = db.command
@@ -655,73 +687,20 @@ Page({
       // 更新全局数据
       app.globalData.courses = courses
 
-      wx.hideLoading()
-
-      wx.switchTab({
-        url: '../index/index',
+      this.setData({
+        delLoading: false
       })
+
+      wx.showToast({
+        title: '已删除',
+      })
+
+      setTimeout(function() {
+        wx.switchTab({
+          url: '../index/index',
+        })
+      }, 2000)
     }
-    // Dialog({
-    //   title: "确认删除",
-    //   buttons: [{
-    //     text: '取消',
-    //     type: 'cancel'
-    //   },
-    //   {
-    //     text: '确认',
-    //     color: '#e64240',
-    //     type: 'confirm'
-    //   }]
-    // }).then(({ type, hasOpenDataPromise, openDataPromise }) => {
-    //   // type 可以用于判断具体是哪一个按钮被点击
-    //   console.log('=== dialog with custom buttons ===', `type: ${type}`);
-
-    //   if (type == 'confirm') {
-    //     const courseid = this.data.courseid
-    //     const db = wx.cloud.database()
-
-    //     wx.showLoading({
-    //       title: '删除中',
-    //     })
-
-    //     db.collection("course")
-    //       .where({
-    //         _id: courseid
-    //       })
-    //       .remove()
-    //       .then(res => {
-    //         console.log(res)
-
-    //         // 更新全局数据
-    //         var temp = []
-    //         const courses = app.globalData.courses
-    //         for(var i = 0; i < courses.length; i++) {
-    //           if(courses[i]._id == courseid) {
-    //             continue
-    //           }
-    //           temp.push(courses[i])
-    //         }
-    //         app.globalData.courses = temp
-
-    //         wx.hideLoading()
-
-    //         wx.switchTab({
-    //           url: '../index/index',
-    //         })
-    //       })
-    //       .catch(err => {
-    //         console.log(err)
-    //       })
-    //   }
-
-    //   if (hasOpenDataPromise) {
-    //     openDataPromise.then((data) => {
-    //       console.log('成功获取信息', data);
-    //     }).catch((data) => {
-    //       console.log('获取信息失败', data);
-    //     });
-    //   }
-    // });
   },
   /**
    * 生命周期函数--监听页面加载
