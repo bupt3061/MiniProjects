@@ -106,7 +106,7 @@ Page({
 
     // 获取所有已提交作业
     let uploadedWorksCount = await this.getUploadedWorksCount(taskid)
-    console.log('uploadedStusCount', uploadedStusCount)
+    console.log('uploadedWorksCount', uploadedWorksCount)
 
     uploadedWorks = []
     for (var i = 0; i < uploadedWorksCount; i += 20) {
@@ -168,7 +168,7 @@ Page({
     const tasks = app.globalData.tasklist[courseid]
     for (var i = 0; i < tasks.length; i++) {
       if (tasks[i]._id == taskid) {
-        standard = tasks[i].satndard
+        standard = tasks[i].standard
       }
     }
     standardKeys = Object.keys(standard)
@@ -181,16 +181,17 @@ Page({
         // 未交作业，作业总分为0，细项得分为0
         stus[i].workscore = 0
         for (var j = 0; j < standardKeys.length; j++) {
-          stus[i].standardKeys[j] = 0
+          stus[i][standardKeys[j]] = 0
         }
         continue
       }
+
       var wevals = stus[i].work.evals
       if (wevals.length == 0) {
         // 没有人互评
         stus[i].workscore = 6.5
         for (var j = 0; j < standardKeys.length; j++) {
-          stus[i].standardKeys[j] = 6.5
+          stus[i][standardKeys[j]] = 6.5
         }
         continue
       }
@@ -201,14 +202,20 @@ Page({
       for (var m = 0; m < wevals.length; m++) {
         totalscores.push(wevals[m].totalscore)
         eachscores.push(wevals[m].scores)
-        ctbs.push(evals[m].contribution)
+        ctbs.push(wevals[m].contribution)
       }
+
+      console.log('totalscores', totalscores)
+      console.log('eachscores', eachscores)
+      console.log('ctbs', ctbs)
 
       const workscore = this.getWorkScore(totalscores, ctbs)
       const eachscore = this.getEachscore(eachscores, ctbs)
+      console.log('workscore', workscore)
+      console.log('eachscore', eachscore)
 
       for (var n = 0; n < standardKeys.length; n++) {
-        stus[i].standardKeys[n] = eachscore[n]
+        stus[i][standardKeys[n]] = eachscore[n]
       }
       stus[i].workscore = workscore
     }
@@ -231,21 +238,23 @@ Page({
     }
 
     var workscore = processed_totalscores_sum / ctbs_sum
-    workscore = Math.round(workscore * 10 * 10) / 10
+    workscore = Math.round(workscore * 10) / 10
 
     return workscore
   },
   getEachscore: function(eachscores, ctbs) {
     var ctbs_sum = 0
+    var processed_eachscores = []
     for (var i = 0; i < ctbs.length; i++) {
       ctbs_sum += ctbs[i]
-      for(var j = 0; j < eachscores.length; j++) {
-        eachscores[j][i] *= ctbs[i]
+      var temp = []
+      for(var j = 0; j < eachscores[i].length; j++) {
+        eachscores[i][j] *= ctbs[i]
       }
     }
 
     var sum_eachscores = []
-    for(var i = 0; i < ctbs.length; i++) {
+    for (var i = 0; i < eachscores[0].length; i++) {
       var temp = 0
       for(var j = 0; j < eachscores.length; j++) {
         temp += eachscores[j][i]
@@ -256,7 +265,7 @@ Page({
     var eachscore = []
     for(var i = 0; i < sum_eachscores.length; i++) {
       var temp = sum_eachscores[i] / ctbs_sum
-      temp = Math.round(temp * 10 * 10) / 10
+      temp = Math.round(temp * 10) / 10
       eachscore.push(temp)
     }
 
@@ -294,6 +303,7 @@ Page({
           _openid: _.nin([openid, ])
         })
         .skip(skip)
+        .get()
         .then(res => {
           const data = res.data
           resolve(data)
@@ -306,7 +316,7 @@ Page({
   },
   getUploadedWorksCount: function(taskid) {
     return new Promise((resolve, reject) => {
-      const db = wx.cloud.database
+      const db = wx.cloud.database()
 
       db.collection('work')
         .where({
@@ -325,13 +335,14 @@ Page({
   },
   getUploadedWorksSkip: function(taskid, skip) {
     return new Promise((resolve, reject) => {
-      const db = wx.cloud.database
+      const db = wx.cloud.database()
 
       db.collection('work')
         .where({
           _taskid: taskid
         })
         .skip(skip)
+        .get()
         .then(res => {
           const data = res.data
           resolve(data)
@@ -371,7 +382,8 @@ Page({
         .where({
           _workid: _.in(uploadedWorkids)
         })
-        .skip()
+        .skip(skip)
+        .get()
         .then(res => {
           const data = res.data
           resolve(data)
