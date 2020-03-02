@@ -40,7 +40,6 @@ Page({
    * 页面的初始数据
    */
   data: {
-    barChart: null,
     onInitBarChart: function(F2, config) {
       const data = [{
           cate: '1',

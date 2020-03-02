@@ -8,7 +8,7 @@
           <view class="primary-bg" style="width: 100%; height: 6rpx; position: absolute; bottom: 0;"></view>
         </view>
         <view style="position: relative;" bindtap="tapWorks">
-          <view>全部作业</view>
+          <view>作业统计</view>
         </view>
       </block>
       <block wx:else>
@@ -16,25 +16,29 @@
           <view>数据分析</view>
         </view>
         <view style="position: relative;" bindtap="tapWorks">
-          <view class="primary">全部作业</view>
+          <view class="primary">作业统计</view>
           <view class="primary-bg" style="width: 100%; height: 6rpx; position: absolute; bottom: 0;"></view>
         </view>
       </block>
     </view>
   </view>
 
-  <view class="container zan-font-14" style="width: 100%; background-color: white; margin-bottom: 32rpx;">
-    <view style="width: 100%; padding: 24rpx 32rpx; border-bottom: 1px solid #f1f1f1;">
-      <view style="margin-left: 32rpx;">评价维度</view>
+  <block wx:if="{{selectedId == datavis}}">
+    <view class="container zan-font-14" style="width: 100%; background-color: white; margin-bottom: 32rpx;">
+      <view style="width: 100%; padding: 24rpx 32rpx; border-bottom: 1px solid #f1f1f1;">
+        <view style="margin-left: 32rpx;">评价维度</view>
+      </view>
+      <ff class="f2-chart" onInit="{{onInitRadarChart}}" />
     </view>
-    <ff class="f2-chart" onInit="{{onInitRadarChart}}" />
-  </view>
 
-  <view class="container zan-font-14" style="width: 100%; background-color: white; margin-bottom: 32rpx;">
-    <view style="width: 100%; padding: 24rpx 32rpx; border-bottom: 1px solid #f1f1f1;">
-      <view style="margin-left: 32rpx;">成绩分布</view>
+    <view class="container zan-font-14" style="width: 100%; background-color: white; margin-bottom: 32rpx;">
+      <view style="width: 100%; padding: 24rpx 32rpx; border-bottom: 1px solid #f1f1f1;">
+        <view style="margin-left: 32rpx;">成绩分布</view>
+      </view>
+      <ff class="f2-chart" onInit="{{onInitBarChart}}" />
     </view>
-    <ff class="f2-chart" onInit="{{onInitBarChart}}" />
-  </view>
+  </block>
+  <block wx:else>
+    <view>作业统计</view>
+  </block>
 </view>
-
