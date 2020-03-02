@@ -24,7 +24,7 @@
     </view>
   </view>
 
-  <view style="width: 90%; background-color: white; margin-bottom: 32rpx">
+  <view style="background-color: white; margin-bottom: 32rpx">
     <f2 class="f2-chart" onInit="{{onInitChart}}" />
   </view>
 </view>

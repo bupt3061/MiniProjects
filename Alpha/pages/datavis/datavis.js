@@ -1,4 +1,6 @@
 // pages/datavis/datavis.js
+const F2 = require('@antv/wx-f2')
+
 Page({
 
   /**
