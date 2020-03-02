@@ -162,6 +162,13 @@ Page({
       url: '../addtask/addtask?data=' + courseid + '/' +taskid + '/2',
     })
   },
+  toDatavis: function(e) {
+    const taskid = e.currentTarget.dataset.taskid
+
+    wx.navigateTo({
+      url: '../datavis/datavis?taskid=' + taskid,
+    })
+  },
   /**
    * 生命周期函数--监听页面加载
    */
