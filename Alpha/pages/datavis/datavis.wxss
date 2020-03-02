@@ -1,16 +1,11 @@
 /* pages/datavis/datavis.wxss */
 
-#id-barchart{
-  width: 100%;
-  height: 600rpx
-}
-
-.f2-chart {
-  width: 100%;
+#bar-dom{
   height: 500rpx;
+  width: 100%
 }
 
-#column-dom{
+#radar-dom{
   height: 500rpx;
   width: 100%
 }

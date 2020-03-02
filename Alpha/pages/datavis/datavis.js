@@ -2,9 +2,10 @@
 const F2 = require("@antv/wx-f2")
 const app = getApp()
 
-let chart = null
+let bar = null
+let radar = null
 
-function initChart(canvas, width, height, F2) { // 使用 F2 绘制图表
+function initBarChart(canvas, width, height, F2) { // 使用 F2 绘制图表
   const data = [{
     cate: '1',
     count: 5
@@ -26,18 +27,18 @@ function initChart(canvas, width, height, F2) { // 使用 F2 绘制图表
     count: 5
   },
   ];
-  chart = new F2.Chart({
+  bar = new F2.Chart({
     el: canvas,
     width,
     height
   });
 
-  chart.source(data, {
+  bar.source(data, {
     count: {
       tickCount: 5
     }
   });
-  chart.tooltip({
+  bar.tooltip({
     showItemMarker: false,
     onShow(ev) {
       const {
@@ -48,10 +49,80 @@ function initChart(canvas, width, height, F2) { // 使用 F2 绘制图表
       items[0].value = ':' + items[0].value + '人';
     }
   });
-  chart.interval().position('cate*count');
-  chart.render();
+  bar.interval().position('cate*count');
+  bar.render();
 
-  return chart;
+  return bar
+}
+
+function initRadarChart(canvas, width, height, F2) { // 使用 F2 绘制图表
+  const data = [{
+    cate: '维度1',
+    avg: 5
+  },
+  {
+    cate: '维度2',
+    avg: 5
+  },
+  {
+    cate: '维度3',
+    avg: 5
+  }]
+
+  radar = new F2.Chart({
+    el: canvas,
+    width,
+    height
+  });
+
+  radar.coord('polar');
+  radar.source(data, {
+    avg: {
+      min: 0,
+      max: 10,
+      nice: false,
+      tickCount: 5
+    }
+  });
+  radar.tooltip({
+    showItemMarker: false,
+    onShow(ev) {
+      const {
+        items
+      } = ev;
+      items[0].name = null;
+      items[0].name = items[0].title;
+      items[0].value = ':' + items[0].value + '分';
+    }
+  });
+  radar.axis('avg', {
+    label: function label(text, index, total) {
+      if (index === total - 1) {
+        return null;
+      }
+      return {
+        top: true
+      };
+    },
+    grid: {
+      lineDash: null,
+      type: 'arc' // 弧线网格
+    }
+  });
+  radar.axis('cate', {
+    grid: {
+      lineDash: null
+    }
+  });
+  radar.line().position('cate*avg')
+  radar.point().position('cate*avg')
+    .style({
+      stroke: '#fff',
+      lineWidth: 1
+    });
+  radar.render();
+
+  return radar
 }
 
 Page({
@@ -60,120 +131,11 @@ Page({
    * 页面的初始数据
    */
   data: {
-    opts: {
-      onInit: initChart
+    optsBar: {
+      onInit: () => { }
     },
-    onInitBarChart: function(F2, config) {
-      const data = [{
-          cate: '1',
-          count: 5
-        },
-        {
-          cate: '3',
-          count: 10
-        },
-        {
-          cate: '5',
-          count: 15
-        },
-        {
-          cate: '7',
-          count: 10
-        },
-        {
-          cate: '9',
-          count: 5
-        },
-      ];
-      const barchart = new F2.Chart(config);
-
-      barchart.source(data, {
-        count: {
-          tickCount: 5
-        }
-      });
-      barchart.tooltip({
-        showItemMarker: false,
-        onShow(ev) {
-          const {
-            items
-          } = ev;
-          items[0].name = null;
-          items[0].name = (parseInt(items[0].title) - 1) + '~' + (parseInt(items[0].title) + 1);
-          items[0].value = ':' + items[0].value + '人';
-        }
-      });
-      barchart.interval().position('cate*count');
-      barchart.render();
-
-      app.globalData.barchart = barchart
-
-      return barchart;
-    },
-    onInitRadarChart: function(F2, config) {
-      const data = [{
-        cate: '维度1',
-        avg: 5
-      },
-      {
-        cate: '维度2',
-        avg: 5
-      },
-      {
-        cate: '维度3',
-        avg: 5
-      }]
-
-      const radarchart = new F2.Chart(config);
-      radarchart.coord('polar');
-      radarchart.source(data, {
-        avg: {
-          min: 0,
-          max: 10,
-          nice: false,
-          tickCount: 5
-        }
-      });
-      radarchart.tooltip({
-        showItemMarker: false,
-        onShow(ev) {
-          const {
-            items
-          } = ev;
-          items[0].name = null;
-          items[0].name = items[0].title;
-          items[0].value = ':' + items[0].value + '分';
-        }
-      });
-      radarchart.axis('avg', {
-        label: function label(text, index, total) {
-          if (index === total - 1) {
-            return null;
-          }
-          return {
-            top: true
-          };
-        },
-        grid: {
-          lineDash: null,
-          type: 'arc' // 弧线网格
-        }
-      });
-      radarchart.axis('cate', {
-        grid: {
-          lineDash: null
-        }
-      });
-      radarchart.line().position('cate*avg')
-      radarchart.point().position('cate*avg')
-        .style({
-          stroke: '#fff',
-          lineWidth: 1
-        });
-      radarchart.render();
-
-      app.globalData.radarchart = radarchart
-      return radarchart
+    optsRadar: {
+      onInit: () => { }
     },
     selectedId: 'datavis',
     stus: null,
@@ -181,7 +143,8 @@ Page({
     avgs: null,
     row: null,
     studata: null,
-    taskname: null
+    taskname: null,
+    show: false
   },
   /**
    * 初始函数
@@ -459,8 +422,20 @@ Page({
     console.log('studata', studata)
 
     // 绘制条形图
-    app.globalData.barchart.changeData(totalscoresGroup)
-    app.globalData.radarchart.changeData(avgs)
+    // bar.changeData(totalscoresGroup)
+    // radar.changeData(avgs)
+    const bar = this.initBarChart(totalscoresGroup)
+    const radar = this.initRadarChart(avgs)
+
+    this.setData({
+      optsBar: {
+        onInit: bar
+      },
+      optsRadar: {
+        onInit: radar
+      },
+      show: true
+    })
 
     wx.hideLoading()
 
@@ -476,6 +451,101 @@ Page({
   /**
    * 其他函数
    */
+  initBarChart(data){
+    return function (canvas, width, height, F2) { // 使用 F2 绘制图表
+      const bar = new F2.Chart({
+        el: canvas,
+        width,
+        height
+      });
+
+      bar.source(data, {
+        count: {
+          tickCount: 5
+        }
+      })
+
+      bar.tooltip({
+        showItemMarker: false,
+        onShow(ev) {
+          const {
+            items
+          } = ev;
+          items[0].name = null;
+          items[0].name = (parseInt(items[0].title) - 1) + '~' + (parseInt(items[0].title) + 1);
+          items[0].value = ':' + items[0].value + '人';
+        }
+      })
+
+      bar.interval().position('cate*count')
+      bar.render()
+
+      return bar
+    }
+  },
+  initRadarChart(data) {
+    return function (canvas, width, height, F2) { // 使用 F2 绘制图表
+      const radar = new F2.Chart({
+        el: canvas,
+        width,
+        height
+      })
+
+      radar.coord('polar')
+
+      radar.source(data, {
+        avg: {
+          min: 0,
+          max: 10,
+          nice: false,
+          tickCount: 5
+        }
+      })
+
+      radar.tooltip({
+        showItemMarker: false,
+        onShow(ev) {
+          const {
+            items
+          } = ev;
+          items[0].name = null;
+          items[0].name = items[0].title;
+          items[0].value = ':' + items[0].value + '分';
+        }
+      })
+
+      radar.axis('avg', {
+        label: function label(text, index, total) {
+          if (index === total - 1) {
+            return null;
+          }
+          return {
+            top: true
+          };
+        },
+        grid: {
+          lineDash: null,
+          type: 'arc' // 弧线网格
+        }
+      })
+
+      radar.axis('cate', {
+        grid: {
+          lineDash: null
+        }
+      })
+
+      radar.line().position('cate*avg')
+      radar.point().position('cate*avg')
+        .style({
+          stroke: '#fff',
+          lineWidth: 1
+        });
+      radar.render();
+
+      return radar
+    }
+  },
   getFileID: function() {
     return new Promise((resolve, reject) => {
       const studata = this.data.studata
@@ -712,12 +782,6 @@ Page({
     })
   },
   tapDatavis: function() {
-    const totalscoresGroup = this.data.totalscoresGroup
-    const avgs = this.data.avgs
-
-    app.globalData.barchart.changeData(totalscoresGroup)
-    app.globalData.radarchart.changeData(avgs)
-
     this.setData({
       selectedId: 'datavis'
     })
