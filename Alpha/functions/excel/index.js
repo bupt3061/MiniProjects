@@ -11,26 +11,19 @@ const xlsx = require('node-xlsx');
 // 云函数入口函数
 exports.main = async (event, context) => {
   try {
-    let { userdata } = event
+    let { taskname, row, data } = event
 
     //1,定义excel表格名
-    let dataCVS = 'test.xlsx'
+    let dataCVS = 'scores/' + taskname + '.xlsx'
     
     //2，定义存储数据的
     let alldata = [];
-    let row = ['姓名', '昵称', '电话']; //表属性
     alldata.push(row);
+    alldata = alldata.concat(data)
 
-    for (let key in userdata) {
-      let arr = [];
-      arr.push(userdata[key].name);
-      arr.push(userdata[key].nickname);
-      arr.push(userdata[key].phone);
-      alldata.push(arr)
-    }
     //3，把数据保存到excel里
     var buffer = await xlsx.build([{
-      name: "mySheetName",
+      name: "score",
       data: alldata
     }]);
     //4，把excel文件保存到云存储里

@@ -3,37 +3,6 @@ const F2 = require("@antv/wx-f2")
 const app = getApp()
 let barchart = null
 
-// function initBarChart(F2) { // 使用 F2 绘制图表
-//   const data = [
-//     { cate: '1', count: 5 },
-//     { cate: '3', sales: 10 },
-//     { cate: '5', sales: 15 },
-//     { cate: '7', sales: 10 },
-//     { cate: '9', sales: 5 },
-//   ];
-//   barchart = new F2.Chart({
-//     id: 'barchart'
-//   });
-
-//   barchart.source(data, {
-//     count: {
-//       tickCount: 5
-//     }
-//   });
-//   barchart.tooltip({
-//     showItemMarker: false,
-//     onShow(ev) {
-//       const { items } = ev;
-//       items[0].name = null;
-//       items[0].name = (parseInt(items[0].title) - 1) + '~' + (parseInt(items[0].title) + 1);
-//       items[0].value = ':' + items[0].value + '人';
-//     }
-//   });
-//   barchart.interval().position('cate*count');
-//   barchart.render();
-//   return barchart;
-// }
-
 Page({
 
   /**
@@ -153,6 +122,12 @@ Page({
       return radarchart
     },
     selectedId: 'datavis',
+    stus: null,
+    totalscoresGroup: null,
+    avgs: null,
+    row: null,
+    studata: null,
+    taskname: null
   },
   /**
    * 初始函数
@@ -170,6 +145,22 @@ Page({
     let standard // 评价标准
     let standardKeys // 评价标准的键值
     let barChart
+    let row
+    let studata
+    let taskname
+
+    wx.showLoading({
+      title: '加载中',
+    })
+
+    // 获取任务名
+    const tks = app.globalData.tasklist[courseid]
+    for(var i = 0; i < tks.length; i++) {
+      if(tks[i]._id == taskid) {
+        taskname = tks[i].taskname
+      }
+    }
+    console.log('taskname', taskname)
 
     // 获取所有选择该课的学生
     let stusCount = await this.getStusCount(openid, courseid)
@@ -392,13 +383,99 @@ Page({
     }
     console.log('avgs', avgs)
 
+    // 获得表头
+    row = ['姓名', '电话']
+    for(var i = 0; i < standardKeys.length; i++) {
+      row.push(standardKeys[i])
+    }
+    row = row.concat(['作业得分', '互评得分', '总分'])
+    console.log('row', row)
+
+    // 获得学生数据
+    studata = []
+    for(var i = 0; i < stus.length; i++) {
+      var temp = []
+      temp = temp.concat([stus[i].name, stus[i].phone])
+      for(var j = 0; j < standardKeys.length; j++) {
+        temp.push(stus[i][standardKeys[j]])
+      }
+      temp = temp.concat([stus[i].workscore, stus[i].evalscore, stus[i].totalscore])
+      studata.push(temp)
+    }
+    console.log('studata', studata)
+
     // 绘制条形图
     app.globalData.barchart.changeData(totalscoresGroup)
     app.globalData.radarchart.changeData(avgs)
+
+    wx.hideLoading()
+
+    this.setData({
+      stus: stus,
+      totalscoresGroup: totalscoresGroup,
+      avgs: avgs,
+      row: row,
+      studata: studata,
+      taskname: taskname
+    })
   },
   /**
    * 其他函数
    */
+  getFileID: function() {
+    return new Promise((resolve, reject) => {
+      const studata = this.data.studata
+      const row = this.data.row
+      const taskname = this.data.taskname
+      
+      wx.cloud.callFunction({
+        name: 'excel',
+        data: {
+          taskname: taskname,
+          row: row,
+          data: studata
+        }
+      })
+      .then(res => {
+        resolve(res.result.fileID)
+      })
+      .catch(err => {
+        console.log(err)
+        reject('获取失败')
+      })
+    })
+  },
+  downloadFile: function(fileID) {
+    return new Promise((resolve, reject) => {
+      wx.cloud.downloadFile({
+        fileID: fileID
+      })
+      .then(res => {
+        resolve(res.tempFilePath)
+      })
+      .catch(err => {
+        reject('获取失败')
+        console.log(err)
+      })
+    })
+  },
+  async download() {
+    let fileID = await this.getFileID()
+    console.log('fileID', fileID)
+
+    let tempFilePath = await this.downloadFile(fileID)
+    console.log(tempFilePath)
+
+    wx.saveFile({
+      tempFilePath: tempFilePath,
+    })
+    .then(res => {
+      console.log(res)
+    })
+    .catch(err => {
+      console.log(err)
+    })
+  },
   getWorkScore: function(totalscores, ctbs) {
     var ctbs_sum = 0
     var processed_totalscores = []
@@ -570,6 +647,12 @@ Page({
     })
   },
   tapDatavis: function() {
+    const totalscoresGroup = this.data.totalscoresGroup
+    const avgs = this.data.avgs
+
+    app.globalData.barchart.changeData(totalscoresGroup)
+    app.globalData.radarchart.changeData(avgs)
+
     this.setData({
       selectedId: 'datavis'
     })
