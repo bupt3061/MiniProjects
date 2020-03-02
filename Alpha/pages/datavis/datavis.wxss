@@ -9,3 +9,8 @@
   width: 100%;
   height: 500rpx;
 }
+
+#column-dom{
+  height: 500rpx;
+  width: 100%
+}

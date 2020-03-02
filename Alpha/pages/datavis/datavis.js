@@ -1,7 +1,58 @@
 // pages/datavis/datavis.js
 const F2 = require("@antv/wx-f2")
 const app = getApp()
-let barchart = null
+
+let chart = null
+
+function initChart(canvas, width, height, F2) { // 使用 F2 绘制图表
+  const data = [{
+    cate: '1',
+    count: 5
+  },
+  {
+    cate: '3',
+    count: 10
+  },
+  {
+    cate: '5',
+    count: 15
+  },
+  {
+    cate: '7',
+    count: 10
+  },
+  {
+    cate: '9',
+    count: 5
+  },
+  ];
+  chart = new F2.Chart({
+    el: canvas,
+    width,
+    height
+  });
+
+  chart.source(data, {
+    count: {
+      tickCount: 5
+    }
+  });
+  chart.tooltip({
+    showItemMarker: false,
+    onShow(ev) {
+      const {
+        items
+      } = ev;
+      items[0].name = null;
+      items[0].name = (parseInt(items[0].title) - 1) + '~' + (parseInt(items[0].title) + 1);
+      items[0].value = ':' + items[0].value + '人';
+    }
+  });
+  chart.interval().position('cate*count');
+  chart.render();
+
+  return chart;
+}
 
 Page({
 
@@ -9,6 +60,9 @@ Page({
    * 页面的初始数据
    */
   data: {
+    opts: {
+      onInit: initChart
+    },
     onInitBarChart: function(F2, config) {
       const data = [{
           cate: '1',

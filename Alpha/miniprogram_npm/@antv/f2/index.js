@@ -4,7 +4,7 @@ var __DEFINE__ = function(modId, func, req) { var m = { exports: {} }; __MODS__[
 var __REQUIRE__ = function(modId, source) { if(!__MODS__[modId]) return require(source); if(!__MODS__[modId].status) { var m = { exports: {} }; __MODS__[modId].status = 1; __MODS__[modId].func(__MODS__[modId].req, m, m.exports); if(typeof m.exports === "object") { __MODS__[modId].m.exports.__proto__ = m.exports.__proto__; Object.keys(m.exports).forEach(function(k) { __MODS__[modId].m.exports[k] = m.exports[k]; var desp = Object.getOwnPropertyDescriptor(m.exports, k); if(desp && desp.configurable) Object.defineProperty(m.exports, k, { set: function(val) { __MODS__[modId].m.exports[k] = val; }, get: function() { return __MODS__[modId].m.exports[k]; } }); }); if(m.exports.__esModule) Object.defineProperty(__MODS__[modId].m.exports, "__esModule", { value: true }); } else { __MODS__[modId].m.exports = m.exports; } } return __MODS__[modId].m.exports; };
 var __REQUIRE_WILDCARD__ = function(obj) { if(obj && obj.__esModule) { return obj; } else { var newObj = {}; if(obj != null) { for(var k in obj) { if (Object.prototype.hasOwnProperty.call(obj, k)) newObj[k] = obj[k]; } } newObj.default = obj; return newObj; } };
 var __REQUIRE_DEFAULT__ = function(obj) { return obj && obj.__esModule ? obj.default : obj; };
-__DEFINE__(1583120421431, function(require, module, exports) {
+__DEFINE__(1583120421651, function(require, module, exports) {
 
 
 /**
@@ -51,8 +51,8 @@ F2.Animate = require('./animation/animate'); // register plugins
 
 F2.Chart.plugins.register([Tooltip, Legend, Guide, Animation]);
 module.exports = F2;
-}, function(modId) {var map = {"./core":1583120421432,"./geom/":1583120421478,"./geom/adjust/":1583120421494,"./coord/polar":1583120421498,"./component/axis/circle":1583120421499,"./scale/time-cat":1583120421500,"./component/guide/arc":1583120421501,"./component/guide/html":1583120421503,"./component/guide/line":1583120421504,"./component/guide/rect":1583120421505,"./component/guide/text":1583120421506,"./component/guide/tag":1583120421507,"./component/guide/point":1583120421508,"./plugin/tooltip":1583120421509,"./plugin/guide":1583120421514,"./plugin/legend":1583120421515,"./animation/detail":1583120421516,"./animation/animate":1583120421520}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421432, function(require, module, exports) {
+}, function(modId) {var map = {"./core":1583120421652,"./geom/":1583120421706,"./geom/adjust/":1583120421722,"./coord/polar":1583120421726,"./component/axis/circle":1583120421727,"./scale/time-cat":1583120421728,"./component/guide/arc":1583120421729,"./component/guide/html":1583120421731,"./component/guide/line":1583120421732,"./component/guide/rect":1583120421733,"./component/guide/text":1583120421734,"./component/guide/tag":1583120421735,"./component/guide/point":1583120421736,"./plugin/tooltip":1583120421737,"./plugin/guide":1583120421742,"./plugin/legend":1583120421743,"./animation/detail":1583120421744,"./animation/animate":1583120421748}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421652, function(require, module, exports) {
 
 
 var Core = {};
@@ -75,8 +75,8 @@ Core.track = function () {
 };
 
 module.exports = Core;
-}, function(modId) { var map = {"./global":1583120421433,"./chart/chart":1583120421437,"./geom/shape/shape":1583120421449,"./graphic/index":1583120421456,"./util/common":1583120421435}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421433, function(require, module, exports) {
+}, function(modId) { var map = {"./global":1583120421653,"./chart/chart":1583120421658,"./geom/shape/shape":1583120421676,"./graphic/index":1583120421683,"./util/common":1583120421655}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421653, function(require, module, exports) {
 
 
 var Theme = require('./theme');
@@ -84,7 +84,7 @@ var Theme = require('./theme');
 var Util = require('./util/common');
 
 var Global = {
-  version: '3.5.0',
+  version: '3.6.0-alpha.2',
   scales: {},
   widthRatio: {
     column: 1 / 2,
@@ -100,8 +100,8 @@ Global.setTheme = function (theme) {
 
 Global.setTheme(Theme);
 module.exports = Global;
-}, function(modId) { var map = {"./theme":1583120421434,"./util/common":1583120421435}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421434, function(require, module, exports) {
+}, function(modId) { var map = {"./theme":1583120421654,"./util/common":1583120421655}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421654, function(require, module, exports) {
 
 
 /**
@@ -180,251 +180,330 @@ var Theme = {
   _defaultAxis: defaultAxis
 };
 module.exports = Theme;
-}, function(modId) { var map = {"./util/common":1583120421435}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421435, function(require, module, exports) {
+}, function(modId) { var map = {"./util/common":1583120421655}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421655, function(require, module, exports) {
 
+
+var _interopRequireWildcard = require("@babel/runtime/helpers/interopRequireWildcard");
+
+exports.__esModule = true;
+var _exportNames = {
+  isObjectValueEqual: true,
+  wrapBehavior: true,
+  getWrapBehavior: true,
+  parsePadding: true,
+  directionEnabled: true,
+  upperFirst: true,
+  lowerFirst: true,
+  isString: true,
+  isNumber: true,
+  isBoolean: true,
+  isFunction: true,
+  isDate: true,
+  isArray: true,
+  isNil: true,
+  isObject: true,
+  isPlainObject: true,
+  deepMix: true,
+  mix: true,
+  each: true,
+  uniq: true,
+  find: true,
+  Array: true
+};
+exports.isObjectValueEqual = isObjectValueEqual;
+exports.wrapBehavior = wrapBehavior;
+exports.getWrapBehavior = getWrapBehavior;
+exports.parsePadding = parsePadding;
+exports.directionEnabled = directionEnabled;
+exports.Array = void 0;
+
+var _util = require("@antv/util");
+
+exports.upperFirst = _util.upperFirst;
+exports.lowerFirst = _util.lowerFirst;
+exports.isString = _util.isString;
+exports.isNumber = _util.isNumber;
+exports.isBoolean = _util.isBoolean;
+exports.isFunction = _util.isFunction;
+exports.isDate = _util.isDate;
+exports.isArray = _util.isArray;
+exports.isNil = _util.isNil;
+exports.isObject = _util.isObject;
+exports.isPlainObject = _util.isPlainObject;
+exports.deepMix = _util.deepMix;
+exports.mix = _util.mix;
+exports.each = _util.each;
+exports.uniq = _util.uniq;
+exports.find = _util.find;
+
+var ArrayUtil = _interopRequireWildcard(require("./array"));
+
+exports.Array = ArrayUtil;
+
+var _dom = require("./dom");
+
+Object.keys(_dom).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  exports[key] = _dom[key];
+});
 
 /**
  * @fileOverview Utility for F2
  * @author dxq613 @gmail.com
  * @author sima.zhang1990@gmail.com
  */
-var DomUtil = require('./dom');
+function isObjectValueEqual(a, b) {
+  // for vue.js
+  a = Object.assign({}, a);
+  b = Object.assign({}, b);
+  var aProps = Object.getOwnPropertyNames(a);
+  var bProps = Object.getOwnPropertyNames(b);
 
-var Util = {
-  upperFirst: require('@antv/util/lib/string/upper-first'),
-  lowerFirst: require('@antv/util/lib/string/lower-first'),
-  isString: require('@antv/util/lib/type/is-string'),
-  isNumber: require('@antv/util/lib/type/is-number'),
-  isBoolean: require('@antv/util/lib/type/is-boolean'),
-  isFunction: require('@antv/util/lib/type/is-function'),
-  isDate: require('@antv/util/lib/type/is-date'),
-  isArray: require('@antv/util/lib/type/is-array'),
-  isNil: require('@antv/util/lib/type/is-nil'),
-  isObject: require('@antv/util/lib/type/is-object'),
-  isPlainObject: require('@antv/util/lib/type/is-plain-object'),
-  deepMix: require('@antv/util/lib/deep-mix'),
-  mix: require('@antv/util/lib/mix'),
-  each: require('@antv/util/lib/each'),
-  uniq: require('@antv/util/lib/array/uniq'),
-  isObjectValueEqual: function isObjectValueEqual(a, b) {
-    // for vue.js
-    a = Object.assign({}, a);
-    b = Object.assign({}, b);
-    var aProps = Object.getOwnPropertyNames(a);
-    var bProps = Object.getOwnPropertyNames(b);
-
-    if (aProps.length !== bProps.length) {
-      return false;
-    }
-
-    for (var i = 0, len = aProps.length; i < len; i++) {
-      var propName = aProps[i];
-
-      if (a[propName] !== b[propName]) {
-        return false;
-      }
-    }
-
-    return true;
-  },
-  wrapBehavior: function wrapBehavior(obj, action) {
-    if (obj['_wrap_' + action]) {
-      return obj['_wrap_' + action];
-    }
-
-    var method = function method(e) {
-      obj[action](e);
-    };
-
-    obj['_wrap_' + action] = method;
-    return method;
-  },
-  getWrapBehavior: function getWrapBehavior(obj, action) {
-    return obj['_wrap_' + action];
-  },
-  parsePadding: function parsePadding(padding) {
-    var top;
-    var right;
-    var bottom;
-    var left;
-
-    if (Util.isNumber(padding) || Util.isString(padding)) {
-      top = bottom = left = right = padding;
-    } else if (Util.isArray(padding)) {
-      top = padding[0];
-      right = !Util.isNil(padding[1]) ? padding[1] : padding[0];
-      bottom = !Util.isNil(padding[2]) ? padding[2] : padding[0];
-      left = !Util.isNil(padding[3]) ? padding[3] : right;
-    }
-
-    return [top, right, bottom, left];
-  },
-  directionEnabled: function directionEnabled(mode, dir) {
-    if (mode === undefined) {
-      return true;
-    } else if (typeof mode === 'string') {
-      return mode.indexOf(dir) !== -1;
-    }
-
+  if (aProps.length !== bProps.length) {
     return false;
   }
-};
-Util.Array = {
-  merge: function merge(dataArray) {
-    var rst = [];
 
-    for (var i = 0, len = dataArray.length; i < len; i++) {
-      rst = rst.concat(dataArray[i]);
+  for (var i = 0, len = aProps.length; i < len; i++) {
+    var propName = aProps[i];
+
+    if (a[propName] !== b[propName]) {
+      return false;
     }
+  }
 
-    return rst;
-  },
-  values: function values(data, name) {
-    var rst = [];
-    var tmpMap = {};
+  return true;
+}
 
-    for (var i = 0, len = data.length; i < len; i++) {
-      var obj = data[i];
-      var value = obj[name];
+function wrapBehavior(obj, action) {
+  if (obj['_wrap_' + action]) {
+    return obj['_wrap_' + action];
+  }
 
-      if (!Util.isNil(value)) {
-        if (!Util.isArray(value)) {
-          if (!tmpMap[value]) {
-            rst.push(value);
-            tmpMap[value] = true;
-          }
-        } else {
-          Util.each(value, function (val) {
-            if (!tmpMap[val]) {
-              rst.push(val);
-              tmpMap[val] = true;
-            }
-          });
+  var method = function method(e) {
+    obj[action](e);
+  };
+
+  obj['_wrap_' + action] = method;
+  return method;
+}
+
+function getWrapBehavior(obj, action) {
+  return obj['_wrap_' + action];
+}
+
+function parsePadding(padding) {
+  var top;
+  var right;
+  var bottom;
+  var left;
+
+  if ((0, _util.isNumber)(padding) || (0, _util.isString)(padding)) {
+    top = bottom = left = right = padding;
+  } else if ((0, _util.isArray)(padding)) {
+    top = padding[0];
+    right = !(0, _util.isNil)(padding[1]) ? padding[1] : padding[0];
+    bottom = !(0, _util.isNil)(padding[2]) ? padding[2] : padding[0];
+    left = !(0, _util.isNil)(padding[3]) ? padding[3] : right;
+  }
+
+  return [top, right, bottom, left];
+}
+
+function directionEnabled(mode, dir) {
+  if (mode === undefined) {
+    return true;
+  } else if (typeof mode === 'string') {
+    return mode.indexOf(dir) !== -1;
+  }
+
+  return false;
+}
+}, function(modId) { var map = {"./array":1583120421656,"./dom":1583120421657}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421656, function(require, module, exports) {
+
+
+exports.__esModule = true;
+exports.merge = merge;
+exports.values = values;
+exports.firstValue = firstValue;
+exports.group = group;
+exports.groupToMap = groupToMap;
+exports.remove = remove;
+exports.getRange = getRange;
+
+var _util = require("@antv/util");
+
+function merge(dataArray) {
+  var rst = [];
+
+  for (var i = 0, len = dataArray.length; i < len; i++) {
+    rst = rst.concat(dataArray[i]);
+  }
+
+  return rst;
+}
+
+function values(data, name) {
+  var rst = [];
+  var tmpMap = {};
+
+  for (var i = 0, len = data.length; i < len; i++) {
+    var obj = data[i];
+    var value = obj[name];
+
+    if (!(0, _util.isNil)(value)) {
+      if (!(0, _util.isArray)(value)) {
+        if (!tmpMap[value]) {
+          rst.push(value);
+          tmpMap[value] = true;
         }
-      }
-    }
-
-    return rst;
-  },
-  firstValue: function firstValue(data, name) {
-    var rst = null;
-
-    for (var i = 0, len = data.length; i < len; i++) {
-      var obj = data[i];
-      var value = obj[name];
-
-      if (!Util.isNil(value)) {
-        if (Util.isArray(value)) {
-          rst = value[0];
-        } else {
-          rst = value;
-        }
-
-        break;
-      }
-    }
-
-    return rst;
-  },
-  group: function group(data, fields, appendConditions) {
-    if (appendConditions === void 0) {
-      appendConditions = {};
-    }
-
-    if (!fields) {
-      return [data];
-    }
-
-    var groups = Util.Array.groupToMap(data, fields);
-    var array = [];
-
-    if (fields.length === 1 && appendConditions[fields[0]]) {
-      var values = appendConditions[fields[0]];
-      Util.each(values, function (value) {
-        value = '_' + value;
-        array.push(groups[value]);
-      });
-    } else {
-      for (var i in groups) {
-        array.push(groups[i]);
-      }
-    }
-
-    return array;
-  },
-  groupToMap: function groupToMap(data, fields) {
-    if (!fields) {
-      return {
-        0: data
-      };
-    }
-
-    var callback = function callback(row) {
-      var unique = '_';
-
-      for (var i = 0, l = fields.length; i < l; i++) {
-        unique += row[fields[i]] && row[fields[i]].toString();
-      }
-
-      return unique;
-    };
-
-    var groups = {};
-
-    for (var i = 0, len = data.length; i < len; i++) {
-      var row = data[i];
-      var key = callback(row);
-
-      if (groups[key]) {
-        groups[key].push(row);
       } else {
-        groups[key] = [row];
+        (0, _util.each)(value, function (val) {
+          if (!tmpMap[val]) {
+            rst.push(val);
+            tmpMap[val] = true;
+          }
+        });
       }
     }
+  }
 
-    return groups;
-  },
-  remove: function remove(arr, obj) {
-    if (!arr) {
-      return;
+  return rst;
+}
+
+function firstValue(data, name) {
+  var rst = null;
+
+  for (var i = 0, len = data.length; i < len; i++) {
+    var obj = data[i];
+    var value = obj[name];
+
+    if (!(0, _util.isNil)(value)) {
+      if ((0, _util.isArray)(value)) {
+        rst = value[0];
+      } else {
+        rst = value;
+      }
+
+      break;
     }
+  }
 
-    var index = arr.indexOf(obj);
+  return rst;
+}
 
-    if (index !== -1) {
-      arr.splice(index, 1);
-    }
-  },
-  getRange: function getRange(values) {
-    if (!values.length) {
-      return {
-        min: 0,
-        max: 0
-      };
-    }
-
-    var max = Math.max.apply(null, values);
-    var min = Math.min.apply(null, values);
+function groupToMap(data, fields) {
+  if (!fields) {
     return {
-      min: min,
-      max: max
+      0: data
     };
   }
-};
-Util.mix(Util, DomUtil);
-module.exports = Util;
-}, function(modId) { var map = {"./dom":1583120421436}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421436, function(require, module, exports) {
+
+  var callback = function callback(row) {
+    var unique = '_';
+
+    for (var i = 0, l = fields.length; i < l; i++) {
+      unique += row[fields[i]] && row[fields[i]].toString();
+    }
+
+    return unique;
+  };
+
+  var groups = {};
+
+  for (var i = 0, len = data.length; i < len; i++) {
+    var row = data[i];
+    var key = callback(row);
+
+    if (groups[key]) {
+      groups[key].push(row);
+    } else {
+      groups[key] = [row];
+    }
+  }
+
+  return groups;
+}
+
+function group(data, fields, appendConditions) {
+  if (appendConditions === void 0) {
+    appendConditions = {};
+  }
+
+  if (!fields) {
+    return [data];
+  }
+
+  var groups = groupToMap(data, fields);
+  var array = [];
+
+  if (fields.length === 1 && appendConditions[fields[0]]) {
+    var _values = appendConditions[fields[0]];
+    (0, _util.each)(_values, function (value) {
+      value = '_' + value;
+      array.push(groups[value]);
+    });
+  } else {
+    for (var i in groups) {
+      array.push(groups[i]);
+    }
+  }
+
+  return array;
+}
+
+function remove(arr, obj) {
+  if (!arr) {
+    return;
+  }
+
+  var index = arr.indexOf(obj);
+
+  if (index !== -1) {
+    arr.splice(index, 1);
+  }
+}
+
+function getRange(values) {
+  if (!values.length) {
+    return {
+      min: 0,
+      max: 0
+    };
+  }
+
+  var max = Math.max.apply(null, values);
+  var min = Math.min.apply(null, values);
+  return {
+    min: min,
+    max: max
+  };
+}
+}, function(modId) { var map = {}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421657, function(require, module, exports) {
 
 
-var DomUtil;
+exports.__esModule = true;
+exports.isCanvasElement = isCanvasElement;
+exports.getPixelRatio = getPixelRatio;
+exports.getStyle = getStyle;
+exports.getWidth = getWidth;
+exports.getHeight = getHeight;
+exports.getDomById = getDomById;
+exports.getRelativePosition = getRelativePosition;
+exports.addEventListener = addEventListener;
+exports.removeEventListener = removeEventListener;
+exports.createEvent = createEvent;
+exports.measureText = measureText;
+exports.isBrowser = exports.isNode = exports.isMy = exports.isWx = void 0;
+
 /**
  * Detects support for options object argument in addEventListener.
  * https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#Safely_detecting_option_support
  * @private
  */
-
 var supportsEventListenerOptions = function () {
   var supports = false;
 
@@ -446,8 +525,103 @@ var supportsEventListenerOptions = function () {
 var eventListenerOptions = supportsEventListenerOptions ? {
   passive: true
 } : false;
+/* global wx, my */
+// weixin miniprogram
 
-function createEvent(type, chart, x, y, nativeEvent) {
+var isWx = typeof wx === 'object' && typeof wx.getSystemInfoSync === 'function'; // ant miniprogram
+
+exports.isWx = isWx;
+var isMy = typeof my === 'object' && typeof my.getSystemInfoSync === 'function'; // in node
+
+exports.isMy = isMy;
+var isNode = typeof module !== 'undefined' && typeof module.exports !== 'undefined'; // in browser
+
+exports.isNode = isNode;
+var isBrowser = typeof window !== 'undefined' && typeof window.document !== 'undefined' && typeof window.sessionStorage !== 'undefined';
+exports.isBrowser = isBrowser;
+
+function isCanvasElement(el) {
+  if (!el || typeof el !== 'object') return false;
+
+  if (el.nodeType === 1 && el.nodeName) {
+    // HTMLCanvasElement
+    return true;
+  } // CanvasElement
+
+
+  return !!el.isCanvasElement;
+}
+
+function getPixelRatio() {
+  return window && window.devicePixelRatio || 1;
+}
+
+function getStyle(el, property) {
+  return el.currentStyle ? el.currentStyle[property] : document.defaultView.getComputedStyle(el, null).getPropertyValue(property);
+}
+
+function getWidth(el) {
+  var width = getStyle(el, 'width');
+
+  if (width === 'auto') {
+    width = el.offsetWidth;
+  }
+
+  return parseFloat(width);
+}
+
+function getHeight(el) {
+  var height = getStyle(el, 'height');
+
+  if (height === 'auto') {
+    height = el.offsetHeight;
+  }
+
+  return parseFloat(height);
+}
+
+function getDomById(id) {
+  if (!id) {
+    return null;
+  }
+
+  return document.getElementById(id);
+}
+
+function getRelativePosition(point, canvas) {
+  var canvasDom = canvas.get('el');
+  if (!canvasDom) return point;
+
+  var _canvasDom$getBoundin = canvasDom.getBoundingClientRect(),
+      top = _canvasDom$getBoundin.top,
+      right = _canvasDom$getBoundin.right,
+      bottom = _canvasDom$getBoundin.bottom,
+      left = _canvasDom$getBoundin.left;
+
+  var paddingLeft = parseFloat(getStyle(canvasDom, 'padding-left'));
+  var paddingTop = parseFloat(getStyle(canvasDom, 'padding-top'));
+  var paddingRight = parseFloat(getStyle(canvasDom, 'padding-right'));
+  var paddingBottom = parseFloat(getStyle(canvasDom, 'padding-bottom'));
+  var width = right - left - paddingLeft - paddingRight;
+  var height = bottom - top - paddingTop - paddingBottom;
+  var pixelRatio = canvas.get('pixelRatio');
+  var mouseX = (point.x - left - paddingLeft) / width * canvasDom.width / pixelRatio;
+  var mouseY = (point.y - top - paddingTop) / height * canvasDom.height / pixelRatio;
+  return {
+    x: mouseX,
+    y: mouseY
+  };
+}
+
+function addEventListener(source, type, listener) {
+  source.addEventListener(type, listener, eventListenerOptions);
+}
+
+function removeEventListener(source, type, listener) {
+  source.removeEventListener(type, listener, eventListenerOptions);
+}
+
+function createEventObj(type, chart, x, y, nativeEvent) {
   return {
     type: type,
     chart: chart,
@@ -457,7 +631,7 @@ function createEvent(type, chart, x, y, nativeEvent) {
   };
 }
 
-function fromNativeEvent(event, chart) {
+function createEvent(event, chart) {
   var type = event.type;
   var clientPoint; // 说明是touch相关事件
 
@@ -473,7 +647,7 @@ function fromNativeEvent(event, chart) {
         clientY = touch.clientY; // 小程序环境会有x,y，这里就直接返回
 
     if (x && y) {
-      return createEvent(type, chart, x, y, event);
+      return createEventObj(type, chart, x, y, event);
     }
 
     clientPoint = {
@@ -491,106 +665,20 @@ function fromNativeEvent(event, chart) {
 
   var canvas = chart.get('canvas'); // 通过clientX, clientY 计算x, y
 
-  var point = DomUtil.getRelativePosition(clientPoint, canvas);
-  return createEvent(type, chart, point.x, point.y, event);
+  var point = getRelativePosition(clientPoint, canvas);
+  return createEventObj(type, chart, point.x, point.y, event);
 }
 
-DomUtil = {
-  /* global wx, my */
-  isWx: typeof wx === 'object' && typeof wx.getSystemInfoSync === 'function',
-  // weixin miniprogram
-  isMy: typeof my === 'object' && typeof my.getSystemInfoSync === 'function',
-  // ant miniprogram
-  isNode: typeof module !== 'undefined' && typeof module.exports !== 'undefined',
-  // in node
-  isBrowser: typeof window !== 'undefined' && typeof window.document !== 'undefined' && typeof window.sessionStorage !== 'undefined',
-  // in browser
-  isCanvasElement: function isCanvasElement(el) {
-    if (!el || typeof el !== 'object') return false;
-
-    if (el.nodeType === 1 && el.nodeName) {
-      // HTMLCanvasElement
-      return true;
-    } // CanvasElement
-
-
-    return !!el.isCanvasElement;
-  },
-  getPixelRatio: function getPixelRatio() {
-    return window && window.devicePixelRatio || 1;
-  },
-  getStyle: function getStyle(el, property) {
-    return el.currentStyle ? el.currentStyle[property] : document.defaultView.getComputedStyle(el, null).getPropertyValue(property);
-  },
-  getWidth: function getWidth(el) {
-    var width = this.getStyle(el, 'width');
-
-    if (width === 'auto') {
-      width = el.offsetWidth;
-    }
-
-    return parseFloat(width);
-  },
-  getHeight: function getHeight(el) {
-    var height = this.getStyle(el, 'height');
-
-    if (height === 'auto') {
-      height = el.offsetHeight;
-    }
-
-    return parseFloat(height);
-  },
-  getDomById: function getDomById(id) {
-    if (!id) {
-      return null;
-    }
-
-    return document.getElementById(id);
-  },
-  getRelativePosition: function getRelativePosition(point, canvas) {
-    var canvasDom = canvas.get('el');
-
-    var _canvasDom$getBoundin = canvasDom.getBoundingClientRect(),
-        top = _canvasDom$getBoundin.top,
-        right = _canvasDom$getBoundin.right,
-        bottom = _canvasDom$getBoundin.bottom,
-        left = _canvasDom$getBoundin.left;
-
-    var paddingLeft = parseFloat(this.getStyle(canvasDom, 'padding-left'));
-    var paddingTop = parseFloat(this.getStyle(canvasDom, 'padding-top'));
-    var paddingRight = parseFloat(this.getStyle(canvasDom, 'padding-right'));
-    var paddingBottom = parseFloat(this.getStyle(canvasDom, 'padding-bottom'));
-    var width = right - left - paddingLeft - paddingRight;
-    var height = bottom - top - paddingTop - paddingBottom;
-    var pixelRatio = canvas.get('pixelRatio');
-    var mouseX = (point.x - left - paddingLeft) / width * canvasDom.width / pixelRatio;
-    var mouseY = (point.y - top - paddingTop) / height * canvasDom.height / pixelRatio;
-    return {
-      x: mouseX,
-      y: mouseY
-    };
-  },
-  addEventListener: function addEventListener(source, type, listener) {
-    source.addEventListener(type, listener, eventListenerOptions);
-  },
-  removeEventListener: function removeEventListener(source, type, listener) {
-    source.removeEventListener(type, listener, eventListenerOptions);
-  },
-  createEvent: function createEvent(event, chart) {
-    return fromNativeEvent(event, chart);
-  },
-  measureText: function measureText(text, font, ctx) {
-    if (!ctx) {
-      ctx = document.createElement('canvas').getContext('2d');
-    }
-
-    ctx.font = font || '12px sans-serif';
-    return ctx.measureText(text);
+function measureText(text, font, ctx) {
+  if (!ctx) {
+    ctx = document.createElement('canvas').getContext('2d');
   }
-};
-module.exports = DomUtil;
+
+  ctx.font = font || '12px sans-serif';
+  return ctx.measureText(text);
+}
 }, function(modId) { var map = {}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421437, function(require, module, exports) {
+__DEFINE__(1583120421658, function(require, module, exports) {
 
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -598,6 +686,8 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 var _assertThisInitialized2 = _interopRequireDefault(require("@babel/runtime/helpers/assertThisInitialized"));
 
 var _inheritsLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/inheritsLoose"));
+
+var _const = require("./const");
 
 var Base = require('../base');
 
@@ -619,17 +709,6 @@ var _require = require('../graphic/index'),
     Canvas = _require.Canvas;
 
 var Helper = require('../util/helper');
-
-function isFullCircle(coord) {
-  var startAngle = coord.startAngle;
-  var endAngle = coord.endAngle;
-
-  if (!Util.isNil(startAngle) && !Util.isNil(endAngle) && endAngle - startAngle < Math.PI * 2) {
-    return false;
-  }
-
-  return true;
-}
 
 function compare(a, b) {
   return a - b;
@@ -752,6 +831,7 @@ function (_Base) {
        * @type {String}
        */
       id: null,
+      rendered: false,
 
       /**
        * padding
@@ -776,7 +856,7 @@ function (_Base) {
        * geometry instances
        * @type {Array}
        */
-      geoms: null,
+      geoms: [],
 
       /**
        * scale configuration
@@ -795,6 +875,12 @@ function (_Base) {
   };
 
   _proto._syncYScales = function _syncYScales() {
+    var syncY = this.get('syncY');
+
+    if (!syncY) {
+      return;
+    }
+
     var geoms = this.get('geoms');
     var syncScales = [];
     var min = [];
@@ -839,50 +925,32 @@ function (_Base) {
     return fields;
   };
 
-  _proto._createScale = function _createScale(field, data) {
+  _proto._getScaleData = function _getScaleData(field) {
+    var data = this.get('data');
+    var filteredData = this.get('filteredData');
+
+    if (filteredData.length) {
+      var legendFields = this._getFieldsForLegend();
+
+      if (legendFields.indexOf(field) === -1) {
+        data = filteredData;
+      }
+    }
+
+    return data;
+  };
+
+  _proto._updateScales = function _updateScales() {
     var scaleController = this.get('scaleController');
-    return scaleController.createScale(field, data);
+    scaleController.updateScales();
+
+    this._adjustScale();
   };
 
   _proto._adjustScale = function _adjustScale() {
     var self = this;
-    var coord = self.get('coord');
-    var xScale = self.getXScale();
-    var yScales = self.getYScales();
-    var scales = [];
-    xScale && scales.push(xScale);
-    scales = scales.concat(yScales);
-    var inFullCircle = coord.isPolar && isFullCircle(coord);
-    var scaleController = self.get('scaleController');
-    var colDefs = scaleController.defs;
-    Util.each(scales, function (scale) {
-      if ((scale.isCategory || scale.isIdentity) && scale.values && !(colDefs[scale.field] && colDefs[scale.field].range)) {
-        var count = scale.values.length;
-        var range;
+    var scaleController = self.get('scaleController'); // 看起来是为了让柱状图最小或最大都默认从0开始
 
-        if (count === 1) {
-          range = [0.5, 1];
-        } else {
-          var widthRatio = 1;
-          var offset = 0;
-
-          if (inFullCircle) {
-            if (!coord.transposed) {
-              range = [0, 1 - 1 / count];
-            } else {
-              widthRatio = Global.widthRatio.multiplePie;
-              offset = 1 / count * widthRatio;
-              range = [offset / 2, 1 - offset / 2];
-            }
-          } else {
-            offset = 1 / count * 1 / 2;
-            range = [offset, 1 - offset];
-          }
-        }
-
-        scale.range = range;
-      }
-    });
     var geoms = this.get('geoms');
 
     for (var i = 0; i < geoms.length; i++) {
@@ -890,22 +958,7 @@ function (_Base) {
 
       if (geom.get('type') === 'interval') {
         var yScale = geom.getYScale();
-        var field = yScale.field,
-            min = yScale.min,
-            max = yScale.max,
-            type = yScale.type;
-
-        if (!(colDefs[field] && colDefs[field].min) && type !== 'time') {
-          if (min > 0) {
-            yScale.change({
-              min: 0
-            });
-          } else if (max <= 0) {
-            yScale.change({
-              max: 0
-            });
-          }
-        }
+        scaleController.adjustStartZero(yScale);
       }
     }
   };
@@ -929,17 +982,15 @@ function (_Base) {
   };
 
   _proto._clearInner = function _clearInner() {
-    this.set('scales', {});
-    this.set('legendItems', null);
-
     this._clearGeoms();
 
     Chart.plugins.notify(this, 'clearInner');
     this.get('axisController') && this.get('axisController').clear();
   };
 
-  _proto._execFilter = function _execFilter(data) {
+  _proto._initFilteredData = function _initFilteredData() {
     var filters = this.get('filters');
+    var data = this.get('data') || [];
 
     if (filters) {
       data = data.filter(function (obj) {
@@ -957,20 +1008,38 @@ function (_Base) {
       });
     }
 
-    return data;
+    this.set('filteredData', data);
   };
 
-  _proto._initGeoms = function _initGeoms(geoms) {
-    var coord = this.get('coord');
+  _proto._changeGeomsData = function _changeGeomsData() {
+    var geoms = this.get('geoms');
     var data = this.get('filteredData');
-    var colDefs = this.get('colDefs');
 
     for (var i = 0, length = geoms.length; i < length; i++) {
       var geom = geoms[i];
-      geom.set('data', data);
-      geom.set('coord', coord);
-      geom.set('colDefs', colDefs);
-      geom.init();
+      geom.changeData(data);
+    }
+  };
+
+  _proto._initGeom = function _initGeom(geom) {
+    var coord = this.get('coord');
+    var data = this.get('filteredData');
+    var colDefs = this.get('colDefs');
+    var middlePlot = this.get('middlePlot');
+    geom.set('chart', this);
+    geom.set('container', middlePlot.addGroup());
+    geom.set('data', data);
+    geom.set('coord', coord);
+    geom.set('colDefs', colDefs);
+    geom.init();
+    this.emit(_const.EVENT_AFTER_GEOM_INIT, geom);
+  };
+
+  _proto._initGeoms = function _initGeoms() {
+    var geoms = this.get('geoms');
+
+    for (var i = 0, length = geoms.length; i < length; i++) {
+      this._initGeom(geoms[i]);
     }
   };
 
@@ -1001,18 +1070,27 @@ function (_Base) {
     var left = padding[3] === 'auto' ? 0 : padding[3];
     var width = this.get('width');
     var height = this.get('height');
-    var plot = new Plot({
-      start: {
-        x: left,
-        y: top
-      },
-      end: {
-        x: width - right,
-        y: height - bottom
-      }
+    var start = {
+      x: left,
+      y: top
+    };
+    var end = {
+      x: width - right,
+      y: height - bottom
+    };
+    var plot = this.get('plot');
+
+    if (plot) {
+      plot.reset(start, end);
+      return;
+    }
+
+    var newPlot = new Plot({
+      start: start,
+      end: end
     });
-    this.set('plotRange', plot);
-    this.set('plot', plot);
+    this.set('plotRange', newPlot);
+    this.set('plot', newPlot);
   };
 
   _proto._initCanvas = function _initCanvas() {
@@ -1036,8 +1114,6 @@ function (_Base) {
     }
 
     Chart.plugins.notify(self, 'afterCanvasInit');
-
-    self._initLayout();
   };
 
   _proto._initLayers = function _initLayers() {
@@ -1051,15 +1127,62 @@ function (_Base) {
     }));
   };
 
+  _proto._initEvents = function _initEvents() {
+    var _this2 = this;
+
+    // 数据更新后的一些更新
+    this.on(_const.EVENT_AFTER_DATA_CHANGE, function () {
+      // 数据更新后，重新设置filterdata
+      _this2._initFilteredData(); // 要重新计算scale的value值
+
+
+      _this2._updateScales(); // 更新geoms里的数据
+
+
+      _this2._changeGeomsData();
+    }); // 大小变化后的一些更新
+
+    this.on(_const.EVENT_AFTER_SIZE_CHANGE, function () {
+      _this2._initLayout(); // layout变化后，坐标轴也需要做相应的变化
+
+
+      var coord = _this2.get('coord');
+
+      if (coord) {
+        coord.reset(_this2.get('plot'));
+      }
+    });
+  };
+
+  _proto._initScaleController = function _initScaleController() {
+    var scaleController = new ScaleController({
+      chart: this
+    }); // 让colDefs 和 scaleController.defs 用同一个对象，这样就不用考虑同步的问题
+
+    this.set('colDefs', scaleController.defs); // 已经实例化的scales 也保持统一个对象
+
+    this.set('scales', scaleController.scales);
+    this.set('scaleController', scaleController);
+  };
+
+  _proto._clearScaleController = function _clearScaleController() {
+    var scaleController = this.get('scaleController');
+    scaleController.clear();
+  };
+
   _proto._init = function _init() {
     var self = this;
 
     self._initCanvas();
 
+    self._initLayout();
+
     self._initLayers();
 
-    self.set('geoms', []);
-    self.set('scaleController', new ScaleController());
+    self._initEvents();
+
+    self._initScaleController();
+
     self.set('axisController', new AxisController({
       frontPlot: self.get('frontPlot').addGroup({
         className: 'axisContainer'
@@ -1091,6 +1214,24 @@ function (_Base) {
 
     return _this;
   }
+
+  _proto.init = function init() {
+    // 初始filterData
+    this._initFilteredData(); // initialization coordinate instance
+
+
+    this._initCoord();
+
+    Chart.plugins.notify(this, 'beforeGeomInit'); // init all geometry instances
+
+    this._initGeoms(); // 多 Y 轴的情况时，统一 Y 轴的数值范围。
+
+
+    this._syncYScales(); // do some adjust for data
+
+
+    this._adjustScale();
+  }
   /**
    * set data and some scale configuration
    * @chainable
@@ -1098,7 +1239,7 @@ function (_Base) {
    * @param  {Object} colDefs the configuration for scales
    * @return {Chart} return the chart instance
    */
-
+  ;
 
   _proto.source = function source(data, colDefs) {
     this.set('data', data);
@@ -1111,17 +1252,8 @@ function (_Base) {
   };
 
   _proto.scale = function scale(field, cfg) {
-    var colDefs = this.get('colDefs') || {};
-
-    if (Util.isObject(field)) {
-      Util.mix(colDefs, field);
-    } else {
-      colDefs[field] = cfg;
-    }
-
-    this.set('colDefs', colDefs);
     var scaleController = this.get('scaleController');
-    scaleController.defs = colDefs;
+    scaleController.setFieldDef(field, cfg);
     return this;
   }
   /**
@@ -1171,7 +1303,11 @@ function (_Base) {
   _proto.filter = function filter(field, condition) {
     var filters = this.get('filters') || {};
     filters[field] = condition;
-    this.set('filters', filters);
+    this.set('filters', filters); // 如果已经render过，则再重新触发一次change
+
+    if (this.get('rendered')) {
+      this.emit(_const.EVENT_AFTER_DATA_CHANGE, this.get('data'));
+    }
   }
   /**
    * render the chart
@@ -1181,28 +1317,16 @@ function (_Base) {
   ;
 
   _proto.render = function render() {
+    var rendered = this.get('rendered');
     var canvas = this.get('canvas');
     var geoms = this.get('geoms');
-    var data = this.get('data') || [];
 
-    var filteredData = this._execFilter(data); // filter data
+    if (!rendered) {
+      this.init();
+      this.set('rendered', true);
+    }
 
-
-    this.set('filteredData', filteredData);
-
-    this._initCoord(); // initialization coordinate instance
-
-
-    Chart.plugins.notify(this, 'beforeGeomInit');
-
-    this._initGeoms(geoms); // init all geometry instances
-
-
-    this.get('syncY') && this._syncYScales();
-
-    this._adjustScale(); // do some adjust for data
-
-
+    this.emit(_const.EVENT_BEFORE_RENDER);
     Chart.plugins.notify(this, 'beforeGeomDraw');
 
     this._renderAxis();
@@ -1226,6 +1350,7 @@ function (_Base) {
     this.get('frontPlot').sort();
     Chart.plugins.notify(this, 'beforeCanvasDraw');
     canvas.draw();
+    this.emit(_const.EVENT_AFTER_RENDER);
     return this;
   }
   /**
@@ -1238,13 +1363,17 @@ function (_Base) {
   _proto.clear = function clear() {
     Chart.plugins.notify(this, 'clear');
 
-    this._removeGeoms();
-
     this._clearInner();
 
+    this._removeGeoms();
+
+    this._clearScaleController();
+
+    this.set('legendItems', null);
     this.set('filters', null);
     this.set('isUpdate', false);
     this.set('_padding', null);
+    this.set('rendered', false);
     var canvas = this.get('canvas');
     canvas.draw();
     return this;
@@ -1252,6 +1381,7 @@ function (_Base) {
 
   _proto.repaint = function repaint() {
     this.set('isUpdate', true);
+    this.set('legendItems', null);
     Chart.plugins.notify(this, 'repaint');
 
     this._clearInner();
@@ -1260,8 +1390,10 @@ function (_Base) {
   };
 
   _proto.changeData = function changeData(data) {
+    this.emit(_const.EVENT_BEFORE_DATA_CHANGE, data);
     this.set('data', data);
     Chart.plugins.notify(this, 'changeData');
+    this.emit(_const.EVENT_AFTER_DATA_CHANGE, data);
     this.set('_padding', null);
     this.repaint();
   };
@@ -1281,9 +1413,10 @@ function (_Base) {
 
     var canvas = this.get('canvas');
     canvas.changeSize(width, height);
-
-    this._initLayout();
-
+    this.emit(_const.EVENT_AFTER_SIZE_CHANGE, {
+      width: width,
+      height: height
+    });
     this.repaint();
     return this;
   };
@@ -1367,24 +1500,10 @@ function (_Base) {
   ;
 
   _proto.createScale = function createScale(field) {
-    var data = this.get('data');
-    var filteredData = this.get('filteredData');
+    var data = this._getScaleData(field);
 
-    if (filteredData.length) {
-      var legendFields = this._getFieldsForLegend();
-
-      if (legendFields.indexOf(field) === -1) {
-        data = filteredData;
-      }
-    }
-
-    var scales = this.get('scales');
-
-    if (!scales[field]) {
-      scales[field] = this._createScale(field, data);
-    }
-
-    return scales[field];
+    var scaleController = this.get('scaleController');
+    return scaleController.createScale(field, data);
   }
   /**
    * @protected
@@ -1394,11 +1513,13 @@ function (_Base) {
   ;
 
   _proto.addGeom = function addGeom(geom) {
+    var rendered = this.get('rendered');
     var geoms = this.get('geoms');
-    var middlePlot = this.get('middlePlot');
-    geoms.push(geom);
-    geom.set('chart', this);
-    geom.set('container', middlePlot.addGroup());
+    geoms.push(geom); // 如果图表已经渲染过了，则直接初始化geom
+
+    if (rendered) {
+      this._initGeom(geom);
+    }
   }
   /**
    * get the scale of x axis
@@ -1544,9 +1665,33 @@ function (_Base) {
 
 Chart.plugins = Chart.initPlugins();
 module.exports = Chart;
-}, function(modId) { var map = {"../base":1583120421438,"./plot":1583120421439,"../util/common":1583120421435,"../coord/index":1583120421440,"../geom/base":1583120421445,"./controller/scale":1583120421450,"./controller/axis":1583120421452,"../global":1583120421433,"../graphic/index":1583120421456,"../util/helper":1583120421477}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421438, function(require, module, exports) {
+}, function(modId) { var map = {"./const":1583120421659,"../base":1583120421660,"./plot":1583120421662,"../util/common":1583120421655,"../coord/index":1583120421663,"../geom/base":1583120421668,"./controller/scale":1583120421677,"./controller/axis":1583120421679,"../global":1583120421653,"../graphic/index":1583120421683,"../util/helper":1583120421705}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421659, function(require, module, exports) {
 
+
+exports.__esModule = true;
+exports.EVENT_AFTER_GEOM_INIT = exports.EVENT_AFTER_SIZE_CHANGE = exports.EVENT_AFTER_DATA_CHANGE = exports.EVENT_BEFORE_DATA_CHANGE = exports.EVENT_AFTER_RENDER = exports.EVENT_BEFORE_RENDER = void 0;
+var EVENT_BEFORE_RENDER = 'beforerender';
+exports.EVENT_BEFORE_RENDER = EVENT_BEFORE_RENDER;
+var EVENT_AFTER_RENDER = 'afterrender';
+exports.EVENT_AFTER_RENDER = EVENT_AFTER_RENDER;
+var EVENT_BEFORE_DATA_CHANGE = 'beforedatachange';
+exports.EVENT_BEFORE_DATA_CHANGE = EVENT_BEFORE_DATA_CHANGE;
+var EVENT_AFTER_DATA_CHANGE = 'afterdatachange';
+exports.EVENT_AFTER_DATA_CHANGE = EVENT_AFTER_DATA_CHANGE;
+var EVENT_AFTER_SIZE_CHANGE = '_aftersizechange';
+exports.EVENT_AFTER_SIZE_CHANGE = EVENT_AFTER_SIZE_CHANGE;
+var EVENT_AFTER_GEOM_INIT = '_aftergeominit';
+exports.EVENT_AFTER_GEOM_INIT = EVENT_AFTER_GEOM_INIT;
+}, function(modId) { var map = {}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421660, function(require, module, exports) {
+
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+var _inheritsLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/inheritsLoose"));
+
+var _emit = _interopRequireDefault(require("./graphic/event/emit"));
 
 /**
  * @fileOverview Base class of chart and geometry
@@ -1556,7 +1701,8 @@ var Util = require('./util/common');
 
 var Base =
 /*#__PURE__*/
-function () {
+function (_Emit) {
+  (0, _inheritsLoose2["default"])(Base, _Emit);
   var _proto = Base.prototype;
 
   _proto.getDefaultCfg = function getDefaultCfg() {
@@ -1564,10 +1710,16 @@ function () {
   };
 
   function Base(cfg) {
+    var _this;
+
+    _this = _Emit.call(this) || this;
     var attrs = {};
-    var defaultCfg = this.getDefaultCfg();
-    this._attrs = attrs;
+
+    var defaultCfg = _this.getDefaultCfg();
+
+    _this._attrs = attrs;
     Util.mix(attrs, defaultCfg, cfg);
+    return _this;
   }
 
   _proto.get = function get(name) {
@@ -1584,11 +1736,90 @@ function () {
   };
 
   return Base;
-}();
+}(_emit["default"]);
 
 module.exports = Base;
-}, function(modId) { var map = {"./util/common":1583120421435}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421439, function(require, module, exports) {
+}, function(modId) { var map = {"./graphic/event/emit":1583120421661,"./util/common":1583120421655}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421661, function(require, module, exports) {
+
+
+exports.__esModule = true;
+exports["default"] = void 0;
+
+var _common = require("../../util/common");
+
+// 实现简单的事件机制
+var EventEmit =
+/*#__PURE__*/
+function () {
+  function EventEmit() {
+    this.__events = {};
+  }
+
+  var _proto = EventEmit.prototype;
+
+  _proto.on = function on(type, listener) {
+    if (!type || !listener) {
+      return;
+    }
+
+    var events = this.__events[type] || [];
+    events.push(listener);
+    this.__events[type] = events;
+  };
+
+  _proto.emit = function emit(type, e) {
+    var _this = this;
+
+    if ((0, _common.isObject)(type)) {
+      e = type;
+      type = e && e.type;
+    }
+
+    if (!type) {
+      return;
+    }
+
+    var events = this.__events[type];
+
+    if (!events || !events.length) {
+      return;
+    }
+
+    events.forEach(function (listener) {
+      listener.call(_this, e);
+    });
+  };
+
+  _proto.off = function off(type, listener) {
+    var __events = this.__events;
+    var events = __events[type];
+
+    if (!events || !events.length) {
+      return;
+    } // 如果没有指定方法，则删除所有项
+
+
+    if (!listener) {
+      delete events[type];
+      return;
+    } // 删除指定的 listener
+
+
+    for (var i = 0, len = events.length; i < len; i++) {
+      if (events[i] === listener) {
+        events.splice(i, 1);
+      }
+    }
+  };
+
+  return EventEmit;
+}();
+
+var _default = EventEmit;
+exports["default"] = _default;
+}, function(modId) { var map = {"../../util/common":1583120421655}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421662, function(require, module, exports) {
 
 
 var Util = require('../util/common');
@@ -1667,8 +1898,8 @@ function () {
 }();
 
 module.exports = Plot;
-}, function(modId) { var map = {"../util/common":1583120421435}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421440, function(require, module, exports) {
+}, function(modId) { var map = {"../util/common":1583120421655}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421663, function(require, module, exports) {
 
 
 var Coord = require('./base');
@@ -1676,8 +1907,8 @@ var Coord = require('./base');
 require('./cartesian');
 
 module.exports = Coord;
-}, function(modId) { var map = {"./base":1583120421441,"./cartesian":1583120421444}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421441, function(require, module, exports) {
+}, function(modId) { var map = {"./base":1583120421664,"./cartesian":1583120421667}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421664, function(require, module, exports) {
 
 
 var Util = require('../util/common');
@@ -1774,8 +2005,8 @@ function () {
 }();
 
 module.exports = Base;
-}, function(modId) { var map = {"../util/common":1583120421435,"../graphic/util/matrix":1583120421442,"../graphic/util/vector2":1583120421443}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421442, function(require, module, exports) {
+}, function(modId) { var map = {"../util/common":1583120421655,"../graphic/util/matrix":1583120421665,"../graphic/util/vector2":1583120421666}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421665, function(require, module, exports) {
 
 
 var Matrix = {
@@ -1850,7 +2081,7 @@ var Matrix = {
 };
 module.exports = Matrix;
 }, function(modId) { var map = {}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421443, function(require, module, exports) {
+__DEFINE__(1583120421666, function(require, module, exports) {
 
 
 /**
@@ -2081,7 +2312,7 @@ module.exports = {
   }
 };
 }, function(modId) { var map = {}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421444, function(require, module, exports) {
+__DEFINE__(1583120421667, function(require, module, exports) {
 
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -2152,13 +2383,17 @@ function (_Base) {
 Base.Cartesian = Cartesian;
 Base.Rect = Cartesian;
 module.exports = Cartesian;
-}, function(modId) { var map = {"./base":1583120421441}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421445, function(require, module, exports) {
+}, function(modId) { var map = {"./base":1583120421664}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421668, function(require, module, exports) {
 
+
+var _interopRequireWildcard = require("@babel/runtime/helpers/interopRequireWildcard");
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
 
 var _inheritsLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/inheritsLoose"));
+
+var Attr = _interopRequireWildcard(require("../attr/index"));
 
 var Util = require('../util/common');
 
@@ -2169,8 +2404,6 @@ var FIELD_ORIGIN = '_origin';
 var FIELD_ORIGIN_Y = '_originY';
 
 var Global = require('../global');
-
-var Attr = require('../attr/index');
 
 var GeometryShape = require('./shape/shape');
 
@@ -2260,13 +2493,7 @@ function (_Base) {
 
     self._initAttrs();
 
-    var dataArray = self._processData();
-
-    if (self.get('adjust')) {
-      self._adjustData(dataArray);
-    }
-
-    self.set('dataArray', dataArray);
+    self._processData();
   };
 
   _proto._getGroupScales = function _getGroupScales() {
@@ -2360,7 +2587,7 @@ function (_Base) {
         }
 
         if (type === 'position') {
-          var yScale = scales[1];
+          var yScale = scales[1]; // 饼图的处理，但是还不知道为啥
 
           if (coord.type === 'polar' && coord.transposed && self.hasAdjust('stack')) {
             if (yScale.values.length) {
@@ -2420,6 +2647,15 @@ function (_Base) {
       dataArray.push(tempData);
     }
 
+    if (self.get('adjust')) {
+      self._adjustData(dataArray);
+    }
+
+    if (self.get('sortable')) {
+      self._sort(dataArray);
+    }
+
+    self.set('dataArray', dataArray);
     return dataArray;
   };
 
@@ -2572,41 +2808,49 @@ function (_Base) {
   _proto._mapping = function _mapping(data) {
     var self = this;
     var attrs = self.get('attrs');
-    var yField = self.getYScale().field;
-    var mappedData = [];
+    var yField = self.getYScale().field; // 用来缓存转换的值，减少mapping耗时
 
-    for (var i = 0, len = data.length; i < len; i++) {
-      var record = data[i];
-      var newRecord = {};
-      newRecord[FIELD_ORIGIN] = record[FIELD_ORIGIN];
-      newRecord.points = record.points;
-      newRecord.nextPoints = record.nextPoints; // 避免
+    var mappedCache = {};
 
-      newRecord[FIELD_ORIGIN_Y] = record[yField];
+    for (var k in attrs) {
+      if (attrs.hasOwnProperty(k)) {
+        var attr = attrs[k];
+        var names = attr.names;
+        var scales = attr.scales;
 
-      for (var k in attrs) {
-        if (attrs.hasOwnProperty(k)) {
-          var attr = attrs[k];
-          var names = attr.names;
+        for (var i = 0, len = data.length; i < len; i++) {
+          var record = data[i];
+          record[FIELD_ORIGIN_Y] = record[yField]; // 获取视觉属性对应的value值
+          // 位置的缓存命中率低，还是每次单独计算
 
-          var values = self._getAttrValues(attr, record);
+          if (attr.type === 'position') {
+            var values = self._getAttrValues(attr, record);
 
-          if (names.length > 1) {
             for (var j = 0, _len = values.length; j < _len; j++) {
               var val = values[j];
               var name = names[j];
-              newRecord[name] = Util.isArray(val) && val.length === 1 ? val[0] : val;
+              record[name] = Util.isArray(val) && val.length === 1 ? val[0] : val;
             }
           } else {
-            newRecord[names[0]] = values.length === 1 ? values[0] : values;
+            // 除了position其他都只有一项
+            var _name = names[0];
+            var field = scales[0].field;
+            var value = record[field];
+            var key = "" + _name + value;
+            var _values = mappedCache[key];
+
+            if (!_values) {
+              _values = self._getAttrValues(attr, record);
+              mappedCache[key] = _values;
+            }
+
+            record[_name] = _values[0];
           }
         }
       }
-
-      mappedData.push(newRecord);
     }
 
-    return mappedData;
+    return data;
   };
 
   _proto._getAttrValues = function _getAttrValues(attr, record) {
@@ -2644,22 +2888,8 @@ function (_Base) {
   _proto._beforeMapping = function _beforeMapping(dataArray) {
     var self = this;
 
-    if (self.get('sortable')) {
-      self._sort(dataArray);
-    }
-
     if (self.get('generatePoints')) {
-      Util.each(dataArray, function (data) {
-        self._generatePoints(data);
-      }); // 添加nextPoints
-
-      Util.each(dataArray, function (data, index) {
-        var nextData = dataArray[index + 1];
-
-        if (nextData) {
-          data[0].nextPoints = nextData[0].points;
-        }
-      });
+      self._generatePoints(dataArray);
     }
   };
 
@@ -2744,18 +2974,27 @@ function (_Base) {
     }
   };
 
-  _proto._generatePoints = function _generatePoints(data) {
+  _proto._generatePoints = function _generatePoints(dataArray) {
     var self = this;
     var shapeFactory = self.getShapeFactory();
     var shapeAttr = self.getAttr('shape');
+    Util.each(dataArray, function (data) {
+      for (var i = 0, len = data.length; i < len; i++) {
+        var obj = data[i];
+        var cfg = self.createShapePointsCfg(obj);
+        var shape = shapeAttr ? self._getAttrValues(shapeAttr, obj) : null;
+        var points = shapeFactory.getShapePoints(shape, cfg);
+        obj.points = points;
+      }
+    }); // 添加nextPoints
 
-    for (var i = 0, len = data.length; i < len; i++) {
-      var obj = data[i];
-      var cfg = self.createShapePointsCfg(obj);
-      var shape = shapeAttr ? self._getAttrValues(shapeAttr, obj) : null;
-      var points = shapeFactory.getShapePoints(shape, cfg);
-      obj.points = points;
-    }
+    Util.each(dataArray, function (data, index) {
+      var nextData = dataArray[index + 1];
+
+      if (nextData) {
+        data[0].nextPoints = nextData[0].points;
+      }
+    });
   }
   /**
    * get the info of each shape
@@ -3026,30 +3265,29 @@ function (_Base) {
     return this;
   };
 
-  _proto.reset = function reset() {
-    this.set('attrOptions', {});
-    this.set('adjust', null);
-    this.clearInner();
+  _proto.changeData = function changeData(data) {
+    this.set('data', data);
+
+    this._processData();
   };
 
   _proto.clearInner = function clearInner() {
     var container = this.get('container');
 
     if (container) {
-      container.clear();
-      container.setMatrix([1, 0, 0, 1, 0, 0]);
+      container.clear(); // container.setMatrix([ 1, 0, 0, 1, 0, 0 ]);
     }
+  };
 
-    container && container.clear();
+  _proto.reset = function reset() {
     this.set('attrs', {});
-    this.set('groupScales', null);
-    this.set('xDistance', null);
-    this.set('_width', null);
+    this.set('attrOptions', {});
+    this.set('adjust', null);
+    this.clearInner();
   };
 
   _proto.clear = function clear() {
     this.clearInner();
-    this.set('scales', {});
   };
 
   _proto.destroy = function destroy() {
@@ -3078,29 +3316,494 @@ function (_Base) {
 }(Base);
 
 module.exports = Geom;
-}, function(modId) { var map = {"../util/common":1583120421435,"../base":1583120421438,"../global":1583120421433,"../attr/index":1583120421446,"./shape/shape":1583120421449}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421446, function(require, module, exports) {
-
-
-module.exports = {
-  Position: require('@antv/attr/lib/position'),
-  Shape: require('@antv/attr/lib/shape'),
-  Size: require('@antv/attr/lib/size'),
-  Color: require('./color')
-};
-}, function(modId) { var map = {"./color":1583120421447}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421447, function(require, module, exports) {
+}, function(modId) { var map = {"../attr/index":1583120421669,"../util/common":1583120421655,"../base":1583120421660,"../global":1583120421653,"./shape/shape":1583120421676}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421669, function(require, module, exports) {
 
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
 
+exports.__esModule = true;
+exports.Color = exports.Size = exports.Shape = exports.Position = void 0;
+
+var _position = _interopRequireDefault(require("./position"));
+
+exports.Position = _position["default"];
+
+var _shape = _interopRequireDefault(require("./shape"));
+
+exports.Shape = _shape["default"];
+
+var _size = _interopRequireDefault(require("./size"));
+
+exports.Size = _size["default"];
+
+var _color = _interopRequireDefault(require("./color"));
+
+exports.Color = _color["default"];
+}, function(modId) { var map = {"./position":1583120421670,"./shape":1583120421672,"./size":1583120421673,"./color":1583120421674}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421670, function(require, module, exports) {
+
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+exports.__esModule = true;
+exports["default"] = void 0;
+
 var _inheritsLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/inheritsLoose"));
 
-var Util = require('../util/common');
+var _util = require("@antv/util");
 
-var ColorUtil = require('./color-util');
+var _base = _interopRequireDefault(require("./base"));
 
-var Base = require('@antv/attr/lib/base');
+var Position =
+/*#__PURE__*/
+function (_Base) {
+  (0, _inheritsLoose2["default"])(Position, _Base);
+
+  function Position(cfg) {
+    var _this;
+
+    _this = _Base.call(this, cfg) || this;
+    _this.names = ['x', 'y'];
+    _this.type = 'position';
+    return _this;
+  }
+
+  var _proto = Position.prototype;
+
+  _proto.mapping = function mapping(x, y) {
+    var scales = this.scales;
+    var coord = this.coord;
+    var scaleX = scales[0];
+    var scaleY = scales[1];
+    var rstX;
+    var rstY;
+    var obj;
+
+    if ((0, _util.isNil)(x) || (0, _util.isNil)(y)) {
+      return [];
+    }
+
+    if ((0, _util.isArray)(y) && (0, _util.isArray)(x)) {
+      rstX = [];
+      rstY = [];
+
+      for (var i = 0, j = 0, xLen = x.length, yLen = y.length; i < xLen && j < yLen; i++, j++) {
+        obj = coord.convertPoint({
+          x: scaleX.scale(x[i]),
+          y: scaleY.scale(y[j])
+        });
+        rstX.push(obj.x);
+        rstY.push(obj.y);
+      }
+    } else if ((0, _util.isArray)(y)) {
+      x = scaleX.scale(x);
+      rstY = [];
+      (0, _util.each)(y, function (yVal) {
+        yVal = scaleY.scale(yVal);
+        obj = coord.convertPoint({
+          x: x,
+          y: yVal
+        });
+
+        if (rstX && rstX !== obj.x) {
+          if (!(0, _util.isArray)(rstX)) {
+            rstX = [rstX];
+          }
+
+          rstX.push(obj.x);
+        } else {
+          rstX = obj.x;
+        }
+
+        rstY.push(obj.y);
+      });
+    } else if ((0, _util.isArray)(x)) {
+      y = scaleY.scale(y);
+      rstX = [];
+      (0, _util.each)(x, function (xVal) {
+        xVal = scaleX.scale(xVal);
+        obj = coord.convertPoint({
+          x: xVal,
+          y: y
+        });
+
+        if (rstY && rstY !== obj.y) {
+          if (!(0, _util.isArray)(rstY)) {
+            rstY = [rstY];
+          }
+
+          rstY.push(obj.y);
+        } else {
+          rstY = obj.y;
+        }
+
+        rstX.push(obj.x);
+      });
+    } else {
+      x = scaleX.scale(x);
+      y = scaleY.scale(y);
+      var point = coord.convertPoint({
+        x: x,
+        y: y
+      });
+      rstX = point.x;
+      rstY = point.y;
+    }
+
+    return [rstX, rstY];
+  };
+
+  return Position;
+}(_base["default"]);
+
+var _default = Position;
+exports["default"] = _default;
+}, function(modId) { var map = {"./base":1583120421671}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421671, function(require, module, exports) {
+
+
+exports.__esModule = true;
+exports["default"] = void 0;
+
+var _util = require("@antv/util");
+
+/**
+ * @fileOverview the Attribute base class
+ */
+function toScaleString(scale, value) {
+  if ((0, _util.isString)(value)) {
+    return value;
+  }
+
+  return scale.invert(scale.scale(value));
+}
+/**
+ * 所有视觉通道属性的基类
+ * @class Attr
+ */
+
+
+var AttributeBase =
+/*#__PURE__*/
+function () {
+  function AttributeBase(cfg) {
+    var _this = this;
+
+    /**
+     * 属性的类型
+     * @type {String}
+     */
+    this.type = 'base';
+    /**
+     * 属性的名称
+     * @type {String}
+     */
+
+    this.name = null;
+    /**
+     * 回调函数
+     * @type {Function}
+     */
+
+    this.method = null;
+    /**
+     * 备选的值数组
+     * @type {Array}
+     */
+
+    this.values = [];
+    /**
+     * 属性内部的度量
+     * @type {Array}
+     */
+
+    this.scales = [];
+    /**
+     * 是否通过线性取值, 如果未指定，则根据数值的类型判定
+     * @type {Boolean}
+     */
+
+    this.linear = null;
+    /**
+     * 当用户设置的 callback 返回 null 时, 应该返回默认 callback 中的值
+     */
+
+    var mixedCallback = null;
+    var defaultCallback = this.callback;
+
+    if (cfg.callback) {
+      var userCallback = cfg.callback;
+
+      mixedCallback = function mixedCallback() {
+        for (var _len = arguments.length, params = new Array(_len), _key = 0; _key < _len; _key++) {
+          params[_key] = arguments[_key];
+        }
+
+        var ret = userCallback.apply(void 0, params);
+
+        if ((0, _util.isNil)(ret)) {
+          ret = defaultCallback.apply(_this, params);
+        }
+
+        return ret;
+      };
+    }
+
+    (0, _util.mix)(this, cfg);
+
+    if (mixedCallback) {
+      (0, _util.mix)(this, {
+        callback: mixedCallback
+      });
+    }
+  } // 获取属性值，将值映射到视觉通道
+
+
+  var _proto = AttributeBase.prototype;
+
+  _proto._getAttrValue = function _getAttrValue(scale, value) {
+    var values = this.values;
+
+    if (scale.isCategory && !this.linear) {
+      var index = scale.translate(value);
+      return values[index % values.length];
+    }
+
+    var percent = scale.scale(value);
+    return this.getLinearValue(percent);
+  }
+  /**
+   * 如果进行线性映射，返回对应的映射值
+   * @protected
+   * @param  {Number} percent 百分比
+   * @return {*}  颜色值、形状、大小等
+   */
+  ;
+
+  _proto.getLinearValue = function getLinearValue(percent) {
+    var values = this.values;
+    var steps = values.length - 1;
+    var step = Math.floor(steps * percent);
+    var leftPercent = steps * percent - step;
+    var start = values[step];
+    var end = step === steps ? start : values[step + 1];
+    var rstValue = start + (end - start) * leftPercent;
+    return rstValue;
+  }
+  /**
+   * 默认的回调函数
+   * @param {*} value 回调函数的值
+   * @type {Function}
+   * @return {Array} 返回映射后的值
+   */
+  ;
+
+  _proto.callback = function callback(value) {
+    var self = this;
+    var scale = self.scales[0];
+    var rstValue = null;
+
+    if (scale.type === 'identity') {
+      rstValue = scale.value;
+    } else {
+      rstValue = self._getAttrValue(scale, value);
+    }
+
+    return rstValue;
+  }
+  /**
+   * 根据度量获取属性名
+   * @return {Array} dims of this Attribute
+   */
+  ;
+
+  _proto.getNames = function getNames() {
+    var scales = this.scales;
+    var names = this.names;
+    var length = Math.min(scales.length, names.length);
+    var rst = [];
+
+    for (var i = 0; i < length; i++) {
+      rst.push(names[i]);
+    }
+
+    return rst;
+  }
+  /**
+   * 根据度量获取维度名
+   * @return {Array} dims of this Attribute
+   */
+  ;
+
+  _proto.getFields = function getFields() {
+    var scales = this.scales;
+    var rst = [];
+    (0, _util.each)(scales, function (scale) {
+      rst.push(scale.field);
+    });
+    return rst;
+  }
+  /**
+   * 根据名称获取度量
+   * @param  {String} name the name of scale
+   * @return {Scale} scale
+   */
+  ;
+
+  _proto.getScale = function getScale(name) {
+    var scales = this.scales;
+    var names = this.names;
+    var index = names.indexOf(name);
+    return scales[index];
+  }
+  /**
+   * 映射数据
+   * @param {*} param1...paramn 多个数值
+   * @return {Array} 映射的值组成的数组
+   */
+  ;
+
+  _proto.mapping = function mapping() {
+    var scales = this.scales;
+    var callback = this.callback;
+
+    for (var _len2 = arguments.length, params = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+      params[_key2] = arguments[_key2];
+    }
+
+    var values = params;
+
+    if (callback) {
+      for (var i = 0, len = params.length; i < len; i++) {
+        params[i] = this._toOriginParam(params[i], scales[i]);
+      }
+
+      values = callback.apply(this, params);
+    }
+
+    values = [].concat(values);
+    return values;
+  } // 原始的参数
+  ;
+
+  _proto._toOriginParam = function _toOriginParam(param, scale) {
+    var rst = param;
+
+    if (!scale.isLinear) {
+      if ((0, _util.isArray)(param)) {
+        rst = [];
+
+        for (var i = 0, len = param.length; i < len; i++) {
+          rst.push(toScaleString(scale, param[i]));
+        }
+      } else {
+        rst = toScaleString(scale, param);
+      }
+    }
+
+    return rst;
+  };
+
+  return AttributeBase;
+}();
+
+var _default = AttributeBase;
+exports["default"] = _default;
+}, function(modId) { var map = {}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421672, function(require, module, exports) {
+
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+exports.__esModule = true;
+exports["default"] = void 0;
+
+var _inheritsLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/inheritsLoose"));
+
+var _base = _interopRequireDefault(require("./base"));
+
+var Shape =
+/*#__PURE__*/
+function (_Base) {
+  (0, _inheritsLoose2["default"])(Shape, _Base);
+
+  function Shape(cfg) {
+    var _this;
+
+    _this = _Base.call(this, cfg) || this;
+    _this.names = ['shape'];
+    _this.type = 'shape';
+    _this.gradient = null;
+    return _this;
+  }
+  /**
+   * @override
+   */
+
+
+  var _proto = Shape.prototype;
+
+  _proto.getLinearValue = function getLinearValue(percent) {
+    var values = this.values;
+    var index = Math.round((values.length - 1) * percent);
+    return values[index];
+  };
+
+  return Shape;
+}(_base["default"]);
+
+var _default = Shape;
+exports["default"] = _default;
+}, function(modId) { var map = {"./base":1583120421671}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421673, function(require, module, exports) {
+
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+exports.__esModule = true;
+exports["default"] = void 0;
+
+var _inheritsLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/inheritsLoose"));
+
+var _base = _interopRequireDefault(require("./base"));
+
+var Size =
+/*#__PURE__*/
+function (_Base) {
+  (0, _inheritsLoose2["default"])(Size, _Base);
+
+  function Size(cfg) {
+    var _this;
+
+    _this = _Base.call(this, cfg) || this;
+    _this.names = ['size'];
+    _this.type = 'size';
+    _this.gradient = null;
+    return _this;
+  }
+
+  return Size;
+}(_base["default"]);
+
+var _default = Size;
+exports["default"] = _default;
+}, function(modId) { var map = {"./base":1583120421671}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421674, function(require, module, exports) {
+
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+exports.__esModule = true;
+exports["default"] = void 0;
+
+var _inheritsLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/inheritsLoose"));
+
+var _util = require("@antv/util");
+
+var _base = _interopRequireDefault(require("./base"));
+
+var _colorUtil = _interopRequireDefault(require("./color-util"));
 
 var Color =
 /*#__PURE__*/
@@ -3115,7 +3818,7 @@ function (_Base) {
     _this.type = 'color';
     _this.gradient = null;
 
-    if (Util.isString(_this.values)) {
+    if ((0, _util.isString)(_this.values)) {
       _this.linear = true;
     }
 
@@ -3133,7 +3836,7 @@ function (_Base) {
 
     if (!gradient) {
       var values = this.values;
-      gradient = ColorUtil.gradient(values);
+      gradient = _colorUtil["default"].gradient(values);
       this.gradient = gradient;
     }
 
@@ -3141,16 +3844,20 @@ function (_Base) {
   };
 
   return Color;
-}(Base);
+}(_base["default"]);
 
-module.exports = Color;
-}, function(modId) { var map = {"../util/common":1583120421435,"./color-util":1583120421448}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421448, function(require, module, exports) {
-
-
-var Util = require('../util/common'); // Get the interpolation between colors
+var _default = Color;
+exports["default"] = _default;
+}, function(modId) { var map = {"./base":1583120421671,"./color-util":1583120421675}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421675, function(require, module, exports) {
 
 
+exports.__esModule = true;
+exports["default"] = void 0;
+
+var _util = require("@antv/util");
+
+// Get the interpolation between colors
 function getValue(start, end, percent, index) {
   var value = start[index] + (end[index] - start[index]) * percent;
   return value;
@@ -3243,11 +3950,11 @@ var ColorUtil = {
   gradient: function gradient(colors) {
     var points = [];
 
-    if (Util.isString(colors)) {
+    if ((0, _util.isString)(colors)) {
       colors = colors.split('-');
     }
 
-    Util.each(colors, function (color) {
+    (0, _util.each)(colors, function (color) {
       if (color.indexOf('#') === -1) {
         color = ColorUtil.toHex(color);
       }
@@ -3259,9 +3966,10 @@ var ColorUtil = {
     };
   }
 };
-module.exports = ColorUtil;
-}, function(modId) { var map = {"../util/common":1583120421435}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421449, function(require, module, exports) {
+var _default = ColorUtil;
+exports["default"] = _default;
+}, function(modId) { var map = {}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421676, function(require, module, exports) {
 
 
 var Util = require('../../util/common');
@@ -3386,8 +4094,8 @@ Shape.getShapeFactory = function (factoryName) {
 };
 
 module.exports = Shape;
-}, function(modId) { var map = {"../../util/common":1583120421435,"../../global":1583120421433}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421450, function(require, module, exports) {
+}, function(modId) { var map = {"../../util/common":1583120421655,"../../global":1583120421653}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421677, function(require, module, exports) {
 
 
 var Util = require('../../util/common');
@@ -3403,16 +4111,51 @@ var SCALE_TYPES_MAP = {
   identity: 'Identity'
 };
 
+function isFullCircle(coord) {
+  if (!coord.isPolar) {
+    return false;
+  }
+
+  var startAngle = coord.startAngle;
+  var endAngle = coord.endAngle;
+
+  if (!Util.isNil(startAngle) && !Util.isNil(endAngle) && endAngle - startAngle < Math.PI * 2) {
+    return false;
+  }
+
+  return true;
+}
+
+function clearObj(obj) {
+  Object.keys(obj).forEach(function (key) {
+    delete obj[key];
+  });
+}
+
 var ScaleController =
 /*#__PURE__*/
 function () {
   function ScaleController(cfg) {
     // defs 列定义
-    this.defs = {};
+    this.defs = {}; // 已经实例化的scale
+
+    this.scales = {};
     Util.mix(this, cfg);
   }
 
   var _proto = ScaleController.prototype;
+
+  _proto.setFieldDef = function setFieldDef(field, cfg) {
+    var defs = this.defs;
+
+    if (Util.isObject(field)) {
+      Util.mix(defs, field);
+    } else {
+      defs[field] = cfg;
+    }
+
+    this.updateScales();
+  };
 
   _proto._getDef = function _getDef(field) {
     var defs = this.defs;
@@ -3451,7 +4194,7 @@ function () {
     return type;
   };
 
-  _proto._getScaleCfg = function _getScaleCfg(type, field, data, def) {
+  _proto._getScaleDef = function _getScaleDef(type, field, data, def) {
     var values;
 
     if (def && def.values) {
@@ -3480,28 +4223,66 @@ function () {
     }
 
     return cfg;
+  } // 调整range，为了让图形居中
+  ;
+
+  _proto._adjustRange = function _adjustRange(type, cfg) {
+    var range = cfg.range,
+        values = cfg.values; // 如果是线性, 或者有自定义range都不处理
+
+    if (type === 'linear' || range || !values) {
+      return cfg;
+    }
+
+    var count = values.length; // 单只有一条数据时，在中间显示
+
+    if (count === 1) {
+      cfg.range = [0.5, 1];
+    } else {
+      var chart = this.chart;
+      var coord = chart.get('coord');
+      var widthRatio = Global.widthRatio.multiplePie;
+      var offset = 0;
+
+      if (isFullCircle(coord)) {
+        if (!coord.transposed) {
+          cfg.range = [0, 1 - 1 / count];
+        } else {
+          offset = 1 / count * widthRatio;
+          cfg.range = [offset / 2, 1 - offset / 2];
+        }
+      } else {
+        // 为了让图形居中，所以才设置range
+        offset = 1 / count * 1 / 2;
+        cfg.range = [offset, 1 - offset];
+      }
+    }
+
+    return cfg;
   };
 
-  _proto.createScale = function createScale(field, data) {
+  _proto._getScaleCfg = function _getScaleCfg(field, data) {
     var self = this;
 
     var def = self._getDef(field);
 
-    var scale;
-
     if (!data || !data.length) {
       if (def && def.type) {
         def.field = field;
-        scale = new Scale[SCALE_TYPES_MAP[def.type]](def);
-      } else {
-        scale = new Scale.Identity({
+        return {
+          type: SCALE_TYPES_MAP[def.type],
+          cfg: def
+        };
+      }
+
+      return {
+        type: 'Identity',
+        cfg: {
           value: field,
           field: field.toString(),
           values: [field]
-        });
-      }
-
-      return scale;
+        }
+      };
     }
 
     var firstObj = data[0];
@@ -3512,29 +4293,102 @@ function () {
     }
 
     if (Util.isNumber(field) || Util.isNil(firstValue) && !def) {
-      scale = new Scale.Identity({
-        value: field,
-        field: field.toString(),
-        values: [field]
-      });
-    } else {
-      var type = self._getDefaultType(field, data, def);
-
-      var cfg = self._getScaleCfg(type, field, data, def);
-
-      def && Util.mix(cfg, def);
-      scale = new Scale[SCALE_TYPES_MAP[type]](cfg);
+      return {
+        type: 'Identity',
+        cfg: {
+          value: field,
+          field: field.toString(),
+          values: [field]
+        }
+      };
     }
 
+    var type = self._getDefaultType(field, data, def);
+
+    var cfg = self._getScaleDef(type, field, data, def);
+
+    def && Util.mix(cfg, def);
+    cfg = this._adjustRange(type, cfg);
+    return {
+      type: SCALE_TYPES_MAP[type],
+      cfg: cfg
+    };
+  };
+
+  _proto.createScale = function createScale(field, data) {
+    var scales = this.scales;
+
+    if (scales[field]) {
+      return scales[field];
+    }
+
+    var _this$_getScaleCfg = this._getScaleCfg(field, data),
+        type = _this$_getScaleCfg.type,
+        cfg = _this$_getScaleCfg.cfg;
+
+    var scale = new Scale[type](cfg);
+    this.scales[field] = scale;
     return scale;
+  };
+
+  _proto._updateScale = function _updateScale(scale) {
+    var field = scale.field;
+
+    var data = this.chart._getScaleData(field);
+
+    var _this$_getScaleCfg2 = this._getScaleCfg(field, data),
+        cfg = _this$_getScaleCfg2.cfg;
+
+    scale.change(cfg);
+  };
+
+  _proto.updateScales = function updateScales() {
+    var _this = this;
+
+    var scales = this.scales; // 修改完列定义后，需要更新已经实例化的scale
+    // 如果是还没有实例化的，在geom初始化的时候会被实例化，所以这里可以不用更新
+
+    Util.each(scales, function (scale) {
+      _this._updateScale(scale);
+    });
+  } // 调整scale从0开始
+  ;
+
+  _proto.adjustStartZero = function adjustStartZero(scale) {
+    var defs = this.defs;
+    var field = scale.field,
+        min = scale.min,
+        max = scale.max; // 如果有定义，则不处理
+
+    if (defs[field] && defs[field].min) {
+      return;
+    }
+
+    if (min > 0) {
+      scale.change({
+        min: 0
+      });
+    } else if (max < 0) {
+      scale.change({
+        max: 0
+      });
+    }
+  };
+
+  _proto.clear = function clear() {
+    // this.defs = {};
+    // this.scales = {};
+    clearObj(this.defs);
+    clearObj(this.scales);
+    this.data = null;
   };
 
   return ScaleController;
 }();
 
 module.exports = ScaleController;
-}, function(modId) { var map = {"../../util/common":1583120421435,"../../global":1583120421433,"../../scale/":1583120421451}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421451, function(require, module, exports) {
+}, function(modId) { var map = {"../../util/common":1583120421655,"../../global":1583120421653,"../../scale/":1583120421678}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421678, function(require, module, exports) {
 
 
 var Scale = require('@antv/scale/lib/base');
@@ -3547,7 +4401,7 @@ require('@antv/scale/lib/category');
 
 module.exports = Scale;
 }, function(modId) { var map = {}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421452, function(require, module, exports) {
+__DEFINE__(1583120421679, function(require, module, exports) {
 
 
 var Util = require('../../util/common');
@@ -3949,8 +4803,8 @@ function () {
 }();
 
 module.exports = AxisController;
-}, function(modId) { var map = {"../../util/common":1583120421435,"../../component/axis/":1583120421453,"../../global":1583120421433,"../../graphic/index":1583120421456}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421453, function(require, module, exports) {
+}, function(modId) { var map = {"../../util/common":1583120421655,"../../component/axis/":1583120421680,"../../global":1583120421653,"../../graphic/index":1583120421683}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421680, function(require, module, exports) {
 
 
 var Abstract = require('./abstract');
@@ -3958,8 +4812,8 @@ var Abstract = require('./abstract');
 require('./line');
 
 module.exports = Abstract;
-}, function(modId) { var map = {"./abstract":1583120421454,"./line":1583120421455}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421454, function(require, module, exports) {
+}, function(modId) { var map = {"./abstract":1583120421681,"./line":1583120421682}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421681, function(require, module, exports) {
 
 
 var Util = require('../../util/common');
@@ -4185,8 +5039,8 @@ function () {
 }();
 
 module.exports = Abastract;
-}, function(modId) { var map = {"../../util/common":1583120421435,"../../global":1583120421433,"../../graphic/util/vector2":1583120421443}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421455, function(require, module, exports) {
+}, function(modId) { var map = {"../../util/common":1583120421655,"../../global":1583120421653,"../../graphic/util/vector2":1583120421666}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421682, function(require, module, exports) {
 
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -4250,8 +5104,8 @@ function (_Abstract) {
 
 Abstract.Line = Line;
 module.exports = Line;
-}, function(modId) { var map = {"../../util/common":1583120421435,"./abstract":1583120421454}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421456, function(require, module, exports) {
+}, function(modId) { var map = {"../../util/common":1583120421655,"./abstract":1583120421681}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421683, function(require, module, exports) {
 
 
 var G = {
@@ -4281,9 +5135,17 @@ require('./shape/text');
 require('./shape/custom');
 
 module.exports = G;
-}, function(modId) { var map = {"./canvas":1583120421457,"./group":1583120421462,"./shape":1583120421459,"./util/matrix":1583120421442,"./util/vector2":1583120421443,"./shape/rect":1583120421465,"./shape/circle":1583120421466,"./shape/line":1583120421467,"./shape/polygon":1583120421469,"./shape/polyline":1583120421470,"./shape/arc":1583120421472,"./shape/sector":1583120421473,"./shape/text":1583120421474,"./shape/custom":1583120421476}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421457, function(require, module, exports) {
+}, function(modId) { var map = {"./canvas":1583120421684,"./group":1583120421690,"./shape":1583120421687,"./util/matrix":1583120421665,"./util/vector2":1583120421666,"./shape/rect":1583120421693,"./shape/circle":1583120421694,"./shape/line":1583120421695,"./shape/polygon":1583120421697,"./shape/polyline":1583120421698,"./shape/arc":1583120421700,"./shape/sector":1583120421701,"./shape/text":1583120421702,"./shape/custom":1583120421704}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421684, function(require, module, exports) {
 
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+var _inheritsLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/inheritsLoose"));
+
+var _emit = _interopRequireDefault(require("./event/emit"));
+
+var _controller = _interopRequireDefault(require("./event/controller"));
 
 var Util = require('../util/common');
 
@@ -4298,7 +5160,8 @@ var CanvasElement = require('./canvas-element');
 
 var Canvas =
 /*#__PURE__*/
-function () {
+function (_EventEmit) {
+  (0, _inheritsLoose2["default"])(Canvas, _EventEmit);
   var _proto = Canvas.prototype;
 
   _proto.get = function get(name) {
@@ -4310,14 +5173,19 @@ function () {
   };
 
   function Canvas(cfg) {
-    this._attrs = Util.mix({
+    var _this;
+
+    _this = _EventEmit.call(this) || this;
+    _this._attrs = Util.mix({
       type: 'canvas',
       children: []
     }, cfg);
 
-    this._initPixelRatio();
+    _this._initPixelRatio();
 
-    this._initCanvas();
+    _this._initCanvas();
+
+    return _this;
   }
 
   _proto._initPixelRatio = function _initPixelRatio() {
@@ -4340,7 +5208,7 @@ function () {
     var context = self.get('context');
 
     if (!el && !context) {
-      throw new Error('Please specify the id or el of the chart!');
+      throw new Error('Please specify the id, el or context of the chart!');
     }
 
     var canvas;
@@ -4374,7 +5242,13 @@ function () {
     self.set('canvas', this);
     self.set('el', canvas);
     self.set('context', context || canvas.getContext('2d'));
-    self.changeSize(width, height);
+    self.changeSize(width, height); // 初始化事件控制器
+
+    var eventController = new _controller["default"]({
+      canvas: this,
+      el: canvas
+    });
+    self.set('eventController', eventController);
   };
 
   _proto.changeSize = function changeSize(width, height) {
@@ -4494,7 +5368,7 @@ function () {
   };
 
   return Canvas;
-}();
+}(_emit["default"]);
 
 Util.mix(Canvas.prototype, Container, {
   getGroupClass: function getGroupClass() {
@@ -4502,8 +5376,301 @@ Util.mix(Canvas.prototype, Container, {
   }
 });
 module.exports = Canvas;
-}, function(modId) { var map = {"../util/common":1583120421435,"./container":1583120421458,"./group":1583120421462,"./util/requestAnimationFrame":1583120421463,"./canvas-element":1583120421464}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421458, function(require, module, exports) {
+}, function(modId) { var map = {"./event/emit":1583120421661,"./event/controller":1583120421685,"../util/common":1583120421655,"./container":1583120421686,"./group":1583120421690,"./util/requestAnimationFrame":1583120421691,"./canvas-element":1583120421692}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421685, function(require, module, exports) {
+
+
+exports.__esModule = true;
+exports["default"] = void 0;
+
+var _dom = require("../../util/dom");
+
+var _common = require("../../util/common");
+
+// 计算滑动的方向
+var calcDirection = function calcDirection(start, end) {
+  var xDistance = end.x - start.x;
+  var yDistance = end.y - start.y; // x 的距离大于y 说明是横向，否则就是纵向
+
+  if (Math.abs(xDistance) > Math.abs(yDistance)) {
+    return xDistance > 0 ? 'right' : 'left';
+  }
+
+  return yDistance > 0 ? 'down' : 'up';
+}; // 计算2点之间的距离
+
+
+var calcDistance = function calcDistance(point1, point2) {
+  var xDistance = Math.abs(point2.x - point1.x);
+  var yDistance = Math.abs(point2.y - point1.y);
+  return Math.sqrt(xDistance * xDistance + yDistance * yDistance);
+};
+
+var getCenter = function getCenter(point1, point2) {
+  var x = point1.x + (point2.x - point1.x) / 2;
+  var y = point1.y + (point2.y - point1.y) / 2;
+  return {
+    x: x,
+    y: y
+  };
+};
+
+var convertPoints = function convertPoints(ev, canvas) {
+  var touches = ev.touches;
+  if (!touches) return;
+  var points = [];
+  var len = touches.length;
+
+  for (var i = 0; i < len; i++) {
+    var touch = touches[i]; // x, y: 相对canvas原点的位置，clientX, clientY 相对于可视窗口的位置
+
+    var x = touch.x,
+        y = touch.y,
+        clientX = touch.clientX,
+        clientY = touch.clientY;
+    var point = void 0; // 小程序环境会有x,y
+
+    if ((0, _common.isNumber)(x) || (0, _common.isNumber)(y)) {
+      point = {
+        x: x,
+        y: y
+      };
+    } else {
+      // 浏览器环境再计算下canvas的相对位置
+      point = (0, _dom.getRelativePosition)({
+        x: clientX,
+        y: clientY
+      }, canvas);
+    }
+
+    points.push(point);
+  }
+
+  return points;
+};
+
+var PRESS_DELAY = 250;
+
+var EventController =
+/*#__PURE__*/
+function () {
+  function EventController(_ref) {
+    var _this = this;
+
+    var canvas = _ref.canvas,
+        el = _ref.el;
+
+    this._click = function (ev) {
+      _this.emitEvent('click', ev);
+    };
+
+    this._start = function (ev) {
+      var points = convertPoints(ev, _this.canvas);
+
+      if (!points) {
+        return;
+      }
+
+      ev.points = points;
+
+      _this.emitEvent('touchstart', ev); // 防止上次的内容没有清理掉，重新reset下
+
+
+      _this.reset(); // 记录touch start 的时间
+
+
+      _this.startTime = Date.now(); // 记录touch start 的点
+
+      _this.startPoints = points;
+
+      if (points.length > 1) {
+        _this.startDistance = calcDistance(points[0], points[1]);
+        _this.center = getCenter(points[0], points[1]);
+      } else {
+        // 如果touchstart后停顿250ms, 则也触发press事件
+        _this.pressTimeout = setTimeout(function () {
+          var eventType = _this.getEventType(points);
+
+          ev.direction = 'none';
+
+          _this.emitStart(eventType, ev);
+
+          _this.emitEvent(eventType, ev);
+        }, PRESS_DELAY);
+      }
+    };
+
+    this._move = function (ev) {
+      var points = convertPoints(ev, _this.canvas);
+      if (!points) return;
+
+      _this.clearPressTimeout();
+
+      ev.points = points;
+
+      _this.emitEvent('touchmove', ev);
+
+      var startPoints = _this.startPoints;
+      if (!startPoints) return; // 多指触控
+
+      if (points.length > 1) {
+        // touchstart的距离
+        var startDistance = _this.startDistance;
+        var currentDistance = calcDistance(points[0], points[1]);
+        ev.zoom = currentDistance / startDistance;
+        ev.center = _this.center; // 触发缩放事件
+
+        _this.emitStart('pinch', ev);
+
+        _this.emitEvent('pinch', ev);
+      } else {
+        var deltaX = points[0].x - startPoints[0].x;
+        var deltaY = points[0].y - startPoints[0].y;
+        var direction = _this.direction || calcDirection(startPoints[0], points[0]);
+        _this.direction = direction; // 获取press或者pan的事件类型
+        // press 按住滑动, pan表示平移
+        // 如果start后立刻move，则触发pan, 如果有停顿，则触发press
+
+        var eventType = _this.getEventType(points);
+
+        ev.direction = direction;
+        ev.deltaX = deltaX;
+        ev.deltaY = deltaY;
+
+        _this.emitStart(eventType, ev);
+
+        _this.emitEvent(eventType, ev);
+      }
+    };
+
+    this._end = function (ev) {
+      _this.emitEvent('touchend', ev);
+
+      _this.emitEnd(ev);
+
+      _this.reset();
+
+      var touches = ev.touches; // 当多指只释放了1指时也会触发end, 这时重新触发一次start
+
+      if (touches && touches.length > 0) {
+        _this._start(ev);
+      }
+    };
+
+    this._cancel = function (ev) {
+      _this.emitEvent('touchcancel', ev);
+
+      _this.reset();
+    };
+
+    // canvasEl
+    this.canvas = canvas;
+    this.delegateEvent(el); // 用来记录当前触发的事件
+
+    this.processEvent = {};
+  }
+
+  var _proto = EventController.prototype;
+
+  _proto.delegateEvent = function delegateEvent(canvasEl) {
+    // 代理这几个事件
+    canvasEl.addEventListener('click', this._click);
+    canvasEl.addEventListener('touchstart', this._start);
+    canvasEl.addEventListener('touchmove', this._move);
+    canvasEl.addEventListener('touchend', this._end);
+    canvasEl.addEventListener('touchcancel', this._cancel);
+  };
+
+  _proto.emitEvent = function emitEvent(type, ev) {
+    var canvas = this.canvas;
+    canvas.emit(type, ev);
+  };
+
+  _proto.getEventType = function getEventType(points) {
+    var eventType = this.eventType,
+        canvas = this.canvas,
+        startTime = this.startTime,
+        startPoints = this.startPoints;
+
+    if (eventType) {
+      return eventType;
+    }
+
+    var type;
+    var panEventListeners = canvas.__events.pan; // 如果没有pan事件的监听，默认都是press
+
+    if (!panEventListeners || !panEventListeners.length) {
+      type = 'press';
+    } else {
+      // 如果有pan事件的处理，press则需要停顿250ms, 且移动距离小于10
+      var now = Date.now();
+
+      if (now - startTime > PRESS_DELAY && calcDistance(startPoints[0], points[0]) < 10) {
+        type = 'press';
+      } else {
+        type = 'pan';
+      }
+    }
+
+    this.eventType = type;
+    return type;
+  };
+
+  _proto.enable = function enable(eventType) {
+    this.processEvent[eventType] = true;
+  } // 是否进行中的事件
+  ;
+
+  _proto.isProcess = function isProcess(eventType) {
+    return this.processEvent[eventType];
+  } // 触发start事件
+  ;
+
+  _proto.emitStart = function emitStart(type, ev) {
+    if (this.isProcess(type)) {
+      return;
+    }
+
+    this.enable(type);
+    this.emitEvent(type + "start", ev);
+  } // 触发end事件
+  ;
+
+  _proto.emitEnd = function emitEnd(ev) {
+    var _this2 = this;
+
+    var processEvent = this.processEvent;
+    Object.keys(processEvent).forEach(function (type) {
+      _this2.emitEvent(type + "end", ev);
+
+      delete processEvent[type];
+    });
+  };
+
+  _proto.clearPressTimeout = function clearPressTimeout() {
+    if (this.pressTimeout) {
+      clearTimeout(this.pressTimeout);
+      this.pressTimeout = 0;
+    }
+  };
+
+  _proto.reset = function reset() {
+    this.clearPressTimeout();
+    this.startTime = 0;
+    this.startPoints = null;
+    this.startDistance = 0;
+    this.direction = null;
+    this.eventType = null;
+    this.pinch = false;
+  };
+
+  return EventController;
+}();
+
+var _default = EventController;
+exports["default"] = _default;
+}, function(modId) { var map = {"../../util/dom":1583120421657,"../../util/common":1583120421655}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421686, function(require, module, exports) {
 
 
 var Util = require('../util/common');
@@ -4629,8 +5796,8 @@ module.exports = {
     }
   }
 };
-}, function(modId) { var map = {"../util/common":1583120421435,"./shape":1583120421459}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421459, function(require, module, exports) {
+}, function(modId) { var map = {"../util/common":1583120421655,"./shape":1583120421687}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421687, function(require, module, exports) {
 
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -4728,8 +5895,8 @@ function (_Element) {
 }(Element);
 
 module.exports = Shape;
-}, function(modId) { var map = {"../util/common":1583120421435,"./element":1583120421460}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421460, function(require, module, exports) {
+}, function(modId) { var map = {"../util/common":1583120421655,"./element":1583120421688}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421688, function(require, module, exports) {
 
 
 var Util = require('../util/common');
@@ -5075,8 +6242,8 @@ function () {
 }();
 
 module.exports = Element;
-}, function(modId) { var map = {"../util/common":1583120421435,"./util/matrix":1583120421442,"./util/vector2":1583120421443,"./util/style-parse":1583120421461}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421461, function(require, module, exports) {
+}, function(modId) { var map = {"../util/common":1583120421655,"./util/matrix":1583120421665,"./util/vector2":1583120421666,"./util/style-parse":1583120421689}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421689, function(require, module, exports) {
 
 
 var Util = require('../../util/common');
@@ -5206,8 +6373,8 @@ module.exports = {
     return color;
   }
 };
-}, function(modId) { var map = {"../../util/common":1583120421435}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421462, function(require, module, exports) {
+}, function(modId) { var map = {"../../util/common":1583120421655}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421690, function(require, module, exports) {
 
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -5319,8 +6486,8 @@ Util.mix(Group.prototype, Container, {
   }
 });
 module.exports = Group;
-}, function(modId) { var map = {"../util/common":1583120421435,"./element":1583120421460,"./container":1583120421458,"./util/vector2":1583120421443}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421463, function(require, module, exports) {
+}, function(modId) { var map = {"../util/common":1583120421655,"./element":1583120421688,"./container":1583120421686,"./util/vector2":1583120421666}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421691, function(require, module, exports) {
 
 
 module.exports = {
@@ -5329,7 +6496,7 @@ module.exports = {
   }
 };
 }, function(modId) { var map = {}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421464, function(require, module, exports) {
+__DEFINE__(1583120421692, function(require, module, exports) {
 
 
 var Util = require('../util/common');
@@ -5445,8 +6612,8 @@ module.exports = {
     return new CanvasElement(ctx);
   }
 };
-}, function(modId) { var map = {"../util/common":1583120421435}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421465, function(require, module, exports) {
+}, function(modId) { var map = {"../util/common":1583120421655}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421693, function(require, module, exports) {
 
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -5533,8 +6700,8 @@ function (_Shape) {
 
 Shape.Rect = Rect;
 module.exports = Rect;
-}, function(modId) { var map = {"../../util/common":1583120421435,"../shape":1583120421459}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421466, function(require, module, exports) {
+}, function(modId) { var map = {"../../util/common":1583120421655,"../shape":1583120421687}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421694, function(require, module, exports) {
 
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -5599,8 +6766,8 @@ function (_Shape) {
 
 Shape.Circle = Circle;
 module.exports = Circle;
-}, function(modId) { var map = {"../shape":1583120421459}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421467, function(require, module, exports) {
+}, function(modId) { var map = {"../shape":1583120421687}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421695, function(require, module, exports) {
 
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -5665,8 +6832,8 @@ function (_Shape) {
 
 Shape.Line = Line;
 module.exports = Line;
-}, function(modId) { var map = {"../shape":1583120421459,"../util/bbox":1583120421468}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421468, function(require, module, exports) {
+}, function(modId) { var map = {"../shape":1583120421687,"../util/bbox":1583120421696}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421696, function(require, module, exports) {
 
 
 var Vector2 = require('./vector2');
@@ -5876,8 +7043,8 @@ module.exports = {
     };
   }
 };
-}, function(modId) { var map = {"./vector2":1583120421443}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421469, function(require, module, exports) {
+}, function(modId) { var map = {"./vector2":1583120421666}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421697, function(require, module, exports) {
 
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -5944,8 +7111,8 @@ function (_Shape) {
 
 Shape.Polygon = Polygon;
 module.exports = Polygon;
-}, function(modId) { var map = {"../shape":1583120421459,"../util/bbox":1583120421468}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421470, function(require, module, exports) {
+}, function(modId) { var map = {"../shape":1583120421687,"../util/bbox":1583120421696}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421698, function(require, module, exports) {
 
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -6070,8 +7237,8 @@ function (_Shape) {
 
 Shape.Polyline = Polyline;
 module.exports = Polyline;
-}, function(modId) { var map = {"../shape":1583120421459,"../util/smooth":1583120421471,"../util/bbox":1583120421468}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421471, function(require, module, exports) {
+}, function(modId) { var map = {"../shape":1583120421687,"../util/smooth":1583120421699,"../util/bbox":1583120421696}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421699, function(require, module, exports) {
 
 
 /**
@@ -6189,8 +7356,8 @@ function catmullRom2bezier(pointList, z, constraint) {
 module.exports = {
   smooth: catmullRom2bezier
 };
-}, function(modId) { var map = {"./vector2":1583120421443}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421472, function(require, module, exports) {
+}, function(modId) { var map = {"./vector2":1583120421666}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421700, function(require, module, exports) {
 
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -6263,8 +7430,8 @@ function (_Shape) {
 
 Shape.Arc = Arc;
 module.exports = Arc;
-}, function(modId) { var map = {"../shape":1583120421459,"../util/bbox":1583120421468}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421473, function(require, module, exports) {
+}, function(modId) { var map = {"../shape":1583120421687,"../util/bbox":1583120421696}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421701, function(require, module, exports) {
 
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -6358,8 +7525,8 @@ function (_Shape) {
 
 Shape.Sector = Sector;
 module.exports = Sector;
-}, function(modId) { var map = {"../shape":1583120421459,"../util/bbox":1583120421468}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421474, function(require, module, exports) {
+}, function(modId) { var map = {"../shape":1583120421687,"../util/bbox":1583120421696}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421702, function(require, module, exports) {
 
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -6657,8 +7824,8 @@ function (_Shape) {
 
 Shape.Text = Text;
 module.exports = Text;
-}, function(modId) { var map = {"../../util/common":1583120421435,"../shape":1583120421459,"../util/rect":1583120421475}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421475, function(require, module, exports) {
+}, function(modId) { var map = {"../../util/common":1583120421655,"../shape":1583120421687,"../util/rect":1583120421703}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421703, function(require, module, exports) {
 
 
 var Rect = {
@@ -6675,7 +7842,7 @@ var Rect = {
 };
 module.exports = Rect;
 }, function(modId) { var map = {}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421476, function(require, module, exports) {
+__DEFINE__(1583120421704, function(require, module, exports) {
 
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -6719,62 +7886,65 @@ function (_Shape) {
 
 Shape.Custom = Custom;
 module.exports = Custom;
-}, function(modId) { var map = {"../shape":1583120421459}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421477, function(require, module, exports) {
+}, function(modId) { var map = {"../shape":1583120421687}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421705, function(require, module, exports) {
 
+
+exports.__esModule = true;
+exports.getClip = getClip;
+exports.isPointInPlot = isPointInPlot;
 
 var _require = require('../graphic/index'),
     Shape = _require.Shape;
 
-module.exports = {
-  getClip: function getClip(coord) {
-    var start = coord.start;
-    var end = coord.end;
-    var width = end.x - start.x;
-    var height = Math.abs(end.y - start.y);
-    var margin = 10;
-    var clip;
+function getClip(coord) {
+  var start = coord.start;
+  var end = coord.end;
+  var width = end.x - start.x;
+  var height = Math.abs(end.y - start.y);
+  var margin = 10;
+  var clip;
 
-    if (coord.isPolar) {
-      var circleRadius = coord.circleRadius,
-          center = coord.center,
-          startAngle = coord.startAngle,
-          endAngle = coord.endAngle;
-      clip = new Shape.Sector({
-        attrs: {
-          x: center.x,
-          y: center.y,
-          r: circleRadius,
-          r0: 0,
-          startAngle: startAngle,
-          endAngle: endAngle
-        }
-      });
-    } else {
-      clip = new Shape.Rect({
-        attrs: {
-          x: start.x,
-          y: end.y - margin,
-          width: width,
-          height: height + 2 * margin
-        }
-      });
-    }
-
-    clip.isClip = true;
-    return clip;
-  },
-  isPointInPlot: function isPointInPlot(point, plot) {
-    var x = point.x,
-        y = point.y;
-    var tl = plot.tl,
-        tr = plot.tr,
-        br = plot.br;
-    return x >= tl.x && x <= tr.x && y >= tl.y && y <= br.y;
+  if (coord.isPolar) {
+    var circleRadius = coord.circleRadius,
+        center = coord.center,
+        startAngle = coord.startAngle,
+        endAngle = coord.endAngle;
+    clip = new Shape.Sector({
+      attrs: {
+        x: center.x,
+        y: center.y,
+        r: circleRadius,
+        r0: 0,
+        startAngle: startAngle,
+        endAngle: endAngle
+      }
+    });
+  } else {
+    clip = new Shape.Rect({
+      attrs: {
+        x: start.x,
+        y: end.y - margin,
+        width: width,
+        height: height + 2 * margin
+      }
+    });
   }
-};
-}, function(modId) { var map = {"../graphic/index":1583120421456}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421478, function(require, module, exports) {
+
+  clip.isClip = true;
+  return clip;
+}
+
+function isPointInPlot(point, plot) {
+  var x = point.x,
+      y = point.y;
+  var tl = plot.tl,
+      tr = plot.tr,
+      br = plot.br;
+  return x >= tl.x && x <= tr.x && y >= tl.y && y <= br.y;
+}
+}, function(modId) { var map = {"../graphic/index":1583120421683}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421706, function(require, module, exports) {
 
 
 var Geom = require('./base');
@@ -6794,8 +7964,8 @@ require('./polygon');
 require('./schema');
 
 module.exports = Geom;
-}, function(modId) { var map = {"./base":1583120421445,"./point":1583120421479,"./path":1583120421482,"./line":1583120421484,"./area":1583120421485,"./interval":1583120421487,"./polygon":1583120421490,"./schema":1583120421492}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421479, function(require, module, exports) {
+}, function(modId) { var map = {"./base":1583120421668,"./point":1583120421707,"./path":1583120421710,"./line":1583120421712,"./area":1583120421713,"./interval":1583120421715,"./polygon":1583120421718,"./schema":1583120421720}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421707, function(require, module, exports) {
 
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -6824,7 +7994,7 @@ function (_Geom) {
 
     cfg.type = 'point';
     cfg.shapeType = 'point';
-    cfg.generatePoints = true;
+    cfg.generatePoints = false;
     return cfg;
   };
 
@@ -6855,8 +8025,8 @@ function (_Geom) {
 
 Geom.Point = Point;
 module.exports = Point;
-}, function(modId) { var map = {"../util/common":1583120421435,"./base":1583120421445,"./shape/point":1583120421480}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421480, function(require, module, exports) {
+}, function(modId) { var map = {"../util/common":1583120421655,"./base":1583120421668,"./shape/point":1583120421708}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421708, function(require, module, exports) {
 
 
 var Util = require('../../util/common');
@@ -6934,8 +8104,8 @@ Util.each(SHAPES, function (shapeType) {
   });
 });
 module.exports = Point;
-}, function(modId) { var map = {"../../util/common":1583120421435,"../../global":1583120421433,"./util":1583120421481,"./shape":1583120421449}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421481, function(require, module, exports) {
+}, function(modId) { var map = {"../../util/common":1583120421655,"../../global":1583120421653,"./util":1583120421709,"./shape":1583120421676}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421709, function(require, module, exports) {
 
 
 /**
@@ -6991,8 +8161,8 @@ var ShapeUtil = {
   }
 };
 module.exports = ShapeUtil;
-}, function(modId) { var map = {"../../util/common":1583120421435}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421482, function(require, module, exports) {
+}, function(modId) { var map = {"../../util/common":1583120421655}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421710, function(require, module, exports) {
 
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -7053,8 +8223,8 @@ function (_Geom) {
 
 Geom.Path = Path;
 module.exports = Path;
-}, function(modId) { var map = {"./base":1583120421445,"./shape/util":1583120421481,"../util/common":1583120421435,"./shape/line":1583120421483}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421483, function(require, module, exports) {
+}, function(modId) { var map = {"./base":1583120421668,"./shape/util":1583120421709,"../util/common":1583120421655,"./shape/line":1583120421711}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421711, function(require, module, exports) {
 
 
 var Util = require('../../util/common');
@@ -7158,8 +8328,8 @@ Util.each(SHAPES, function (shapeType) {
   });
 });
 module.exports = Line;
-}, function(modId) { var map = {"../../util/common":1583120421435,"./shape":1583120421449,"./util":1583120421481,"../../global":1583120421433}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421484, function(require, module, exports) {
+}, function(modId) { var map = {"../../util/common":1583120421655,"./shape":1583120421676,"./util":1583120421709,"../../global":1583120421653}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421712, function(require, module, exports) {
 
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -7196,8 +8366,8 @@ function (_Path) {
 
 Geom.Line = Line;
 module.exports = Line;
-}, function(modId) { var map = {"./path":1583120421482,"./base":1583120421445,"./shape/line":1583120421483}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421485, function(require, module, exports) {
+}, function(modId) { var map = {"./path":1583120421710,"./base":1583120421668,"./shape/line":1583120421711}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421713, function(require, module, exports) {
 
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -7266,8 +8436,8 @@ function (_Geom) {
 
 Geom.Area = Area;
 module.exports = Area;
-}, function(modId) { var map = {"./base":1583120421445,"./shape/util":1583120421481,"../util/common":1583120421435,"./shape/area":1583120421486}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421486, function(require, module, exports) {
+}, function(modId) { var map = {"./base":1583120421668,"./shape/util":1583120421709,"../util/common":1583120421655,"./shape/area":1583120421714}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421714, function(require, module, exports) {
 
 
 var Util = require('../../util/common');
@@ -7423,8 +8593,8 @@ Util.each(SHAPES, function (shapeType) {
   });
 });
 module.exports = Area;
-}, function(modId) { var map = {"../../util/common":1583120421435,"./shape":1583120421449,"../../graphic/util/smooth":1583120421471,"../../graphic/util/bbox":1583120421468,"../../global":1583120421433}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421487, function(require, module, exports) {
+}, function(modId) { var map = {"../../util/common":1583120421655,"./shape":1583120421676,"../../graphic/util/smooth":1583120421699,"../../graphic/util/bbox":1583120421696,"../../global":1583120421653}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421715, function(require, module, exports) {
 
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -7464,6 +8634,13 @@ function (_Geom) {
     return _this;
   }
 
+  _proto.init = function init() {
+    _Geom.prototype.init.call(this); // 绑定事件
+
+
+    this.initEvent();
+  };
+
   _proto.createShapePointsCfg = function createShapePointsCfg(obj) {
     var cfg = _Geom.prototype.createShapePointsCfg.call(this, obj);
 
@@ -7482,9 +8659,11 @@ function (_Geom) {
 
 Geom.Interval = Interval;
 module.exports = Interval;
-}, function(modId) { var map = {"./base":1583120421445,"../util/common":1583120421435,"./mixin/size":1583120421488,"./shape/interval":1583120421489}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421488, function(require, module, exports) {
+}, function(modId) { var map = {"./base":1583120421668,"../util/common":1583120421655,"./mixin/size":1583120421716,"./shape/interval":1583120421717}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421716, function(require, module, exports) {
 
+
+var _const = require("../../chart/const");
 
 /**
  * @fileOverview Utility for calculate the with ratui in x axis
@@ -7496,6 +8675,19 @@ var Global = require('../../global');
 var Util = require('../../util/common');
 
 var SizeMixin = {
+  initEvent: function initEvent() {
+    var _this = this;
+
+    var chart = this.get('chart');
+
+    if (!chart) {
+      return;
+    }
+
+    chart.on(_const.EVENT_AFTER_SIZE_CHANGE, function () {
+      _this.set('_width', null);
+    });
+  },
   getDefalutSize: function getDefalutSize() {
     var defaultSize = this.get('defaultSize');
 
@@ -7603,8 +8795,8 @@ var SizeMixin = {
   }
 };
 module.exports = SizeMixin;
-}, function(modId) { var map = {"../../global":1583120421433,"../../util/common":1583120421435}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421489, function(require, module, exports) {
+}, function(modId) { var map = {"../../chart/const":1583120421659,"../../global":1583120421653,"../../util/common":1583120421655}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421717, function(require, module, exports) {
 
 
 var Util = require('../../util/common');
@@ -7782,8 +8974,8 @@ Shape.registerShape('interval', 'rect', {
   });
 });
 module.exports = Interval;
-}, function(modId) { var map = {"../../util/common":1583120421435,"./shape":1583120421449,"../../graphic/util/vector2":1583120421443,"../../global":1583120421433}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421490, function(require, module, exports) {
+}, function(modId) { var map = {"../../util/common":1583120421655,"./shape":1583120421676,"../../graphic/util/vector2":1583120421666,"../../global":1583120421653}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421718, function(require, module, exports) {
 
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -7857,8 +9049,8 @@ function (_Geom) {
 
 Geom.Polygon = Polygon;
 module.exports = Polygon;
-}, function(modId) { var map = {"./base":1583120421445,"../util/common":1583120421435,"./shape/polygon":1583120421491}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421491, function(require, module, exports) {
+}, function(modId) { var map = {"./base":1583120421668,"../util/common":1583120421655,"./shape/polygon":1583120421719}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421719, function(require, module, exports) {
 
 
 var Shape = require('./shape');
@@ -7896,8 +9088,8 @@ Shape.registerShape('polygon', 'polygon', {
   }
 });
 module.exports = Polygon;
-}, function(modId) { var map = {"./shape":1583120421449,"../../util/common":1583120421435}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421492, function(require, module, exports) {
+}, function(modId) { var map = {"./shape":1583120421676,"../../util/common":1583120421655}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421720, function(require, module, exports) {
 
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -7937,6 +9129,13 @@ function (_Geom) {
     return _this;
   }
 
+  _proto.init = function init() {
+    _Geom.prototype.init.call(this); // 绑定事件
+
+
+    this.initEvent();
+  };
+
   _proto.createShapePointsCfg = function createShapePointsCfg(obj) {
     var cfg = _Geom.prototype.createShapePointsCfg.call(this, obj);
 
@@ -7955,8 +9154,8 @@ function (_Geom) {
 
 Geom.Schema = Schema;
 module.exports = Schema;
-}, function(modId) { var map = {"./base":1583120421445,"../util/common":1583120421435,"./mixin/size":1583120421488,"./shape/schema":1583120421493}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421493, function(require, module, exports) {
+}, function(modId) { var map = {"./base":1583120421668,"../util/common":1583120421655,"./mixin/size":1583120421716,"./shape/schema":1583120421721}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421721, function(require, module, exports) {
 
 
 var Shape = require('./shape');
@@ -8045,8 +9244,8 @@ Shape.registerShape('schema', 'candle', {
   }
 });
 module.exports = Schema;
-}, function(modId) { var map = {"./shape":1583120421449,"../../util/common":1583120421435}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421494, function(require, module, exports) {
+}, function(modId) { var map = {"./shape":1583120421676,"../../util/common":1583120421655}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421722, function(require, module, exports) {
 
 
 module.exports = {
@@ -8054,29 +9253,29 @@ module.exports = {
   Dodge: require('./dodge'),
   Symmetric: require('./symmetric')
 };
-}, function(modId) { var map = {"./stack":1583120421495,"./dodge":1583120421496,"./symmetric":1583120421497}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421495, function(require, module, exports) {
+}, function(modId) { var map = {"./stack":1583120421723,"./dodge":1583120421724,"./symmetric":1583120421725}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421723, function(require, module, exports) {
 
 
 var Stack = require('@antv/adjust/lib/stack');
 
 module.exports = Stack;
 }, function(modId) { var map = {}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421496, function(require, module, exports) {
+__DEFINE__(1583120421724, function(require, module, exports) {
 
 
 var Dodge = require('@antv/adjust/lib/dodge');
 
 module.exports = Dodge;
 }, function(modId) { var map = {}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421497, function(require, module, exports) {
+__DEFINE__(1583120421725, function(require, module, exports) {
 
 
 var Symmetric = require('@antv/adjust/lib/symmetric');
 
 module.exports = Symmetric;
 }, function(modId) { var map = {}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421498, function(require, module, exports) {
+__DEFINE__(1583120421726, function(require, module, exports) {
 
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -8214,8 +9413,8 @@ function (_Base) {
 
 Base.Polar = Polar;
 module.exports = Polar;
-}, function(modId) { var map = {"./base":1583120421441,"../graphic/util/vector2":1583120421443,"../graphic/util/matrix":1583120421442}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421499, function(require, module, exports) {
+}, function(modId) { var map = {"./base":1583120421664,"../graphic/util/vector2":1583120421666,"../graphic/util/matrix":1583120421665}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421727, function(require, module, exports) {
 
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -8321,15 +9520,15 @@ function (_Abstract) {
 
 Abstract.Circle = Circle;
 module.exports = Circle;
-}, function(modId) { var map = {"../../util/common":1583120421435,"./abstract":1583120421454}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421500, function(require, module, exports) {
+}, function(modId) { var map = {"../../util/common":1583120421655,"./abstract":1583120421681}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421728, function(require, module, exports) {
 
 
 var TimeCat = require('@antv/scale/lib/time-cat');
 
 module.exports = TimeCat;
 }, function(modId) { var map = {}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421501, function(require, module, exports) {
+__DEFINE__(1583120421729, function(require, module, exports) {
 
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -8408,8 +9607,8 @@ function (_GuideBase) {
 
 GuideBase.Arc = Arc;
 module.exports = Arc;
-}, function(modId) { var map = {"../../util/common":1583120421435,"./base":1583120421502}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421502, function(require, module, exports) {
+}, function(modId) { var map = {"../../util/common":1583120421655,"./base":1583120421730}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421730, function(require, module, exports) {
 
 
 var Util = require('../../util/common');
@@ -8540,8 +9739,8 @@ function () {
 }();
 
 module.exports = GuideBase;
-}, function(modId) { var map = {"../../util/common":1583120421435}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421503, function(require, module, exports) {
+}, function(modId) { var map = {"../../util/common":1583120421655}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421731, function(require, module, exports) {
 
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -8717,8 +9916,8 @@ function (_GuideBase) {
 
 GuideBase.Html = Html;
 module.exports = Html;
-}, function(modId) { var map = {"../../util/common":1583120421435,"./base":1583120421502}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421504, function(require, module, exports) {
+}, function(modId) { var map = {"../../util/common":1583120421655,"./base":1583120421730}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421732, function(require, module, exports) {
 
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -8777,8 +9976,8 @@ function (_GuideBase) {
 
 GuideBase.Line = Line;
 module.exports = Line;
-}, function(modId) { var map = {"../../util/common":1583120421435,"./base":1583120421502}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421505, function(require, module, exports) {
+}, function(modId) { var map = {"../../util/common":1583120421655,"./base":1583120421730}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421733, function(require, module, exports) {
 
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -8836,8 +10035,8 @@ function (_GuideBase) {
 
 GuideBase.Rect = Rect;
 module.exports = Rect;
-}, function(modId) { var map = {"../../util/common":1583120421435,"./base":1583120421502}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421506, function(require, module, exports) {
+}, function(modId) { var map = {"../../util/common":1583120421655,"./base":1583120421730}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421734, function(require, module, exports) {
 
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -8933,8 +10132,8 @@ function (_GuideBase) {
 
 GuideBase.Text = Text;
 module.exports = Text;
-}, function(modId) { var map = {"../../util/common":1583120421435,"./base":1583120421502}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421507, function(require, module, exports) {
+}, function(modId) { var map = {"../../util/common":1583120421655,"./base":1583120421730}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421735, function(require, module, exports) {
 
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -9214,8 +10413,8 @@ function (_GuideBase) {
 
 GuideBase.Tag = Tag;
 module.exports = Tag;
-}, function(modId) { var map = {"../../util/common":1583120421435,"./base":1583120421502}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421508, function(require, module, exports) {
+}, function(modId) { var map = {"../../util/common":1583120421655,"./base":1583120421730}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421736, function(require, module, exports) {
 
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -9269,8 +10468,8 @@ function (_GuideBase) {
 
 GuideBase.Point = Point;
 module.exports = Point;
-}, function(modId) { var map = {"../../util/common":1583120421435,"./base":1583120421502}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421509, function(require, module, exports) {
+}, function(modId) { var map = {"../../util/common":1583120421655,"./base":1583120421730}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421737, function(require, module, exports) {
 
 
 var Util = require('../util/common');
@@ -9904,8 +11103,8 @@ module.exports = {
     tooltipController.clear();
   }
 };
-}, function(modId) { var map = {"../util/common":1583120421435,"../global":1583120421433,"../component/tooltip":1583120421510,"../util/helper":1583120421477}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421510, function(require, module, exports) {
+}, function(modId) { var map = {"../util/common":1583120421655,"../global":1583120421653,"../component/tooltip":1583120421738,"../util/helper":1583120421705}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421738, function(require, module, exports) {
 
 
 var Util = require('../util/common');
@@ -10397,8 +11596,8 @@ function () {
 }();
 
 module.exports = Tooltip;
-}, function(modId) { var map = {"../util/common":1583120421435,"./marker":1583120421511,"./list":1583120421512,"./text-box":1583120421513}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421511, function(require, module, exports) {
+}, function(modId) { var map = {"../util/common":1583120421655,"./marker":1583120421739,"./list":1583120421740,"./text-box":1583120421741}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421739, function(require, module, exports) {
 
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -10488,8 +11687,8 @@ function (_Shape) {
 }(Shape);
 
 module.exports = Marker;
-}, function(modId) { var map = {"../util/common":1583120421435,"../graphic/index":1583120421456}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421512, function(require, module, exports) {
+}, function(modId) { var map = {"../util/common":1583120421655,"../graphic/index":1583120421683}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421740, function(require, module, exports) {
 
 
 var Util = require('../util/common');
@@ -10972,8 +12171,8 @@ function () {
 }();
 
 module.exports = List;
-}, function(modId) { var map = {"../util/common":1583120421435,"../graphic/index":1583120421456,"./marker":1583120421511}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421513, function(require, module, exports) {
+}, function(modId) { var map = {"../util/common":1583120421655,"../graphic/index":1583120421683,"./marker":1583120421739}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421741, function(require, module, exports) {
 
 
 var Util = require('../util/common');
@@ -11151,8 +12350,8 @@ function () {
 }();
 
 module.exports = TextBox;
-}, function(modId) { var map = {"../util/common":1583120421435,"../graphic/index":1583120421456}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421514, function(require, module, exports) {
+}, function(modId) { var map = {"../util/common":1583120421655,"../graphic/index":1583120421683}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421742, function(require, module, exports) {
 
 
 var Util = require('../util/common');
@@ -11434,8 +12633,8 @@ module.exports = {
     chart.get('guideController').reset();
   }
 };
-}, function(modId) { var map = {"../util/common":1583120421435,"../component/guide/base":1583120421502,"../global":1583120421433}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421515, function(require, module, exports) {
+}, function(modId) { var map = {"../util/common":1583120421655,"../component/guide/base":1583120421730,"../global":1583120421653}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421743, function(require, module, exports) {
 
 
 var Util = require('../util/common');
@@ -11948,8 +13147,8 @@ module.exports = {
     chart.set('legendRange', null);
   }
 };
-}, function(modId) { var map = {"../util/common":1583120421435,"../component/list":1583120421512,"../global":1583120421433}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421516, function(require, module, exports) {
+}, function(modId) { var map = {"../util/common":1583120421655,"../component/list":1583120421740,"../global":1583120421653}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421744, function(require, module, exports) {
 
 
 /**
@@ -12410,8 +13609,8 @@ module.exports = {
     timeline.stop();
   }
 };
-}, function(modId) { var map = {"../util/common":1583120421435,"../graphic/element":1583120421460,"../graphic/animate/timeline":1583120421517,"../graphic/animate/animator":1583120421518,"./animate":1583120421520,"./shape-action":1583120421521,"./group-action":1583120421523,"../chart/chart":1583120421437}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421517, function(require, module, exports) {
+}, function(modId) { var map = {"../util/common":1583120421655,"../graphic/element":1583120421688,"../graphic/animate/timeline":1583120421745,"../graphic/animate/animator":1583120421746,"./animate":1583120421748,"./shape-action":1583120421749,"./group-action":1583120421751,"../chart/chart":1583120421658}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421745, function(require, module, exports) {
 
 
 var _require = require('../util/requestAnimationFrame'),
@@ -12551,8 +13750,8 @@ function () {
 }();
 
 module.exports = Timeline;
-}, function(modId) { var map = {"../util/requestAnimationFrame":1583120421463}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421518, function(require, module, exports) {
+}, function(modId) { var map = {"../util/requestAnimationFrame":1583120421691}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421746, function(require, module, exports) {
 
 
 var Easing = require('./easing');
@@ -12712,8 +13911,8 @@ function () {
 }();
 
 module.exports = Animator;
-}, function(modId) { var map = {"./easing":1583120421519}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421519, function(require, module, exports) {
+}, function(modId) { var map = {"./easing":1583120421747}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421747, function(require, module, exports) {
 
 
 var Easing = {
@@ -12851,7 +14050,7 @@ var Easing = {
 };
 module.exports = Easing;
 }, function(modId) { var map = {}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421520, function(require, module, exports) {
+__DEFINE__(1583120421748, function(require, module, exports) {
 
 
 /**
@@ -12917,8 +14116,8 @@ var Animate = {
   }
 };
 module.exports = Animate;
-}, function(modId) { var map = {"../util/common":1583120421435}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421521, function(require, module, exports) {
+}, function(modId) { var map = {"../util/common":1583120421655}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421749, function(require, module, exports) {
 
 
 /**
@@ -12990,8 +14189,8 @@ module.exports = {
   // scaleInY,
   fadeIn: fadeIn
 };
-}, function(modId) { var map = {"../util/common":1583120421435,"./util":1583120421522}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421522, function(require, module, exports) {
+}, function(modId) { var map = {"../util/common":1583120421655,"./util":1583120421750}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421750, function(require, module, exports) {
 
 
 /**
@@ -13076,8 +14275,8 @@ var Helpers = {
   }
 };
 module.exports = Helpers;
-}, function(modId) { var map = {"../graphic/index":1583120421456,"../util/common":1583120421435}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1583120421523, function(require, module, exports) {
+}, function(modId) { var map = {"../graphic/index":1583120421683,"../util/common":1583120421655}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1583120421751, function(require, module, exports) {
 
 
 /**
@@ -13227,7 +14426,7 @@ module.exports = {
   shapesScaleInY: shapesScaleInY,
   shapesScaleInXY: shapesScaleInXY
 };
-}, function(modId) { var map = {"./util":1583120421522,"../util/helper":1583120421477,"../graphic/index":1583120421456}; return __REQUIRE__(map[modId], modId); })
-return __REQUIRE__(1583120421431);
+}, function(modId) { var map = {"./util":1583120421750,"../util/helper":1583120421705,"../graphic/index":1583120421683}; return __REQUIRE__(map[modId], modId); })
+return __REQUIRE__(1583120421651);
 })()
 //# sourceMappingURL=index.js.map

@@ -5,14 +5,14 @@
     <view style="width: 100%; padding: 24rpx 32rpx; border-bottom: 1px solid #f1f1f1;">
       <view style="margin-left: 32rpx;">评价维度</view>
     </view>
-    <ff class="f2-chart" onInit="{{onInitRadarChart}}" />
+    <ff-canvas id="column-dom" canvas-id="column" opts="{{ opts }}"></ff-canvas>
   </view>
 
   <view class="container zan-font-14" style="width: 100%; background-color: white; margin-bottom: 32rpx;">
     <view style="width: 100%; padding: 24rpx 32rpx; border-bottom: 1px solid #f1f1f1;">
       <view style="margin-left: 32rpx;">成绩分布</view>
     </view>
-    <ff class="f2-chart" onInit="{{onInitBarChart}}" />
+    <!-- <ff class="f2-chart" onInit="{{onInitBarChart}}" /> -->
   </view>
 
   <view class="primary" bindtap="download" style="margin: 32rpx 32rpx 64rpx 32rpx;">下载成绩</view>
