@@ -246,7 +246,7 @@
         <zan-tag wx:if="{{state == 1}}" disabled>未开始</zan-tag>
         <zan-tag wx:if="{{state == 2}}" type="primary">提交中</zan-tag>
         <zan-tag wx:if="{{state == 3}}" type="warn">互评中</zan-tag>
-        <zan-tag wx:if="{{state == 4}}" disabled>已过期</zan-tag>
+        <zan-tag wx:if="{{state == 4}}" disabled>已完成</zan-tag>
       </view>
       <view class="zan-font-12 zan-c-gray-darker">{{zhouqi}}</view>
     </view>

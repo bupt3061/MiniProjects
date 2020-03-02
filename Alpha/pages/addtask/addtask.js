@@ -2,6 +2,7 @@
 const app = getApp()
 const dt = require('../../utils/date.js')
 const st = require('../../utils/string.js')
+const Dialog = require('../../dist/dialog/dialog');
 
 Page({
 
@@ -21,9 +22,12 @@ Page({
     backgroundColor: "#FAAD14",
     standards: [{
       key: null,
-      ratio: 0,
-      status: true
+      ratio: 0
     }, ],
+    lastStandard: {
+      key: null,
+      ratio: 0
+    },
     taskname: null,
     uploadstart: null,
     uploadend: null,
@@ -90,23 +94,17 @@ Page({
       standards = [{
         key: null,
         ratio: 0,
-        status: true
       }, ]
     } else {
       for (var i = 0; i < keys.length; i++) {
         var temp = {
           key: keys[i],
-          ratio: standard[keys[i]] * 100,
-          status: false
+          ratio: standard[keys[i]] * 100
         }
-
-        if (i == keys.length - 1) {
-          temp.status = true
-        }
-
         standards.push(temp)
       }
     }
+    console.log(standards)
 
     this.setData({
       standards: standards,
@@ -240,11 +238,9 @@ Page({
 
     const data = {
       key: null,
-      ratio: 0,
-      status: true
+      ratio: 0
     }
 
-    standards[standards.length - 1].status = false
     standards.push(data)
 
     this.setData({
@@ -253,7 +249,6 @@ Page({
   },
   delItem: function(e) {
     const idx = e.currentTarget.dataset.idx
-    console
     var standards = this.data.standards
 
     var temp = []
@@ -512,13 +507,28 @@ Page({
   checkStandards: function() {
     const standards = this.data.standards
 
-    if (standards.length == 1 && standards[0].ratio == 0 && (standards[0].key == null || standards[0].key == '')) {
+    // 检查是否更新了维度
+    var flag = true
+    if (standards.length === 0) {
+      console.log('未填写其他维度')
+    } else if (standards.length == 1) {
+      if (standards[0].ratio == 0 && (standards[0].key == null || standards[0].key == '')) {
+        console.log('未填写其他维度')
+      } else {
+        flag = false
+      }
+    } else {
+      flag = false
+    }
+
+    if (flag) {
       return 1
     }
 
+    // 获取satndard
     var res = {}
     var sum = 0
-    for (var i = 0; i < standards.length - 1; i++) {
+    for (var i = 0; i < standards.length; i++) {
       if (standards[i].key == null || standards[i].key == '' || standards[i].ratio == 0) {
         this.setData({
           $zanui: {
@@ -546,14 +556,6 @@ Page({
       res[standards[i].key] = standards[i].ratio / 100
     }
 
-    const last_standard = standards[standards.length - 1]
-    if((last_standard.key == '' || last_standard.key == null) && last_standard.ratio == 0) {
-      console.log('未填写')
-    } else if (last_standard.key != '' && last_standard.ratio != 0) {
-      sum += last_standard.ration
-      res[last_standard.key] = last_standard.ratio / 100
-    }
-
     if (sum != 100) {
       this.setData({
         $zanui: {
@@ -578,6 +580,31 @@ Page({
     }
     return res
   },
+  removeStandard: function() {
+    return new Promise((resolve, reject) => {
+      const taskid = this.data.taskid
+      const db = wx.cloud.database()
+      const _ = db.command
+
+      db.collection('task')
+        .where({
+          _id: taskid
+        })
+        .update({
+          data: {
+            standard: _.remove()
+          }
+        })
+        .then(res => {
+          console.log(res)
+          resolve(true)
+        })
+        .catch(err => {
+          console.log(err)
+          reject('删除失败')
+        })
+    })
+  },
   async summit() {
     const courseid = this.data.courseid
     const taskname = this.data.taskname
@@ -585,7 +612,6 @@ Page({
     const uploadend = this.data.uploadend
     const evaluatestart = this.data.evaluatestart
     const evaluateend = this.data.evaluateend
-    const standards = this.data.standards
     const now = new Date()
     let standard
     let data
@@ -703,8 +729,8 @@ Page({
     })
 
     setTimeout(function() {
-      wx.redirectTo({
-        url: '../tasklist/tasklist?courseid=' + courseid,
+      wx.navigateBack({
+
       })
     }, 2000)
 
@@ -717,7 +743,6 @@ Page({
     const uploadend = this.data.uploadend
     const evaluatestart = this.data.evaluatestart
     const evaluateend = this.data.evaluateend
-    const standards = this.data.standards
     const now = new Date()
     let standard
     let data
@@ -772,7 +797,7 @@ Page({
       standard = res
     }
 
-    console.log(standard)
+    console.log('standard', standard)
 
     this.setData({
       upLoading: true,
@@ -789,21 +814,26 @@ Page({
       standard: standard
     }
 
-    const db = wx.cloud.database()
+    let removed = await this.removeStandard()
 
-    db.collection('task')
-    .where({
-      _id: taskid
-    })
-    .update({
-      data
-    })
-    .then(res => {
-      console.log(res)
-    })
-    .catch(err => {
-      console.log(err)
-    }) 
+    if (removed) {
+      const db = wx.cloud.database()
+      const _ = db.command
+
+      db.collection('task')
+        .where({
+          _id: taskid
+        })
+        .update({
+          data
+        })
+        .then(res => {
+          console.log(res)
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    }
 
     // 更新全局数据
     var state = null
@@ -818,23 +848,21 @@ Page({
     }
     const zhouqi = dt.formatTime(uploadstart) + '-' + dt.formatTime(evaluateend)
     const ttasknameh = st.handleTaskName(taskname)
-    const item = {
-      cretime: now,
-      evaluateend: evaluateend,
-      evaluatestart: evaluatestart,
-      standard: standard,
-      state: state,
-      taskname: taskname,
-      ttasknameh: ttasknameh,
-      uploadstart: uploadstart,
-      uploadend: uploadend,
-      zhouqi: zhouqi,
-      _courseid: courseid,
-      _id: id
-    }
 
     var tasks = app.globalData.tasklist[courseid]
-    tasks = [item,].concat(tasks)
+    for (var i = 0; i < tasks.length; i++) {
+      if (tasks[i]._id == taskid) {
+        tasks[i].taskname = taskname
+        tasks[i].ttasknameh = ttasknameh
+        tasks[i].uploadstart = uploadstart
+        tasks[i].uploadend = uploadend
+        tasks[i].evaluatestart = evaluatestart
+        tasks[i].evaluateend = evaluateend
+        tasks[i].zhouqi = zhouqi
+        tasks[i].state = state
+        tasks[i].standard = standard
+      }
+    }
     app.globalData.tasklist[courseid] = tasks
     console.log(tasks)
 
@@ -846,12 +874,112 @@ Page({
       title: '已更新',
     })
 
-    setTimeout(function () {
-      wx.redirectTo({
-        url: '../tasklist/tasklist?courseid=' + courseid,
+    setTimeout(function() {
+      wx.navigateBack({
+
       })
     }, 2000)
 
+  },
+  handleDialog: function () {
+    return new Promise((resolve, reject) => {
+      Dialog({
+        title: "确认删除",
+        buttons: [{
+          text: '取消',
+          type: 'cancel'
+        },
+        {
+          text: '确认',
+          color: '#e64240',
+          type: 'confirm'
+        }
+        ]
+      })
+        .then(({
+          type,
+          hasOpenDataPromise,
+          openDataPromise
+        }) => {
+          // type 可以用于判断具体是哪一个按钮被点击
+          console.log('=== dialog with custom buttons ===', `type: ${type}`);
+
+          if (type == 'confirm') {
+            resolve(true)
+          }
+
+          resolve(false)
+
+          if (hasOpenDataPromise) {
+            openDataPromise.then((data) => {
+              console.log('成功获取信息', data);
+            }).catch((data) => {
+              console.log('获取信息失败', data);
+            });
+          }
+        })
+        .catch(err => {
+          console.log(err)
+          reject('获取失败')
+        })
+    })
+  },
+  async del() {
+    const taskid = this.data.taskid
+    const courseid = this.data.courseid
+
+    let confirm = await this.handleDialog()
+    console.log(confirm)
+
+    if(!confirm) {
+      return
+    }
+
+    this.setData({
+      delLoading: true
+    })
+
+    // 删除
+    const db = wx.cloud.database()
+
+    db.collection('task')
+    .where({
+      _id: taskid
+    })
+    .remove()
+    .then(res => {
+      console.log(res)
+    })
+    .catch(err => {
+      console.log(err)
+    })
+
+    // 更新全局数据
+    var tasks = app.globalData.tasklist[courseid]
+
+    var temp = []
+    for(var i = 0; i < tasks.length; i++) {
+      if(tasks[i]._id == taskid) {
+        continue
+      }
+      temp.push(tasks[i])
+    }
+    app.globalData.tasklist[courseid] = temp
+    console.log(temp)
+
+    this.setData({
+      delLoading: false
+    })
+
+    wx.showToast({
+      title: '已删除',
+    })
+
+    setTimeout(function(){
+      wx.navigateBack({
+        
+      })
+    }, 2000)
   },
   /**
    * 生命周期函数--监听页面加载
@@ -860,11 +988,11 @@ Page({
     const list = options.data.split('/')
     const arg = list[list.length - 1]
     const courseid = list[0]
-    console.log(courseid)
+    console.log('courseid', courseid)
 
     if (arg == '2') {
       var taskid = list[1]
-      console.log(taskid)
+      console.log('taskid', taskid)
 
       this.setData({
         courseid: courseid,

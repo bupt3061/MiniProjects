@@ -449,8 +449,11 @@ Page({
     })
 
     setTimeout(function() {
-      wx.switchTab({
-        url: '../index/index',
+      // wx.switchTab({
+      //   url: '../index/index',
+      // })
+      wx.navigateBack({
+        
       })
     }, 2000)
 
@@ -630,10 +633,6 @@ Page({
         delLoading: true
       })
 
-      setTimeout(function () {
-
-      }, 2000)
-
       const db = wx.cloud.database()
       const _ = db.command
       const courseid = this.data.courseid
@@ -696,8 +695,8 @@ Page({
       })
 
       setTimeout(function() {
-        wx.switchTab({
-          url: '../index/index',
+        wx.navigateBack({
+
         })
       }, 2000)
     }
