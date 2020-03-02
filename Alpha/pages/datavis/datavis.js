@@ -1,6 +1,40 @@
 // pages/datavis/datavis.js
 const F2 = require("@antv/wx-f2")
+// import F2 from '@antv/wx-f2';
 const app = getApp()
+
+let barChart = null
+
+// function initBarChart(F2) { // 使用 F2 绘制图表
+//   const data = [
+//     { cate: '1', count: 5 },
+//     { cate: '3', sales: 10 },
+//     { cate: '5', sales: 15 },
+//     { cate: '7', sales: 10 },
+//     { cate: '9', sales: 5 },
+//   ];
+//   barchart = new F2.Chart({
+//     id: 'barchart'
+//   });
+
+//   barchart.source(data, {
+//     count: {
+//       tickCount: 5
+//     }
+//   });
+//   barchart.tooltip({
+//     showItemMarker: false,
+//     onShow(ev) {
+//       const { items } = ev;
+//       items[0].name = null;
+//       items[0].name = (parseInt(items[0].title) - 1) + '~' + (parseInt(items[0].title) + 1);
+//       items[0].value = ':' + items[0].value + '人';
+//     }
+//   });
+//   barchart.interval().position('cate*count');
+//   barchart.render();
+//   return barchart;
+// }
 
 Page({
 
@@ -8,70 +42,49 @@ Page({
    * 页面的初始数据
    */
   data: {
-    onInitChart(F2, config) {
-      const chart = new F2.Chart(config);
+    onInitBarChart(F2, config) {
       const data = [{
-          value: 63.4,
-          city: 'New York',
-          date: '2011-10-01'
+          cate: '1',
+          count: 5
         },
         {
-          value: 62.7,
-          city: 'Alaska',
-          date: '2011-10-01'
+          cate: '3',
+          sales: 10
         },
         {
-          value: 72.2,
-          city: 'Austin',
-          date: '2011-10-01'
+          cate: '5',
+          sales: 15
         },
         {
-          value: 58,
-          city: 'New York',
-          date: '2011-10-02'
+          cate: '7',
+          sales: 10
         },
         {
-          value: 59.9,
-          city: 'Alaska',
-          date: '2011-10-02'
-        },
-        {
-          value: 67.7,
-          city: 'Austin',
-          date: '2011-10-02'
-        },
-        {
-          value: 53.3,
-          city: 'New York',
-          date: '2011-10-03'
-        },
-        {
-          value: 59.1,
-          city: 'Alaska',
-          date: '2011-10-03'
-        },
-        {
-          value: 69.4,
-          city: 'Austin',
-          date: '2011-10-03'
+          cate: '9',
+          sales: 5
         },
       ];
-      chart.source(data, {
-        date: {
-          range: [0, 1],
-          type: 'timeCat',
-          mask: 'MM-DD'
-        },
-        value: {
-          max: 300,
-          tickCount: 4
+      barchart = new F2.Chart(config);
+
+      barchart.source(data, {
+        count: {
+          tickCount: 5
         }
       });
-      chart.area().position('date*value').color('city').adjust('stack');
-      chart.line().position('date*value').color('city').adjust('stack');
-      chart.render();
-      // 注意：需要把chart return 出来
-      return chart;
+      barchart.tooltip({
+        showItemMarker: false,
+        onShow(ev) {
+          const {
+            items
+          } = ev;
+          items[0].name = null;
+          items[0].name = (parseInt(items[0].title) - 1) + '~' + (parseInt(items[0].title) + 1);
+          items[0].value = ':' + items[0].value + '人';
+        }
+      });
+      barchart.interval().position('cate*count');
+      barchart.render();
+      return barchart;
     },
     selectedId: 'datavis',
   },
@@ -90,6 +103,7 @@ Page({
     let evals // 所有评论
     let standard // 评价标准
     let standardKeys // 评价标准的键值
+    let barChart
 
     // 获取所有选择该课的学生
     let stusCount = await this.getStusCount(openid, courseid)
@@ -273,13 +287,14 @@ Page({
       {
         cate: '9',
         count: 0
-      }]
+      }
+    ]
 
-    for(var i = 0; i < stus.length; i++) {
+    for (var i = 0; i < stus.length; i++) {
       const totalscore = stus[i].totalscore
-      if(0 <= totalscore && totalscore < 2) {
+      if (0 <= totalscore && totalscore < 2) {
         totalscoresGroup[0].count += 1
-      } else if(2 <= totalscore && totalscore < 4) {
+      } else if (2 <= totalscore && totalscore < 4) {
         totalscoresGroup[1].count += 1
       } else if (4 <= totalscore && totalscore < 6) {
         totalscoresGroup[2].count += 1
@@ -293,12 +308,15 @@ Page({
 
     // 获取各细项均值
     avgs = []
-    for(var i = 0; i < standardKeys.length; i++) {
+    for (var i = 0; i < standardKeys.length; i++) {
       var temp = 0
-      for(var j = 0; j < stus.length; j++) {
+      for (var j = 0; j < stus.length; j++) {
+        if (stus[j][standardKeys[i]] == 0) {
+          continue
+        }
         temp += stus[j][standardKeys[i]]
       }
-      var avg = temp / stus.length
+      var avg = temp / uploadedWorksCount
       avg = Math.round(avg * 10) / 10
       var data = {
         cate: standardKeys[i],
@@ -307,10 +325,47 @@ Page({
       avgs.push(data)
     }
     console.log('avgs', avgs)
+
+    // 绘制条形图
+    const func = this.initBarChart(totalscoresGroup)
+    this.setData({
+      opts: {
+        onInit: func
+      },
+      showChart: true,
+      totalscoresGroup: totalscoresGroup,
+    })
   },
   /**
    * 其他函数
    */
+  initBarChart(data) {
+    return function(F2) {
+      chart = new F2.Chart({
+        id: 'column'
+      })
+
+      chart.source(data, {
+        count: {
+          tickCount: 5
+        }
+      });
+      chart.tooltip({
+        showItemMarker: false,
+        onShow(ev) {
+          const {
+            items
+          } = ev;
+          items[0].name = null;
+          items[0].name = (parseInt(items[0].title) - 1) + '~' + (parseInt(items[0].title) + 1);
+          items[0].value = ':' + items[0].value + '人';
+        }
+      });
+      chart.interval().position('cate*count');
+      chart.render();
+      return chart;
+    }
+  },
   getWorkScore: function(totalscores, ctbs) {
     var ctbs_sum = 0
     var processed_totalscores = []

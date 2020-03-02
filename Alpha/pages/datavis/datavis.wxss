@@ -1,8 +1,11 @@
 /* pages/datavis/datavis.wxss */
+
+#id-barchart{
+  width: 100%;
+  height: 600rpx
+}
+
 .f2-chart {
   width: 100%;
   height: 500rpx;
-  background-color: white;
-  padding: 24rpx;
-  box-sizing: border-box
 }

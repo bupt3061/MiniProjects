@@ -27,7 +27,8 @@
     <view style="width: 100%; padding: 24rpx 32rpx; border-bottom: 1px solid #f1f1f1;">
       <view style="margin-left: 32rpx;">成绩分布</view>
     </view>
-    <ff class="f2-chart" onInit="{{onInitChart}}" />
+     <!-- <ff-canvas id="id-barchart" canvas-id="barchart" opts="{{ opts }}"></ff-canvas> -->
+     <ff class="f2-chart" onInit="{{onInitBarChart}}" />
   </view>
 
 </view>
