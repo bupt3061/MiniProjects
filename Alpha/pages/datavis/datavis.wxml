@@ -1,7 +1,6 @@
 <!--pages/datavis/datavis.wxml-->
-
-<view class="container zan-font-16 zan-c-black" style="padding: 0 0 64rpx 0;">
-  <view class="container" style="width: 100%; background-color: white; border-bottom: 1px solid #f1f1f1; mrigin-bottom: 32rpx;">
+<view class="container">
+  <view class="container zan-font-16 zan-c-gray-darker" style="width: 100%; background-color: white; border-bottom: 1px solid #f1f1f1; margin-bottom: 32rpx;">
     <view class="tab" style="display: flex; flex-direction: row; justify-content: space-between; align-items: center; width: 70%; line-height: 88rpx;">
       <block wx:if="{{selectedId == 'datavis'}}">
         <view style="position: relative;" bindtap="tapDatavis">
@@ -24,7 +23,11 @@
     </view>
   </view>
 
-  <view style="background-color: white; margin-bottom: 32rpx">
-    <f2 class="f2-chart" onInit="{{onInitChart}}" />
+  <view class="container zan-font-14" style="width: 100%; background-color: white; margin-bottom: 32rpx;">
+    <view style="width: 100%; padding: 24rpx 32rpx; border-bottom: 1px solid #f1f1f1;">
+      <view style="margin-left: 32rpx;">成绩分布</view>
+    </view>
+    <ff class="f2-chart" onInit="{{onInitChart}}" />
   </view>
+
 </view>

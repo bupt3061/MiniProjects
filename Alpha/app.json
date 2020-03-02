@@ -58,7 +58,8 @@
   "debug": true,
   "sitemapLocation": "sitemap.json",
   "usingComponents": {
-    "f2": "@antv/wx-f2",
+    "ff": "@antv/wx-f2",
+    "ff-canvas": "@antv/f2-canvas",
     "zan-icon": "/dist/icon/index",
     "zan-button": "/dist/btn/index",
     "zan-loading": "/dist/loading/index",

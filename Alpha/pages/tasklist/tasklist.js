@@ -164,9 +164,10 @@ Page({
   },
   toDatavis: function(e) {
     const taskid = e.currentTarget.dataset.taskid
+    const courseid = this.data.courseid
 
     wx.navigateTo({
-      url: '../datavis/datavis?taskid=' + taskid,
+      url: '../datavis/datavis?data=' + courseid + '/' + taskid,
     })
   },
   /**
