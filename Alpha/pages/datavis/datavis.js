@@ -460,6 +460,9 @@ Page({
     })
   },
   async download() {
+    wx.showLoading({
+      title: '下载中',
+    })
     let fileID = await this.getFileID()
     console.log('fileID', fileID)
 
@@ -470,7 +473,15 @@ Page({
       tempFilePath: tempFilePath,
     })
     .then(res => {
-      console.log(res)
+      const savedFilePath = res.savedFilePath;
+      // 打开文件
+      wx.openDocument({
+        filePath: savedFilePath,
+        success: function (res) {
+          console.log('打开文档成功')
+          wx.hideLoading()
+        },
+      })
     })
     .catch(err => {
       console.log(err)
