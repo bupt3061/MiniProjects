@@ -1,9 +1,7 @@
 // pages/datavis/datavis.js
 const F2 = require("@antv/wx-f2")
-// import F2 from '@antv/wx-f2';
 const app = getApp()
-
-let barChart = null
+let barchart = null
 
 // function initBarChart(F2) { // 使用 F2 绘制图表
 //   const data = [
@@ -42,29 +40,30 @@ Page({
    * 页面的初始数据
    */
   data: {
-    onInitBarChart(F2, config) {
+    barChart: null,
+    onInitBarChart: function(F2, config) {
       const data = [{
           cate: '1',
           count: 5
         },
         {
           cate: '3',
-          sales: 10
+          count: 10
         },
         {
           cate: '5',
-          sales: 15
+          count: 15
         },
         {
           cate: '7',
-          sales: 10
+          count: 10
         },
         {
           cate: '9',
-          sales: 5
+          count: 5
         },
       ];
-      barchart = new F2.Chart(config);
+      const barchart = new F2.Chart(config);
 
       barchart.source(data, {
         count: {
@@ -84,7 +83,75 @@ Page({
       });
       barchart.interval().position('cate*count');
       barchart.render();
+
+      app.globalData.barchart = barchart
+
       return barchart;
+    },
+    onInitRadarChart: function(F2, config) {
+      const data = [{
+        cate: '维度1',
+        avg: 5
+      },
+      {
+        cate: '维度2',
+        avg: 5
+      },
+      {
+        cate: '维度3',
+        avg: 5
+      }]
+
+      const radarchart = new F2.Chart(config);
+      radarchart.coord('polar');
+      radarchart.source(data, {
+        avg: {
+          min: 0,
+          max: 10,
+          nice: false,
+          tickCount: 5
+        }
+      });
+      radarchart.tooltip({
+        showItemMarker: false,
+        onShow(ev) {
+          const {
+            items
+          } = ev;
+          items[0].name = null;
+          items[0].name = items[0].title;
+          items[0].value = ':' + items[0].value + '分';
+        }
+      });
+      radarchart.axis('avg', {
+        label: function label(text, index, total) {
+          if (index === total - 1) {
+            return null;
+          }
+          return {
+            top: true
+          };
+        },
+        grid: {
+          lineDash: null,
+          type: 'arc' // 弧线网格
+        }
+      });
+      radarchart.axis('cate', {
+        grid: {
+          lineDash: null
+        }
+      });
+      radarchart.line().position('cate*avg')
+      radarchart.point().position('cate*avg')
+        .style({
+          stroke: '#fff',
+          lineWidth: 1
+        });
+      radarchart.render();
+
+      app.globalData.radarchart = radarchart
+      return radarchart
     },
     selectedId: 'datavis',
   },
@@ -327,45 +394,12 @@ Page({
     console.log('avgs', avgs)
 
     // 绘制条形图
-    const func = this.initBarChart(totalscoresGroup)
-    this.setData({
-      opts: {
-        onInit: func
-      },
-      showChart: true,
-      totalscoresGroup: totalscoresGroup,
-    })
+    app.globalData.barchart.changeData(totalscoresGroup)
+    app.globalData.radarchart.changeData(avgs)
   },
   /**
    * 其他函数
    */
-  initBarChart(data) {
-    return function(F2) {
-      chart = new F2.Chart({
-        id: 'column'
-      })
-
-      chart.source(data, {
-        count: {
-          tickCount: 5
-        }
-      });
-      chart.tooltip({
-        showItemMarker: false,
-        onShow(ev) {
-          const {
-            items
-          } = ev;
-          items[0].name = null;
-          items[0].name = (parseInt(items[0].title) - 1) + '~' + (parseInt(items[0].title) + 1);
-          items[0].value = ':' + items[0].value + '人';
-        }
-      });
-      chart.interval().position('cate*count');
-      chart.render();
-      return chart;
-    }
-  },
   getWorkScore: function(totalscores, ctbs) {
     var ctbs_sum = 0
     var processed_totalscores = []
