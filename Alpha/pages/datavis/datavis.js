@@ -84,6 +84,8 @@ Page({
   async init(courseid, taskid) {
     const openid = app.globalData.openid
     let stus // 所有选课学生
+    let totalscoresGroup // 总成绩分组
+    let avgs // 各细项均值
     let uploadedWorks // 所有已交作业
     let evals // 所有评论
     let standard // 评价标准
@@ -141,6 +143,17 @@ Page({
     console.log('evals', evals)
 
     // 整合数据
+    for (var i = 0; i < stus.length; i++) {
+      var temp = 0
+      for (var j = 0; j < evals.length; j++) {
+        if (stus[i]._openid == evals[j]._openid) {
+          temp += 1
+        }
+      }
+      stus[i].evalNum = temp
+    }
+    console.log('stus', stus)
+
     for (var i = 0; i < uploadedWorks.length; i++) {
       var temp = []
       for (var j = 0; j < evals.length; j++) {
@@ -205,14 +218,8 @@ Page({
         ctbs.push(wevals[m].contribution)
       }
 
-      console.log('totalscores', totalscores)
-      console.log('eachscores', eachscores)
-      console.log('ctbs', ctbs)
-
       const workscore = this.getWorkScore(totalscores, ctbs)
       const eachscore = this.getEachscore(eachscores, ctbs)
-      console.log('workscore', workscore)
-      console.log('eachscore', eachscore)
 
       for (var n = 0; n < standardKeys.length; n++) {
         stus[i][standardKeys[n]] = eachscore[n]
@@ -220,13 +227,93 @@ Page({
       stus[i].workscore = workscore
     }
     console.log('stus', stus)
+
+    // 获取互评得分
+    for (var i = 0; i < stus.length; i++) {
+      var evalNum = stus[i].evalNum
+      const needEvalNum = 3
+      var ratio = evalNum / needEvalNum
+      if (ratio > 1) {
+        ratio = 1
+      }
+
+      var evalscore = ratio * 10
+      evalscore = Math.round(evalscore * 10) / 10
+      stus[i].evalscore = evalscore
+    }
+    console.log("stus", stus)
+
+    // 获取总分
+    for (var i = 0; i < stus.length; i++) {
+      const evalscore = stus[i].evalscore
+      const workscore = stus[i].workscore
+      var totalscore = evalscore * 0.3 + workscore * 0.7
+      totalscore = Math.round(totalscore * 10) / 10
+      stus[i].totalscore = totalscore
+    }
+    console.log('stus', stus)
+
+    // 获取总分分组
+    totalscoresGroup = [{
+        cate: '1',
+        count: 0
+      },
+      {
+        cate: '3',
+        count: 0
+      },
+      {
+        cate: '5',
+        count: 0
+      },
+      {
+        cate: '7',
+        count: 0
+      },
+      {
+        cate: '9',
+        count: 0
+      }]
+
+    for(var i = 0; i < stus.length; i++) {
+      const totalscore = stus[i].totalscore
+      if(0 <= totalscore && totalscore < 2) {
+        totalscoresGroup[0].count += 1
+      } else if(2 <= totalscore && totalscore < 4) {
+        totalscoresGroup[1].count += 1
+      } else if (4 <= totalscore && totalscore < 6) {
+        totalscoresGroup[2].count += 1
+      } else if (6 <= totalscore && totalscore < 8) {
+        totalscoresGroup[3].count += 1
+      } else {
+        totalscoresGroup[4].count += 1
+      }
+    }
+    console.log('totalscoreGroup', totalscoresGroup)
+
+    // 获取各细项均值
+    avgs = []
+    for(var i = 0; i < standardKeys.length; i++) {
+      var temp = 0
+      for(var j = 0; j < stus.length; j++) {
+        temp += stus[j][standardKeys[i]]
+      }
+      var avg = temp / stus.length
+      avg = Math.round(avg * 10) / 10
+      var data = {
+        cate: standardKeys[i],
+        avg: avg
+      }
+      avgs.push(data)
+    }
+    console.log('avgs', avgs)
   },
   /**
    * 其他函数
    */
   getWorkScore: function(totalscores, ctbs) {
     var ctbs_sum = 0
-    var processed_totalscores= []
+    var processed_totalscores = []
     for (var i = 0; i < ctbs.length; i++) {
       ctbs_sum += ctbs[i]
       processed_totalscores.push(totalscores[i] * ctbs[i])
@@ -248,7 +335,7 @@ Page({
     for (var i = 0; i < ctbs.length; i++) {
       ctbs_sum += ctbs[i]
       var temp = []
-      for(var j = 0; j < eachscores[i].length; j++) {
+      for (var j = 0; j < eachscores[i].length; j++) {
         eachscores[i][j] *= ctbs[i]
       }
     }
@@ -256,14 +343,14 @@ Page({
     var sum_eachscores = []
     for (var i = 0; i < eachscores[0].length; i++) {
       var temp = 0
-      for(var j = 0; j < eachscores.length; j++) {
+      for (var j = 0; j < eachscores.length; j++) {
         temp += eachscores[j][i]
       }
       sum_eachscores.push(temp)
     }
 
     var eachscore = []
-    for(var i = 0; i < sum_eachscores.length; i++) {
+    for (var i = 0; i < sum_eachscores.length; i++) {
       var temp = sum_eachscores[i] / ctbs_sum
       temp = Math.round(temp * 10) / 10
       eachscore.push(temp)
