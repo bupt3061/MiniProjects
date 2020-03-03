@@ -17,8 +17,12 @@
   </view>
 
   <view class="item-list">
-    <view class="item" style="border-bottom: 1px solid #f1f1f1;" bindtap="toCourse">
+    <view wx:if="{{type == 1}}" class="item" style="border-bottom: 1px solid #f1f1f1;" bindtap="toCourse">
       <view>我的课程</view>
+      <zan-icon class="zan-font-14 zan-c-gray-dark" type="arrow"></zan-icon>
+    </view>
+    <view wx:else class="item" style="border-bottom: 1px solid #f1f1f1;" bindtap="toStore">
+      <view>应用商城</view>
       <zan-icon class="zan-font-14 zan-c-gray-dark" type="arrow"></zan-icon>
     </view>
     <view class="item" bindtap="toCollect">

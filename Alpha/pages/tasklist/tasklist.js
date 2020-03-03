@@ -35,8 +35,10 @@ Page({
       console.log(tasklist)
 
       this.setData({
-        show: true
+        show: true,
+        courseid: courseid
       })
+      wx.hideLoading()
 
       return
     }
@@ -163,6 +165,7 @@ Page({
   },
   toAddTask: function() {
     const courseid = this.data.courseid
+    console.log(courseid)
 
     wx.navigateTo({
       url: '../addtask/addtask?data=' + courseid + '/1',
@@ -190,7 +193,7 @@ Page({
   onLoad: function (options) {
     const courseid = options.courseid
     const tasklist = app.globalData.tasklist
-    console.log('courseid')
+    console.log('courseid', courseid)
 
     if (tasklist[courseid] != null) {
       this.setData({

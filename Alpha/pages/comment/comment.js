@@ -636,13 +636,31 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function() {
+    const data = app.globalData.curComment
 
+    this.setData({
+      data
+    })
   },
 
   /**
    * 生命周期函数--监听页面隐藏
    */
   onHide: function() {
+    const arg = this.data.arg
+    const workid = this.data.workid
+    const taskid = this.data.taskid
+    const standard = this.data.standard
+    const standardKeys = this.data.standardKeys
+    const data = {
+      arg: arg,
+      workid: workid,
+      taskid: taskid,
+      standard: standard,
+      standardKeys: standardKeys
+    }
+
+    app.globalData.curComment = data
 
   },
 

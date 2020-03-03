@@ -446,11 +446,13 @@ Page({
           this.setData({
             works: markedWorksList,
             hasWork: true,
+            content: "暂无收藏",
             show: true
           })
         } else {
           this.setData({
             hasWork: false,
+            content: "暂无收藏",
             show: true
           })
         }
@@ -559,11 +561,13 @@ Page({
           this.setData({
             works: markedWorksList,
             hasWork: true,
+            content: "暂无收藏",
             show: true
           })
         } else {
           this.setData({
             hasWork: false,
+            content: "暂无收藏",
             show: true
           })
         }

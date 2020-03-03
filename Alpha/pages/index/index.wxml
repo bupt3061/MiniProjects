@@ -18,7 +18,7 @@
 </block>
 
 <block wx:else>
-  <view class="container zan-font-16 zan-c-black" style="padding-top: 64rpx 0;">
+  <view class="container zan-font-16 zan-c-black" style="padding: 32rpx 0;">
     <view hidden="{{!show}}" class="card primary zan-font-18" style="height: 160rpx; width: 90%; justify-content: center; " bindtap="toAddCourse">
       <zan-icon type="add-o" style="margin-right: 12rpx;"></zan-icon>
       <view>添加课程</view>

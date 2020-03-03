@@ -555,6 +555,7 @@ Page({
       })
 
     // 更新全局数据
+    course._id = courseid
     course.coursename = coursename
     course.tcoursenameh = st.handleCourseName2(coursename)
     course.cover = cover

@@ -23,6 +23,7 @@ Page({
    */
   async init() {
     const openid = app.globalData.openid
+    const type = app.globalData.type
     let userInfo = app.globalData.userInfo
 
     if (userInfo == null) {
@@ -42,7 +43,8 @@ Page({
     this.setData({
       nickname: nickname,
       avatarUrl: avatarUrl,
-      rank: rank
+      rank: rank,
+      type: type
     })
   },
   /**
@@ -77,6 +79,11 @@ Page({
   toCourse: function() {
     wx.navigateTo({
       url: '../course/course',
+    })
+  },
+  toStore: function() {
+    wx.navigateTo({
+      url: '../store/store',
     })
   },
   getRank(ctb) {

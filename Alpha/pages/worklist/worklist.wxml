@@ -8,7 +8,7 @@
   </view>
 </view>
 
-<view wx:if="{{hasWork && show}}" class="container zan-font-16 zan-c-black" style="padding: 32rpx 0;">
+<view wx:if="{{hasWork && show}}" class="container zan-font-16 zan-c-black" style="padding: 64rpx 0;">
   <block wx:for="{{works}}" wx:key="{{index}}">
     <template is="work-card" data="{{...item}}"></template>
   </block>

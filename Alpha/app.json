@@ -17,7 +17,8 @@
     "pages/addcourse/addcourse",
     "pages/addtask/addtask",
     "pages/datavis/datavis",
-    "pages/tasklist/tasklist"
+    "pages/tasklist/tasklist",
+    "pages/store/store"
   ],
   "enablePullDownRefresh": true,
   "window": {

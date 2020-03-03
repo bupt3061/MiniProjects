@@ -296,8 +296,6 @@ Page({
 
         newMsg.push(data)
       }
-
-      newMsg = tempNewMsgList
     }
 
     // 上传数据

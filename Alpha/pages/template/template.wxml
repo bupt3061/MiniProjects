@@ -166,19 +166,19 @@
       <view style="margin-bottom: 12rpx;">[已完成] {{tasknameh}}</view>
       <view class="zan-font-12 zan-c-gray-darker">时间：{{endtime}}</view>
     </view>
-    <view class="msg-right">
+    <view style="width: 30%; display: flex; flex-direction: row; justify-content: flex-end;">
       <view class="zan-font-14 primary">查看</view>
     </view>
   </view>
 </template>
 
 <template name="etmsg-card">
-  <view class="card  zan-c-gray-dark" style="padding: 48rpx 64rpx; box-sizing: border-box" data-courseid="{{_courseid}}" data-taskid="{{_taskid}}" bindtap="clicktmsg">
+  <view class="card  zan-c-gray-dark" style="padding: 48rpx 64rpx; box-sizing: border-box; align-items: center" data-courseid="{{_courseid}}" data-taskid="{{_taskid}}" bindtap="clicktmsg">
     <view class="msg-left">
       <view style="margin-bottom: 12rpx;">[已完成] {{tasknameh}}</view>
       <view class="zan-font-12">时间：{{endtime}}</view>
     </view>
-    <view class="msg-right">
+    <view style="width: 30%; display: flex; flex-direction: row; justify-content: flex-end;">
       <view class="zan-font-14">查看</view>
     </view>
   </view>
