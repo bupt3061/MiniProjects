@@ -9,6 +9,7 @@ Page({
    * 页面的初始数据
    */
   data: {
+    type: null,
     newMsg: null,
     existedMsg: null,
     hasCourse: true,
@@ -20,6 +21,7 @@ Page({
    */
   async init(arg) {
     const openid = app.globalData.openid
+    const type = app.globalData.type
     const now = new Date()
     let hasCourse
     let hasMsg
@@ -128,157 +130,175 @@ Page({
     }
     console.log('needProcessTasks', needProcessTasks)
 
-    // 获取需处理任务的全部作品
-    var needProcessTaskids = []
-    for (var i = 0; i < needProcessTasks.length; i++) {
-      needProcessTaskids.push(needProcessTasks[i]._id)
-    }
+    if(type == 2) {
+      // 获取新消息列表
+      newMsg = []
+      for (var i = 0; i < needProcessTasks.length; i++) {
+        var data = {}
+        data._taskid = needProcessTasks[i]._id
+        data._courseid = needProcessTasks[i]._courseid
+        data.taskname = needProcessTasks[i].taskname
+        data.endtime = needProcessTasks[i].evaluateend
+        data.uploadtime = now
+        data.totalscore = 0
 
-    let works = await this.getWorks(needProcessTaskids, openid)
-
-    var workids = []
-    for (var i = 0; i < works.length; i++) {
-      workids.push(works[i]._id)
-    }
-    console.log('works', works)
-    console.log('workids', workids)
-
-    // 获取全部互评信息
-    let [num, evaledTasks] = await this.getEvaledTasks(openid, needProcessTaskids)
-    console.log('evaledTasks', evaledTasks)
-
-    // 获取作品的全部评价
-    let evals = await this.getEvals(workids)
-    console.log('evals', evals)
-
-    // 整合数据
-    for (var i = 0; i < works.length; i++) {
-      var temp = []
-      for (var j = 0; j < evals.length; j++) {
-        if (works[i]._id == evals[j]._workid) {
-          temp.push(evals[j])
-        }
+        newMsg.push(data)
       }
-      works[i].evals = temp
-    }
+      console.log('newMsg', newMsg)
+    } else if(type == 1) {
+      // 获取需处理任务的全部作品
+      var needProcessTaskids = []
+      for (var i = 0; i < needProcessTasks.length; i++) {
+        needProcessTaskids.push(needProcessTasks[i]._id)
+      }
 
-    console.log('works', works)
+      let works = await this.getWorks(needProcessTaskids, openid)
 
-    for (var i = 0; i < needProcessTasks.length; i++) {
-      var temp = null
-      for (var j = 0; j < works.length; j++) {
-        if (needProcessTasks[i]._id == works[j]._taskid) {
-          temp = works[j]
+      var workids = []
+      for (var i = 0; i < works.length; i++) {
+        workids.push(works[i]._id)
+      }
+      console.log('works', works)
+      console.log('workids', workids)
+
+      // 获取全部互评信息
+      let [num, evaledTasks] = await this.getEvaledTasks(openid, needProcessTaskids)
+      console.log('evaledTasks', evaledTasks)
+
+      // 获取作品的全部评价
+      let evals = await this.getEvals(workids)
+      console.log('evals', evals)
+
+      // 整合数据
+      for (var i = 0; i < works.length; i++) {
+        var temp = []
+        for (var j = 0; j < evals.length; j++) {
+          if (works[i]._id == evals[j]._workid) {
+            temp.push(evals[j])
+          }
+        }
+        works[i].evals = temp
+      }
+
+      console.log('works', works)
+
+      for (var i = 0; i < needProcessTasks.length; i++) {
+        var temp = null
+        for (var j = 0; j < works.length; j++) {
+          if (needProcessTasks[i]._id == works[j]._taskid) {
+            temp = works[j]
+            continue
+          }
+        }
+        needProcessTasks[i].work = temp
+      }
+
+      for (var i = 0; i < needProcessTasks.length; i++) {
+        var evaledNum = 0
+        for (var j = 0; j < evaledTasks.length; j++) {
+          if (needProcessTasks[i]._id == evaledTasks[j]._id) {
+            evaledNum = evaledTasks[j].num
+            continue
+          }
+        }
+        needProcessTasks[i].evaledNum = evaledNum
+      }
+
+      console.log('needProcessTasks', needProcessTasks)
+
+      // 计算成绩
+      for (var i = 0; i < needProcessTasks.length; i++) {
+        // 互评成绩
+        if (!needProcessTasks[i].evaledNum || needProcessTasks[i].evaledNum == 0) {
+          needProcessTasks[i].evalScore = 0
           continue
         }
-      }
-      needProcessTasks[i].work = temp
-    }
+        var temp = needProcessTasks[i].evaledNum / 3
+        if (temp >= 1) {
+          temp = 1
+        }
 
-    for (var i = 0; i < needProcessTasks.length; i++) {
-      var evaledNum = 0
-      for (var j = 0; j < evaledTasks.length; j++) {
-        if (needProcessTasks[i]._id == evaledTasks[j]._id) {
-          evaledNum = evaledTasks[j].num
+        var evalScore = Math.round(temp * 10 * 10) / 10
+        needProcessTasks[i].evalScore = evalScore
+      }
+
+      console.log('needProcessTasks', needProcessTasks)
+
+      for (var i = 0; i < needProcessTasks.length; i++) {
+        // 作业成绩
+        if (needProcessTasks[i].work == null) {  // 没交作业
+          needProcessTasks[i].workScore = 0
           continue
         }
+
+        if (needProcessTasks[i].work.evals.length == 0) {  // 无人评价
+          needProcessTasks[i].workScore = 6.5
+          continue
+        }
+
+        var ctb = []
+        var totals = []
+        var evalList = needProcessTasks[i].work.evals
+        for (var j = 0; j < evalList.length; j++) {
+          ctb.push(evalList[j].contribution)
+          totals.push(evalList[j].totalscore)
+        }
+
+        var muls = []
+        var ctb_sum = 0
+        for (var m = 0; m < ctb.length; m++) {
+          var temp = ctb[m] * totals[m]
+          muls.push(temp)
+          ctb_sum += ctb[m]
+        }
+
+        var muls_sum = 0
+        for (var n = 0; n < muls.length; n++) {
+          muls_sum += muls[n]
+        }
+
+        var workScore = muls_sum / ctb_sum
+        workScore = Math.round(workScore * 10) / 10
+
+        needProcessTasks[i].workScore = workScore
       }
-      needProcessTasks[i].evaledNum = evaledNum
+
+      console.log('needProcessTasks', needProcessTasks)
+
+      for (var i = 0; i < needProcessTasks.length; i++) {
+        // 总成绩
+        var workScore = needProcessTasks[i].workScore
+        var evalScore = needProcessTasks[i].evalScore
+
+        var totalScore = workScore * 0.7 + evalScore * 0.3
+        totalScore = Math.round(totalScore * 10) / 10
+
+        needProcessTasks[i].totalScore = totalScore
+      }
+
+      console.log('needProcessTasks', needProcessTasks)
+
+      // 获取新消息列表
+      newMsg = []
+      for (var i = 0; i < needProcessTasks.length; i++) {
+        var data = {}
+        data._taskid = needProcessTasks[i]._id
+        data._courseid = needProcessTasks[i]._courseid
+        data.taskname = needProcessTasks[i].taskname
+        data.totalscore = needProcessTasks[i].totalScore
+        data.endtime = needProcessTasks[i].evaluateend
+
+        if (needProcessTasks[i].work) {
+          data.uploadtime = needProcessTasks[i].work.uploadtime
+        } else {
+          data.uploadtime = '未提交'
+        }
+
+        newMsg.push(data)
+      }
+
+      newMsg = tempNewMsgList
     }
-
-    console.log('needProcessTasks', needProcessTasks)
-
-    // 计算成绩
-    for (var i = 0; i < needProcessTasks.length; i++) {
-      // 互评成绩
-      if (!needProcessTasks[i].evaledNum || needProcessTasks[i].evaledNum == 0) {
-        needProcessTasks[i].evalScore = 0
-        continue
-      }
-      var temp = needProcessTasks[i].evaledNum / 3
-      if (temp >= 1) {
-        temp = 1
-      }
-
-      var evalScore = Math.round(temp * 10 * 10) / 10
-      needProcessTasks[i].evalScore = evalScore
-    }
-
-    console.log('needProcessTasks', needProcessTasks)
-
-    for (var i = 0; i < needProcessTasks.length; i++) {
-      // 作业成绩
-      if (needProcessTasks[i].work == null) {  // 没交作业
-        needProcessTasks[i].workScore = 0
-        continue
-      }
-
-      if (needProcessTasks[i].work.evals.length == 0) {  // 无人评价
-        needProcessTasks[i].workScore = 6.5
-        continue
-      }
-
-      var ctb = []
-      var totals = []
-      var evalList = needProcessTasks[i].work.evals
-      for (var j = 0; j < evalList.length; j++) {
-        ctb.push(evalList[j].contribution)
-        totals.push(evalList[j].totalscore)
-      }
-
-      var muls = []
-      var ctb_sum = 0
-      for (var m = 0; m < ctb.length; m++) {
-        var temp = ctb[m] * totals[m]
-        muls.push(temp)
-        ctb_sum += ctb[m]
-      }
-
-      var muls_sum = 0
-      for (var n = 0; n < muls.length; n++) {
-        muls_sum += muls[n]
-      }
-
-      var workScore = muls_sum / ctb_sum
-      workScore = Math.round(workScore * 10) / 10
-
-      needProcessTasks[i].workScore = workScore
-    }
-
-    console.log('needProcessTasks', needProcessTasks)
-
-    for (var i = 0; i < needProcessTasks.length; i++) {
-      // 总成绩
-      var workScore = needProcessTasks[i].workScore
-      var evalScore = needProcessTasks[i].evalScore
-
-      var totalScore = workScore * 0.7 + evalScore * 0.3
-      totalScore = Math.round(totalScore * 10) / 10
-
-      needProcessTasks[i].totalScore = totalScore
-    }
-
-    console.log('needProcessTasks', needProcessTasks)
-
-    // 获取新消息列表
-    var tempNewMsgList = []
-    for (var i = 0; i < needProcessTasks.length; i++) {
-      var data = {}
-      data._taskid = needProcessTasks[i]._id
-      data.taskname = needProcessTasks[i].taskname
-      data.totalscore = needProcessTasks[i].totalScore
-      data.endtime = needProcessTasks[i].evaluateend
-
-      if (needProcessTasks[i].work) {
-        data.uploadtime = needProcessTasks[i].work.uploadtime
-      } else {
-        data.uploadtime = '未提交'
-      }
-
-      tempNewMsgList = tempNewMsgList.concat(data)
-    }
-
-    newMsg = tempNewMsgList
 
     // 上传数据
     for (var i = 0; i < newMsg.length; i++) {
@@ -303,12 +323,14 @@ Page({
       if (newMsg[i].uploadtime != '未提交') {
         newMsg[i].uploadtime = dt.formatTime(newMsg[i].uploadtime)
       }
+      newMsg[i].endtime = dt.formatTime(newMsg[i].endtime)
     }
 
     for (var i = 0; i < existedMsg.length; i++) {
       if (existedMsg[i].uploadtime != '未提交') {
         existedMsg[i].uploadtime = dt.formatTime(existedMsg[i].uploadtime)
       }
+      existedMsg[i].endtime = dt.formatTime(existedMsg[i].endtime)
     }
 
     // 处理长字符串
@@ -361,6 +383,7 @@ Page({
     
 
     this.setData({
+      type: type,
       newMsg: newMsg,
       existedMsg: existedMsg,
       hasMsg: hasMsg,
@@ -544,6 +567,16 @@ Page({
 
     wx.navigateTo({
       url: '../details/details?data=' + taskid + '/1',
+    })
+  },
+  clicktmsg: function (e) {
+    const taskid = e.currentTarget.dataset.taskid
+    const courseid = e.currentTarget.dataset.courseid
+
+    console.log(e)
+
+    wx.navigateTo({
+      url: '../datavis/datavis?data=' + courseid + '/' + taskid,
     })
   },
   addCourse: function() {

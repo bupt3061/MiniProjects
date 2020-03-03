@@ -1,129 +1,7 @@
 // pages/datavis/datavis.js
 const F2 = require("@antv/wx-f2")
 const app = getApp()
-
-let bar = null
-let radar = null
-
-function initBarChart(canvas, width, height, F2) { // 使用 F2 绘制图表
-  const data = [{
-    cate: '1',
-    count: 5
-  },
-  {
-    cate: '3',
-    count: 10
-  },
-  {
-    cate: '5',
-    count: 15
-  },
-  {
-    cate: '7',
-    count: 10
-  },
-  {
-    cate: '9',
-    count: 5
-  },
-  ];
-  bar = new F2.Chart({
-    el: canvas,
-    width,
-    height
-  });
-
-  bar.source(data, {
-    count: {
-      tickCount: 5
-    }
-  });
-  bar.tooltip({
-    showItemMarker: false,
-    onShow(ev) {
-      const {
-        items
-      } = ev;
-      items[0].name = null;
-      items[0].name = (parseInt(items[0].title) - 1) + '~' + (parseInt(items[0].title) + 1);
-      items[0].value = ':' + items[0].value + '人';
-    }
-  });
-  bar.interval().position('cate*count');
-  bar.render();
-
-  return bar
-}
-
-function initRadarChart(canvas, width, height, F2) { // 使用 F2 绘制图表
-  const data = [{
-    cate: '维度1',
-    avg: 5
-  },
-  {
-    cate: '维度2',
-    avg: 5
-  },
-  {
-    cate: '维度3',
-    avg: 5
-  }]
-
-  radar = new F2.Chart({
-    el: canvas,
-    width,
-    height
-  });
-
-  radar.coord('polar');
-  radar.source(data, {
-    avg: {
-      min: 0,
-      max: 10,
-      nice: false,
-      tickCount: 5
-    }
-  });
-  radar.tooltip({
-    showItemMarker: false,
-    onShow(ev) {
-      const {
-        items
-      } = ev;
-      items[0].name = null;
-      items[0].name = items[0].title;
-      items[0].value = ':' + items[0].value + '分';
-    }
-  });
-  radar.axis('avg', {
-    label: function label(text, index, total) {
-      if (index === total - 1) {
-        return null;
-      }
-      return {
-        top: true
-      };
-    },
-    grid: {
-      lineDash: null,
-      type: 'arc' // 弧线网格
-    }
-  });
-  radar.axis('cate', {
-    grid: {
-      lineDash: null
-    }
-  });
-  radar.line().position('cate*avg')
-  radar.point().position('cate*avg')
-    .style({
-      stroke: '#fff',
-      lineWidth: 1
-    });
-  radar.render();
-
-  return radar
-}
+const st = require('../../utils/string.js')
 
 Page({
 
@@ -153,6 +31,7 @@ Page({
    * 初始化函数
    */
   async init(courseid, taskid) {
+    const now = new Date()
     const openid = app.globalData.openid
     let stus // 所有选课学生
     let totalscoresGroup // 总成绩分组
@@ -170,13 +49,28 @@ Page({
       title: '加载中',
     })
 
-    // 获取任务名
-    const tks = app.globalData.tasklist[courseid]
-    for(var i = 0; i < tks.length; i++) {
-      if(tks[i]._id == taskid) {
-        taskname = tks[i].taskname
+    // 获得评分维度
+    const tasks = app.globalData.tasklist[courseid]
+
+    if(tasks == null) {
+      let theTask = await this.getTaskInfo(taskid)
+      taskname = theTask.taskname
+      standard = theTask.standard
+      console.log('standard', theTask)
+      standardKeys = Object.keys(standard)
+    } else {
+      for (var i = 0; i < tasks.length; i++) {
+        if (tasks[i]._id == taskid) {
+          standard = tasks[i].standard
+          standardKeys = Object.keys(standard)
+          taskname = tasks[i].taskname
+          break
+        }
       }
     }
+    
+    console.log('standard', standard)
+    console.log('standardKeys', standardKeys)
     console.log('taskname', taskname)
 
     // 获取所有选择该课的学生
@@ -264,17 +158,6 @@ Page({
       stus[i].work = temp
     }
     console.log('stus', stus)
-
-    // 获得评分维度
-    const tasks = app.globalData.tasklist[courseid]
-    for (var i = 0; i < tasks.length; i++) {
-      if (tasks[i]._id == taskid) {
-        standard = tasks[i].standard
-      }
-    }
-    standardKeys = Object.keys(standard)
-    console.log('standard', standard)
-    console.log('standardKeys', standardKeys)
 
     // 获取总分及各项评分
     for (var i = 0; i < stus.length; i++) {
@@ -400,6 +283,44 @@ Page({
     }
     console.log('avgs', avgs)
 
+    // 处理提交时间
+    for(var i = 0; i < stus.length; i++) {
+      if(stus[i].work == null) {
+        stus[i].tijiao = '未提交'
+        stus[i].state = false
+        continue
+      } 
+      stus[i].tijiao = this.getTimeBetween(stus[i].work.uploadtime, now)
+      stus[i].state = true
+    }
+    console.log('stus', stus)
+
+    // 排序
+    for (var i = 0; i < stus.length; i++) {
+      // 排序
+      for (var j = 0; j < stus.length - i - 1; j++) {
+        if (stus[j].totalscore < stus[j + 1].totalscore) {
+          var temp = stus[j]
+          stus[j] = stus[j + 1]
+          stus[j + 1] = temp
+        }
+      }
+    }
+    console.log('stus', stus)
+
+    // 处理长字符串
+    for (var i = 0; i < stus.length; i++) {
+      var temp = null
+      if (stus[i].work == null) {
+        temp = taskname
+        temp = st.handleTaskName(temp)
+        stus[i].worknameh = temp
+        continue
+      }
+      stus[i].worknameh = st.handleListTaskName(stus[i].work.title)
+    }
+    console.log('stus', stus)
+
     // 获得表头
     row = ['姓名', '电话']
     for(var i = 0; i < standardKeys.length; i++) {
@@ -440,6 +361,7 @@ Page({
     wx.hideLoading()
 
     this.setData({
+      taskid: taskid,
       stus: stus,
       totalscoresGroup: totalscoresGroup,
       avgs: avgs,
@@ -451,6 +373,56 @@ Page({
   /**
    * 其他函数
    */
+  getTaskInfo: function (taskid) {
+    return new Promise((resolve, reject) => {
+      const db = wx.cloud.database()
+
+      db.collection('task')
+      .where({
+        _id: taskid
+      })
+      .get()
+      .then(res => {
+        const data = res.data[0]
+        resolve(data)
+      })
+      .catch(err => {
+        console.log(err)
+        reject('获取失败')
+      })
+    })
+  },
+  getTimeBetween: function (startDate, endDate) {
+    var days = (endDate - startDate) / (1 * 24 * 60 * 60 * 1000)
+    var timeString = null
+
+    if (days >= 365) {
+      var years = days / 365
+      timeString = Math.floor(years).toString() + "年前"
+    } else if (days > 30 && days < 365) {
+      var months = days / 30
+      timeString = Math.floor(months).toString() + "月前"
+    } else if (days >= 7 && days < 30) {
+      var weeks = days / 7
+      timeString = Math.floor(weeks).toString() + "周前"
+    } else if (days >= 1 && days < 7) {
+      timeString = Math.floor(days).toString() + "天前"
+    } else if (days < 1) {
+      var hours = days * 24
+      timeString = Math.floor(hours).toString() + "小时前"
+
+      if (hours < 1) {
+        var mins = hours * 60
+        timeString = Math.floor(mins).toString() + "分钟前"
+
+        if (mins < 1) {
+          timeString = "刚刚"
+        }
+      }
+    }
+
+    return timeString
+  },
   initBarChart(data){
     return function (canvas, width, height, F2) { // 使用 F2 绘制图表
       const bar = new F2.Chart({
@@ -789,6 +761,16 @@ Page({
   tapWorks: function() {
     this.setData({
       selectedId: 'works'
+    })
+  },
+  toWork: function(e) {
+    const taskid = this.data.taskid
+    const workid = e.currentTarget.dataset.workid
+    console.log(workid)
+    console.log(taskid)
+
+    wx.navigateTo({
+      url: '../details/details?data=' + taskid + '/' + workid + '/4',
     })
   },
   /**

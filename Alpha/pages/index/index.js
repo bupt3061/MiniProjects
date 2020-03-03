@@ -83,7 +83,7 @@ Page({
       courseids = userInfo.courses
 
       if (courseids.length == 0) {
-        if(type == 1) {
+        if (type == 1) {
           wx.hideLoading()
           hasCourse = false
           console.log('尚未添加课程')
@@ -98,7 +98,7 @@ Page({
           })
 
           return
-        } else if(type == 2) {
+        } else if (type == 2) {
           wx.hideLoading()
 
           this.setData({
@@ -138,6 +138,31 @@ Page({
         app.globalData.courseids = courseids
         app.globalData.courses = courses
       }
+
+      /**
+       * 1、获得消息数目并设置提示红点
+       * 2、消息数目 = 已过期任务数 - 已存在消息数
+       * 3、如果是数据刷新需要将当前数据更新到全局
+       */
+      let pastedEvalTasksNum = await this.pastedEvalTasksNum(courseids)
+      let msgNum = await this.getMsgNum(openid)
+
+      var newMsgNum = pastedEvalTasksNum - msgNum
+      console.log('pastedEvalTasksNum', pastedEvalTasksNum)
+      console.log('msgNum', msgNum)
+      console.log('新消息', newMsgNum)
+
+      if (newMsgNum > 0) {
+        wx.showTabBarRedDot({
+          index: 1,
+          success: res => {
+            console.log(res)
+          },
+          fail: err => {
+            console.log(err)
+          }
+        })
+      }
     } else if (arg == 2) {
 
       hasCourse = true
@@ -174,31 +199,6 @@ Page({
      */
 
     if (type == 1) { // 学生端
-      /**
-       * 1、获得消息数目并设置提示红点
-       * 2、消息数目 = 已过期任务数 - 已存在消息数
-       * 3、如果是数据刷新需要将当前数据更新到全局
-       */
-      let pastedEvalTasksNum = await this.pastedEvalTasksNum(courseids)
-      let msgNum = await this.getMsgNum(openid)
-
-      var newMsgNum = pastedEvalTasksNum - msgNum
-      console.log('pastedEvalTasksNum', pastedEvalTasksNum)
-      console.log('msgNum', msgNum)
-      console.log('新消息', newMsgNum)
-
-      if (newMsgNum > 0) {
-        wx.showTabBarRedDot({
-          index: 1,
-          success: res => {
-            console.log(res)
-          },
-          fail: err => {
-            console.log(err)
-          }
-        })
-      }
-
       /**
        * 1、获取所有待提交任务数并存储到全局
        * 2、需提交任务数 = 所有待提交 - 所有已提交
@@ -928,7 +928,7 @@ Page({
     const indexProcessedIds = app.globalData.indexProcessedIds
     console.log('test, onShow执行了')
 
-    if(type == 2) {
+    if (type == 2) {
       this.setData({
         courses: courses
       })

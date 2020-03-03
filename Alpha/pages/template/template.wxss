@@ -27,6 +27,15 @@
   border-radius: 18rpx;
 }
 
+.stu-img {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 48rpx;
+  border: 1px solid #f1f1f1;
+  margin-right: 24rpx;
+  margin-left: 32rpx;
+}
+
 .img-cover {
   position: absolute;
   width: 100%;

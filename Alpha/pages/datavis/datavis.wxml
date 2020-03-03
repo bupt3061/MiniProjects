@@ -1,22 +1,32 @@
 <!--pages/datavis/datavis.wxml-->
+<import src="../template/template.wxml" />
+
 <view class="container">
   <view class="container" style="width: 100%; background-color: white; border-bottom: 1px solid #f3f3f3; margin-bottom: 32rpx;">
     <view style="width: 70%; display: flex; flex-direction: row; justify-content: space-between; align-items: center;">
       <block wx:if="{{selectedId == 'datavis'}}">
-        <view style="position: relative; padding: 24rpx;" bindtap="tapDatavis">
-          <view class="primary">数据分析</view>
+        <view style="position: relative;" bindtap="tapDatavis">
+          <view class="primary container" style="width: 100%; padding: 24rpx;">
+            <view>数据分析</view>
+          </view>
           <view class="primary-bg" style="width: 100%; height: 6rpx; position: absolute; bottom: 0"></view>
         </view>
         <view style="position: relative; padding: 24rpx;" bindtap="tapWorks">
-          <view class="zan-c-gray-darker">提交统计</view>
+          <view class="zan-c-gray-darker container" style="width: 100%;">
+            <view>作业统计</view>
+          </view>
         </view>
       </block>
       <block wx:else>
-        <view style="position: relative; padding: 24rpx;" bindtap="tapDatavis">
-          <view class="zan-c-gray-darker">数据分析</view>
+        <view style="position: relative;" bindtap="tapDatavis">
+          <view class="zan-c-gray-darker container" style="width: 100%; padding: 24rpx;">
+            <view>数据分析</view>
+          </view>
         </view>
-        <view style="position: relative; padding: 24rpx;" bindtap="tapWorks">
-          <view class="primary">提交统计</view>
+        <view style="position: relative;" bindtap="tapWorks">
+          <view class="primary container" style="width: 100%; padding: 24rpx;">
+            <view>作业统计</view>
+          </view>
           <view class="primary-bg" style="width: 100%; height: 6rpx; position: absolute; bottom: 0"></view>
         </view>
       </block>
@@ -38,10 +48,21 @@
       <ff-canvas id="radar-dom" canvas-id="radar" opts="{{ optsBar }}"></ff-canvas>
     </view>
 
-    <view wx:if="{{show}}" class="primary" bindtap="download" style="margin: 32rpx 32rpx 64rpx 32rpx;">下载成绩</view>
+    <view wx:if="{{show}}" class="primary" bindtap="download" style="margin: 32rpx 32rpx 64rpx 32rpx;">
+      下载成绩
+    </view>
   </block>
   <block wx:else>
-    提交统计
+
+    <template is="title" data="{{title: '未提交'}}" />
+    <block wx:for="{{stus}}" wx:key="{{index}}">
+      <template wx:if="{{!item.state}}" is="stu-wtj-card" data="{{...item}}"></template>
+    </block>
+
+    <template is="title" data="{{title: '已提交'}}" />
+    <block wx:for="{{stus}}" wx:key="{{index}}">
+      <template wx:if="{{item.state}}" is="stu-card" data="{{...item}}"></template>
+    </block>
   </block>
 
 </view>

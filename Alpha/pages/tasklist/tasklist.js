@@ -74,10 +74,24 @@ Page({
 
     console.log('tasks', tasks)
 
+    // 排序
+    for (var i = 0; i < tasks.length; i++) {
+      // 排序
+      for (var j = 0; j < tasks.length - i - 1; j++) {
+        if (tasks[j].evaluateend < tasks[j + 1].evaluateend) {
+          var temp = tasks[j]
+          tasks[j] = tasks[j + 1]
+          tasks[j + 1] = temp
+        }
+      }
+    }
+
     // 处理时间
     for (var i = 0; i < tasks.length; i++) {
       tasks[i].zhouqi = dt.formatTime(tasks[i].uploadstart) + '-' + dt.formatTime(tasks[i].evaluateend)
     }
+
+    console.log('tasks', tasks)
 
     console.log('tasks', tasks)
 
@@ -181,6 +195,7 @@ Page({
     if (tasklist[courseid] != null) {
       this.setData({
         tasks: tasklist[courseid],
+        courseid: courseid,
         show: true
       })
 
@@ -208,6 +223,7 @@ Page({
     if(tasklist[courseid] != null) {
       this.setData({
         tasks: tasklist[courseid],
+        courseid: courseid,
         show: true
       })
     }

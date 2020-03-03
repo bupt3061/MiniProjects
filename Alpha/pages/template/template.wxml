@@ -143,7 +143,7 @@
 <template name="nmsg-card">
   <view class="card" style="padding: 48rpx 64rpx; box-sizing: border-box" data-taskid="{{_taskid}}" bindtap="clickmsg">
     <view class="msg-left">
-      <view>{{tasknameh}}</view>
+      <view style="margin-bottom: 12rpx;">{{tasknameh}}</view>
       <view class="zan-font-12 zan-c-gray-darker">时间：{{uploadtime}}</view>
     </view>
     <view class="msg-right primary">{{totalscore}}</view>
@@ -153,10 +153,34 @@
 <template name="emsg-card">
   <view class="card  zan-c-gray-dark" style="padding: 48rpx 64rpx; box-sizing: border-box" data-taskid="{{_taskid}}" bindtap="clickmsg">
     <view class="msg-left">
-      <view>{{tasknameh}}</view>
+      <view style="margin-bottom: 12rpx;">{{tasknameh}}</view>
       <view class="zan-font-12">时间：{{uploadtime}}</view>
     </view>
     <view class="msg-right">{{totalscore}}</view>
+  </view>
+</template>
+
+<template name="ntmsg-card">
+  <view class="card" style="padding: 48rpx 64rpx; box-sizing: border-box" data-courseid="{{_courseid}}" data-taskid="{{_taskid}}" bindtap="clicktmsg">
+    <view class="msg-left">
+      <view style="margin-bottom: 12rpx;">[已完成] {{tasknameh}}</view>
+      <view class="zan-font-12 zan-c-gray-darker">时间：{{endtime}}</view>
+    </view>
+    <view class="msg-right">
+      <view class="zan-font-14 primary">查看</view>
+    </view>
+  </view>
+</template>
+
+<template name="etmsg-card">
+  <view class="card  zan-c-gray-dark" style="padding: 48rpx 64rpx; box-sizing: border-box" data-courseid="{{_courseid}}" data-taskid="{{_taskid}}" bindtap="clicktmsg">
+    <view class="msg-left">
+      <view style="margin-bottom: 12rpx;">[已完成] {{tasknameh}}</view>
+      <view class="zan-font-12">时间：{{endtime}}</view>
+    </view>
+    <view class="msg-right">
+      <view class="zan-font-14">查看</view>
+    </view>
   </view>
 </template>
 
@@ -256,6 +280,33 @@
         <view style="margin-right: 12rpx">|</view>
         <view data-taskid="{{_id}}" bindtap="toDatavis">分析</view>
       </block>
+    </view>
+  </view>
+</template>
+
+<template name="stu-card">
+  <view data-workid="{{work._id}}" class="card" style="position: relative; height: 160rpx; align-items: center;" bindtap="toWork">
+    <image src="{{avatarUrl}}" class="stu-img"></image>
+    <view>
+      <view style="margin-bottom: 14rpx; font-weight: bold">{{worknameh}}</view>
+      <view class="zan-font-12 zan-c-gray-darker">{{name}} · {{tijiao}}</view>
+    </view>
+    <view class="primary zan-font-30" style="diaplsy: flex; justify-content: flex-end; align-items: center; font-weight: bold; margin-right: 32rpx; position: absolute; right: 64rpx;">
+      {{totalscore}}
+    </view>
+    <zan-icon class="zan-c-gray zan-font-14" type="arrow" style="position: absolute; right: 32rpx;"></zan-icon>
+  </view>
+</template>
+
+<template name="stu-wtj-card">
+  <view class="card" style="position: relative; height: 160rpx; align-items: center;">
+    <image src="{{avatarUrl}}" class="stu-img"></image>
+    <view>
+      <view style="margin-bottom: 14rpx; font-weight: bold">{{worknameh}}</view>
+      <view class="zan-font-12 zan-c-gray-darker">{{name}} · {{tijiao}}</view>
+    </view>
+    <view class="primary zan-font-30" style="diaplsy: flex; justify-content: flex-end; align-items: center; font-weight: bold; margin-right: 32rpx; position: absolute; right: 32rpx;">
+      {{totalscore}}
     </view>
   </view>
 </template>
